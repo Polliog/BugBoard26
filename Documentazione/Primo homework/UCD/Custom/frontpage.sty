@@ -1,0 +1,196 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{frontpage}[2025/10/18 Custom Frontpage Package]
+
+\RequirePackage{graphicx}
+\RequirePackage{geometry}
+\RequirePackage{setspace}
+\RequirePackage{xcolor}
+\RequirePackage{eso-pic}
+\RequirePackage{array}
+
+% Colore del testo della copertina
+\definecolor{frontpagedark}{HTML}{f5f5f5}
+
+% Titolo e sottotitolo
+\newcommand{\@fpthesistitle}{}
+\newcommand{\@fpthesissubtitle}{}
+\newcommand{\fpthesistitle}[1]{\renewcommand{\@fpthesistitle}{#1}}
+\newcommand{\fpthesissubtitle}[1]{\renewcommand{\@fpthesissubtitle}{#1}}
+
+% Primo autore (obbligatorio)
+\newcommand{\@fpfirstauthor}{}
+\newcommand{\@fpfirstauthornumber}{}
+\newcommand{\fpfirstauthor}[2]{
+	\renewcommand{\@fpfirstauthor}{#1}
+	\renewcommand{\@fpfirstauthornumber}{#2}
+}
+
+% Secondo autore (opzionale)
+\newcommand{\@fpsecondauthor}{}
+\newcommand{\@fpsecondauthornumber}{}
+\newcommand{\fpsecondauthor}[2]{
+	\renewcommand{\@fpsecondauthor}{#1}
+	\renewcommand{\@fpsecondauthornumber}{#2}
+}
+
+% Terzo autore (opzionale)
+\newcommand{\@fpthirdauthor}{}
+\newcommand{\@fpthirdauthornumber}{}
+\newcommand{\fpthirdauthor}[2]{
+	\renewcommand{\@fpthirdauthor}{#1}
+	\renewcommand{\@fpthirdauthornumber}{#2}
+}
+
+% Lista professori
+\newcommand{\@fpprofessors}{}
+\newcommand{\fpprofessors}[1]{
+	\renewcommand{\@fpprofessors}{#1}
+}
+
+
+% Informazioni università
+\newcommand{\@fpschool}{}
+\newcommand{\@fpdepartment}{}
+\newcommand{\@fpdegree}{}
+\newcommand{\@fpcourse}{}
+\newcommand{\@fpthesistype}{}
+\newcommand{\@fpthesisdate}{}
+
+\newcommand{\fpschool}[1]{\renewcommand{\@fpschool}{#1}}
+\newcommand{\fpdepartment}[1]{\renewcommand{\@fpdepartment}{#1}}
+\newcommand{\fpdegree}[1]{\renewcommand{\@fpdegree}{#1}}
+\newcommand{\fpcourse}[1]{\renewcommand{\@fpcourse}{#1}}
+\newcommand{\fpthesistype}[1]{\renewcommand{\@fpthesistype}{#1}}
+\newcommand{\fpthesisdate}[1]{\renewcommand{\@fpthesisdate}{#1}}
+
+% Logo della scuola
+\newcommand{\@fpschoollogo}{}
+\newcommand{\fpschoollogo}[1]{\renewcommand{\@fpschoollogo}{#1}}
+
+% Immagine di sfondo (opzionale)
+\newcommand{\@fpbackgroundimage}{}
+\newcommand{\fpbackgroundimage}[1]{\renewcommand{\@fpbackgroundimage}{#1}}
+
+
+\newcommand{\makefrontpage}{
+	% Aggiungi sfondo se definito
+	\ifx\@fpbackgroundimage\empty
+	\else
+	\AddToShipoutPictureBG*{
+		\put(-4,-4){
+			\parbox[b][\paperheight]{\paperwidth}{
+				\vfill
+				\centering
+				\includegraphics[width=\dimexpr\paperwidth+4pt\relax,height=\dimexpr\paperheight+4pt\relax,keepaspectratio=false]{\@fpbackgroundimage}
+				\vfill
+			}
+		}
+	}
+	\fi
+	
+	% Margini personalizzati per la copertina
+	\newgeometry{margin=1.98cm, top=1.42cm, bottom=1.47cm}
+	
+	\begin{titlepage}
+		\color{frontpagedark}
+		\vspace*{\baselineskip}
+		
+		% ========== LOGO ==========
+		\ifx\@fpschoollogo\empty
+		\else
+		\begin{figure}[h]
+			\centering  
+			\includegraphics[width=1\linewidth]{\@fpschoollogo}
+		\end{figure}
+		\fi
+		
+		\vspace{5\baselineskip}
+		
+		% ========== TITOLO ==========
+		\noindent
+		\makebox[\textwidth][l]{
+			\parbox{\dimexpr\textwidth-2.5cm\relax}{
+				\setstretch{1.05}
+				\raggedright\bfseries\fontsize{20}{20}\selectfont\@fpthesistitle
+			}
+		}
+		
+		\vspace{0.5\baselineskip}
+		
+		% ========== SOTTOTITOLO ==========
+		\ifx\@fpthesissubtitle\empty
+		\else
+		\noindent
+		\makebox[\textwidth][l]{
+			\parbox{\dimexpr\textwidth-3cm\relax}{
+				\setstretch{1.05}
+				\raggedright\fontsize{14}{19}\selectfont
+				\@fpthesissubtitle
+			}
+		}
+		\vspace{32pt}
+		\fi
+		
+		% ========== AUTORE(I) ==========
+		{\noindent\bfseries\fontsize{12}{19}\selectfont\@fpfirstauthor}
+		
+		{\noindent\itshape\fontsize{10}{10}\selectfont Matricola N. \@fpfirstauthornumber}
+		
+		\vspace{10pt}
+		
+		% ========== AUTORE(II) ==========
+		{\noindent\bfseries\fontsize{12}{19}\selectfont\@fpsecondauthor}
+		
+		{\noindent\itshape\fontsize{10}{10}\selectfont Matricola N. \@fpsecondauthornumber}
+		
+		\vspace{10pt}
+		
+		% ========== AUTORE(III) ==========
+		{\noindent\bfseries\fontsize{12}{19}\selectfont\@fpthirdauthor}
+		
+		{\noindent\itshape\fontsize{10}{10}\selectfont Matricola N. \@fpthirdauthornumber}
+		
+		% Questo \vfill spinge tutto ciò che segue verso il basso
+		\vfill
+		
+		% ========== PROFESSORI ==========
+		\ifx\@fpprofessors\@empty
+		\else
+		{
+			\noindent
+			\fontsize{10}{8}\selectfont\textbf{Professori:}
+			
+			\vspace{0.3\baselineskip}
+			
+			\noindent
+			\@fpprofessors
+		}
+		
+		\vspace{1.5\baselineskip}  % Spazio tra professori e info università
+		\fi
+		
+		% ========== INFORMAZIONI UNIVERSITÀ ==========
+		{\noindent\fontsize{10}{12}\selectfont\@fpschool}
+		
+		{\noindent\fontsize{10}{12}\selectfont\@fpdepartment}
+		
+		{\noindent\fontsize{10}{12}\selectfont\@fpdegree}
+		
+		% Corso (opzionale)
+		\ifx\@fpcourse\@empty
+		\else
+		{\noindent\fontsize{10}{12}\selectfont\@fpcourse}
+
+		\vspace{1.5\baselineskip}  
+		\fi
+		
+		% ========== DATA ==========
+		{\noindent\fontsize{10}{12}\selectfont\@fpthesisdate\par}
+		
+		\vspace{32pt}  % Distanza dal fondo della pagina
+	\end{titlepage}
+	
+	% Ripristina margini normali
+	\restoregeometry
+	\clearpage
+}

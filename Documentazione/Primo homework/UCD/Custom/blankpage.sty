@@ -1,0 +1,23 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{blankpage}[2025/10/18 Blank page with centered text]
+
+\RequirePackage{xcolor}
+\RequirePackage{afterpage}
+
+% Definisce il colore grigio chiaro
+\definecolor{lightgray}{gray}{0.7}
+
+% Comando per creare una pagina vuota con testo centrato
+\newcommand{\blankpage}{%
+	\clearpage
+	\thispagestyle{empty}
+	\null
+	\vfill
+	\begin{center}
+		{\itshape\color{lightgray}\Large Pagina vuota}
+	\end{center}
+	\vfill
+	\clearpage
+}
+
+\endinput

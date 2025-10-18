@@ -1,0 +1,251 @@
+% ============================================
+% COMANDI PER DEFINIRE I DATI DELLA TESI
+% ============================================
+
+% Titolo e sottotitolo
+\newcommand{\@fpthesistitle}{}
+\newcommand{\@fpthesissubtitle}{}
+\newcommand{\fpthesistitle}[1]{\renewcommand{\@fpthesistitle}{#1}}
+\newcommand{\fpthesissubtitle}[1]{\renewcommand{\@fpthesissubtitle}{#1}}
+
+% Primo autore (obbligatorio)
+\newcommand{\@fpfirstauthor}{}
+\newcommand{\@fpfirstauthornumber}{}
+\newcommand{\fpfirstauthor}[2]{
+	\renewcommand{\@fpfirstauthor}{#1}
+	\renewcommand{\@fpfirstauthornumber}{#2}
+}
+
+% Secondo autore (opzionale)
+\newcommand{\@fpsecondauthor}{}
+\newcommand{\fpsecondauthor}[1]{\renewcommand{\@fpsecondauthor}{#1}}
+
+% Terzo autore (opzionale)
+\newcommand{\@fpthirdauthor}{}
+\newcommand{\fpthirdauthor}[1]{\renewcommand{\@fpthirdauthor}{#1}}
+
+% Supervisore principale
+\newcommand{\@fpsupervisor}{}
+\newcommand{\@fpsupervisortitle}{}
+\newcommand{\fpsupervisor}[2]{
+	\renewcommand{\@fpsupervisor}{#1}
+	\renewcommand{\@fpsupervisortitle}{#2}
+}
+
+% Co-supervisore (opzionale)
+\newcommand{\@fpcosupervisor}{}
+\newcommand{\@fpcosupervisortitle}{}
+\newcommand{\fpcosupervisor}[2]{
+	\renewcommand{\@fpcosupervisor}{#1}
+	\renewcommand{\@fpcosupervisortitle}{#2}
+}
+
+% Secondo co-supervisore (opzionale)
+\newcommand{\@fpsecondcosupervisor}{}
+\newcommand{\@fpsecondcosupervisortitle}{}
+\newcommand{\fpsecondcosupervisor}[2]{
+	\renewcommand{\@fpsecondcosupervisor}{#1}
+	\renewcommand{\@fpsecondcosupervisortitle}{#2}
+}
+
+% Informazioni università
+\newcommand{\@fpschool}{}
+\newcommand{\@fpdepartment}{}
+\newcommand{\@fpdegree}{}
+\newcommand{\@fpcourse}{}
+\newcommand{\@fpthesistype}{}
+\newcommand{\@fpthesisdate}{}
+
+\newcommand{\fpschool}[1]{\renewcommand{\@fpschool}{#1}}
+\newcommand{\fpdepartment}[1]{\renewcommand{\@fpdepartment}{#1}}
+\newcommand{\fpdegree}[1]{\renewcommand{\@fpdegree}{#1}}
+\newcommand{\fpcourse}[1]{\renewcommand{\@fpcourse}{#1}}
+\newcommand{\fpthesistype}[1]{\renewcommand{\@fpthesistype}{#1}}
+\newcommand{\fpthesisdate}[1]{\renewcommand{\@fpthesisdate}{#1}}
+
+% Logo della scuola
+\newcommand{\@fpschoollogo}{}
+\newcommand{\fpschoollogo}[1]{\renewcommand{\@fpschoollogo}{#1}}
+
+% Immagine di sfondo (opzionale)
+\newcommand{\@fpbackgroundimage}{}
+\newcommand{\fpbackgroundimage}[1]{\renewcommand{\@fpbackgroundimage}{#1}}
+
+
+% ============================================
+% COMANDO PER CREARE LA COPERTINA
+% ============================================
+
+\RequirePackage{graphicx}
+\RequirePackage{geometry}
+\RequirePackage{setspace}
+\RequirePackage{xcolor}
+\RequirePackage{eso-pic} % Per lo sfondo
+
+% Colore del testo della copertina
+\definecolor{frontpagedark}{HTML}{1c1c1c}
+
+\newcommand{\makefrontpage}{
+	% Aggiungi sfondo se definito
+	\ifx\@fpbackgroundimage\empty
+	\else
+	\AddToShipoutPictureBG*{
+		\put(0,0){
+			\parbox[b][\paperheight]{\paperwidth}{
+				\vfill
+				\centering
+				\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{\@fpbackgroundimage}
+				\vfill
+			}
+		}
+	}
+	\fi
+	
+	% Margini personalizzati per la copertina
+	\newgeometry{margin=1.98cm, top=2.15cm, bottom=1.47cm}
+	
+	\begin{titlepage}
+		\color{frontpagedark}
+		\vspace*{\baselineskip}
+		
+		% ========== LOGO ==========
+		\ifx\@fpschoollogo\empty
+		\else
+		\begin{figure}[h]
+			\includegraphics[width=0.485\linewidth]{\@fpschoollogo}
+		\end{figure}
+		\fi
+		
+		\vspace{3.5\baselineskip}
+		
+		% ========== TITOLO ==========
+		\noindent
+		\makebox[\textwidth][l]{
+			\parbox{\dimexpr\textwidth-2.5cm\relax}{
+				\setstretch{1.03}
+				\raggedright\bfseries\fontsize{20}{26}\selectfont
+				\@fpthesistitle
+			}
+		}
+		
+		\vspace{0.8\baselineskip}
+		
+		% ========== SOTTOTITOLO ==========
+		\ifx\@fpthesissubtitle\empty
+		\else
+		\noindent
+		\makebox[\textwidth][l]{
+			\parbox{\dimexpr\textwidth-7cm\relax}{
+				\setstretch{1.03}
+				\raggedright\fontsize{14}{19}\selectfont
+				\@fpthesissubtitle
+			}
+		}
+		\vspace{35pt}
+		\fi
+		
+		% ========== AUTORE(I) ==========
+		{\noindent\bfseries\fontsize{14}{19}\selectfont\@fpfirstauthor}
+		
+		{\noindent\itshape\fontsize{10}{10}\selectfont Student No. \@fpfirstauthornumber}
+		
+		% Secondo autore (opzionale)
+		\ifx\@fpsecondauthor\empty
+		\else
+		\vspace{8pt}
+		{\noindent\bfseries\fontsize{14}{19}\selectfont\@fpsecondauthor}
+		\fi
+		
+		% Terzo autore (opzionale)
+		\ifx\@fpthirdauthor\empty
+		\else
+		\vspace{8pt}
+		{\noindent\bfseries\fontsize{14}{19}\selectfont\@fpthirdauthor}
+		\fi
+		
+		\vfill
+		
+		% ========== SUPERVISORI ==========
+		{
+			\noindent
+			\fontsize{10}{12}\selectfont
+			\renewcommand{\arraystretch}{0.1}
+			\hspace*{-2.5pt}
+			\begin{tabular}{@{}r@{\hspace{5pt}}>{\raggedright\arraybackslash}m{6cm}@{}}
+				\textbf{Supervisor:} & \@fpsupervisor \\ [-.7ex]
+				& \setstretch{0.9}{\fontsize{8}{10}\selectfont\itshape \@fpsupervisortitle} \\ [2ex]
+				
+				% Co-supervisore (opzionale)
+				\ifx\@fpcosupervisor\empty
+				\else
+				\textbf{Co-supervisor:} & \@fpcosupervisor \\ [-.7ex]
+				& \setstretch{0.9}{\fontsize{8}{10}\selectfont\itshape \@fpcosupervisortitle} \\ [.5ex]
+				\fi
+				
+				% Secondo co-supervisore (opzionale)
+				\ifx\@fpsecondcosupervisor\empty
+				\else
+				& \@fpsecondcosupervisor \\ [-.7ex]
+				& \setstretch{0.9}{\fontsize{8}{10}\selectfont\itshape \@fpsecondcosupervisortitle} \\
+				\fi
+			\end{tabular}
+		}
+		
+		\vfill
+		
+		% ========== INFORMAZIONI UNIVERSITÀ ==========
+		{\noindent\fontsize{10}{12}\selectfont\@fpschool}
+		
+		{\noindent\fontsize{10}{12}\selectfont\@fpdepartment}
+		
+		{\noindent\fontsize{10}{12}\selectfont\@fpdegree}
+		
+		% Corso (opzionale)
+		\ifx\@fpcourse\empty
+		\else
+		{\noindent\fontsize{10}{12}\selectfont\@fpcourse}
+		\fi
+		
+		\vspace{45pt}
+		
+		% ========== TIPO DI TESI ==========
+		{\noindent\fontsize{10}{12}\itshape\selectfont\@fpthesistype}
+		
+		\vspace{45pt}
+		
+		% ========== DATA ==========
+		{\noindent\fontsize{10}{12}\selectfont\@fpthesisdate}
+		
+		\vspace{68pt}
+	\end{titlepage}
+	
+	% Ripristina margini normali
+	\restoregeometry
+	\clearpage
+}
+
+
+% ============================================
+% ESEMPIO DI UTILIZZO
+% ============================================
+
+% Nel tuo documento .tex, usa così:
+%
+% \fpthesistitle{Titolo della Mia Tesi Magistrale}
+% \fpthesissubtitle{Un sottotitolo interessante}
+% \fpfirstauthor{Mario Rossi}{12345}
+% \fpsecondauthor{Giulia Bianchi}  % opzionale
+% \fpsupervisor{Prof. Giovanni Verdi}{PhD, Associate Professor}
+% \fpcosupervisor{Dr. Laura Neri}{PhD, Researcher}  % opzionale
+% \fpschool{Politecnico di Milano}
+% \fpdepartment{Dipartimento di Ingegneria}
+% \fpdegree{Laurea Magistrale in Ingegneria Informatica}
+% \fpthesistype{Tesi di Laurea Magistrale}
+% \fpthesisdate{Leiria, Ottobre 2025}
+% \fpschoollogo{path/to/logo.pdf}  % opzionale
+% \fpbackgroundimage{path/to/background.pdf}  % opzionale
+%
+% \begin{document}
+	% \makefrontpage
+	% ... resto del documento ...
+	% \end{document}

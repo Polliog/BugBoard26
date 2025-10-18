@@ -1,0 +1,57 @@
+\begin{table}[h]
+	\centering
+	\begin{tabular}{|p{3cm}|p{11cm}|}
+		\hline
+		\textbf{Use Case} & UC02 -- Segnalazione (Aggiunta) di una nuova issue \\
+		\hline
+		\textbf{Goal} & Si vuole segnalare una issue ad un progetto. \\
+		\hline
+		\textbf{Precondizioni} & 
+		\begin{itemize}
+			\item L'utente deve essere autenticato e deve trovarsi nella vista dedicata ad un progetto.
+			\item Il progetto di riferimento deve esistere nel sistema.
+			\item L'utente, se non è un admin, deve essere stato assegnato al progetto di riferimento.
+		\end{itemize} \\
+		\hline
+		\textbf{Success End} & La issue è stata creata e salvata nel sistema. \\
+		\hline
+		\textbf{Failed End} & La issue non viene creata, viene mostrato un messaggio di errore e il sistema torna allo stato precedente. \\
+		\hline
+		\textbf{Actors} & Utente o Admin (L'utente non è read-only) \\
+		\hline
+		\textbf{Trigger} & Click sul bottone ``Segnala Issue'' \\
+		\hline
+		\textbf{Main Scenario} & 
+		\begin{enumerate}
+			\item \textbf{Attore:} Viene premuto il bottone Segnala Issue.
+			\item \textbf{System:} Viene mostrato il form per segnalare una nuova issue.
+			\item \textbf{Attore:} Vengono compilati almeno tutti i campi obbligatori.
+			\item \textbf{Attore:} Viene cliccato il bottone ``Crea''.
+			\item \textbf{System:} Vengono verificati la validità dei dati inseriti nella form.
+			\item \textbf{System:} Viene salvata la issue all'interno del database del sistema.
+			\item \textbf{System:} Il form si chiude e viene lanciata una notifica di Successo.
+		\end{enumerate} \\
+		\hline
+		\textbf{Extensions} & 
+		\begin{itemize}
+			\item \textbf{3a.} L'utente non compila tutti i campi obbligatori
+			\begin{itemize}
+				\item \textbf{3a.1} Il sistema mostra un errore, i campi non compilati appaiono rossi.
+				\item \textbf{3a.2} Ritorna al passo 3.
+			\end{itemize}
+			\item \textbf{5a.} La verifica dei dati fallisce, i dati non sono validi
+			\begin{itemize}
+				\item \textbf{5a.1} Il sistema mostra un messaggio di errore.
+				\item \textbf{5a.2} Si ritorna al passo 3, il form viene svuotato dei dati inseriti precedentemente.
+			\end{itemize}
+			\item \textbf{6a.} Errore interno, i dati non vengono salvati nel database del sistema.
+			\begin{itemize}
+				\item \textbf{6a.1} Il form si chiude e viene lanciata una notifica di Errore.
+				\item \textbf{6a.2} Il caso d'uso è fallito.
+			\end{itemize}
+		\end{itemize} \\
+		\hline
+	\end{tabular}
+	\caption{Use Case UC02: Segnalazione di una nuova issue}
+	\label{tab:uc02}
+\end{table}

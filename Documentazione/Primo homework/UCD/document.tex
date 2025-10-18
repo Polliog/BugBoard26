@@ -1,0 +1,55 @@
+\documentclass[a4paper]{FedericoIIswedoc}
+\usepackage{./Custom/frontpage}
+\usepackage{./Custom/blankpage}
+\usepackage{./Custom/glossary}
+
+\fpthesistitle{BugBoard26}
+\fpthesissubtitle{Documentazione del progetto di Ingegneria del Software}
+\fpfirstauthor{Mario Lombardo}{N86004029}
+\fpsecondauthor{Giuseppe Pollio}{N86004953}
+\fpthirdauthor{Antonio Paudice}{N86004566}
+\fpprofessors{Porfiro Tramontana \\ Breve Bernardo}
+
+\fpschool{Università degli Studi di Napoli Federico II}
+\fpdegree{Classe di Laurea in Scienze e Tecnologie Informatiche L-31}
+
+\fpthesisdate{Anno Accademico 2025/2026}
+
+\fpschoollogo{./Assets/Federico_II_University_Logo_White.png}
+\fpbackgroundimage{./Assets/cover.png}
+
+
+\begin{document}
+	\makefrontpage
+	\blankpage
+	
+	% Numerazione romana per le pagine iniziali
+	\pagenumbering{roman}
+	
+	\tableofcontents
+	\newpage
+	
+	\listoffigures
+	\addchapterlike{Lista delle Figure}
+	\newpage
+	
+	\listoftables
+	\addchapterlike{Lista delle Tabelle}
+	\newpage
+	
+	\input{glossaryTerms}
+	\printglossary
+	\addchapterlike{Glossario}
+	\blankpage
+	\cleardoublepage
+	
+	
+	\pagenumbering{arabic}
+	
+	\input{./Chapters/Chapter1.tex}
+	\input{./Chapters/Chapter2.tex}
+	\input{./Chapters/Chapter3.tex}
+	\input{./Chapters/Chapter4.tex}	
+	\input{./Chapters/Chapter5.tex}
+	
+\end{document}

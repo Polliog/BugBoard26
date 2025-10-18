@@ -1,0 +1,41 @@
+\chapter{Utenti del sistema}
+
+Per il corretto sviluppo di \textbf{BugBoard26}, è necessario definire quali sono gli utenti che andranno a \textbf{utilizzare il sistema}, e di quali \textbf{competenze} o\textbf{ esigenze} hanno bisogno
+\\\\
+Il sistema è destinato a team di \textbf{sviluppo software} e, più in generale, a tutte le organizzazioni che necessitano di uno strumento collaborativo per la \textbf{gestione di \textit{issues}, bug e richieste di miglioramento}nei propri progetti informatici.
+\\\\
+All'interno del sistema sono stati individuati quattro \textit{attori} principali, tutti con accesso a funzionalità diverse:
+\begin{enumerate}
+	
+	\item \textbf{Utente non autenticato:} 
+	\begin{itemize}
+		\item Ha accesso solo alla schermata di login
+		\item Non può accedere a dati a meno che non entra nel proprio account. 
+	\end{itemize}
+	
+	\item \textbf{Utente normale (\textit{User}):} 
+	\begin{itemize}
+		\item Rappresenta il profilo standard utilizzato dalla maggior parte del team di sviluppo (sviluppatori, tester...)
+		\item Può visualizzare i progetti a cui partecipa e le \textit{issues} a lui assegnate.
+		\item Può creare nuove \textit{issues} secondo il procedimento già indicato.
+		\item Può filtrare e ordinare \textit{issues} in base a vari criteri
+		\item Può aggiornare lo stato delle \textit{issues} a lui assegnate
+	\end{itemize}
+	
+	\item \textbf{Utente Admin:} 
+	\begin{itemize}
+		\item Dispone di privilegi avanzati per gestire al meglio l'intero sistema.
+		\item Ha come obiettivo di monitorare e coordinare il lavoro del team.
+		\item Ha completa gestione dei progetti, può crearli, eliminarli o modificarli.
+		\item Può creare account di qualsiasi tipo, specificandone email, password, e tipo di utenza (Normale/Admin/Read-Only).
+		\item Può assegnare \textit{issues} a membri del team e contrassegnare eventuali duplicati.
+	\end{itemize}
+	
+	\item \textbf{Utente in sola lettura (Read-Only):}
+	\begin{itemize}
+		\item Si tratta di un utente esterno al team di sviluppo, come uno stakeholder o un committente.
+		\item Gli account di questa categoria possono essere gestiti e creati solo dagli \textit{admin}
+		\item Ha lo scopo di monitorare l'andamento del lavoro senza interferire con il lavoro del team
+		\item Può visualizzare progetti, \textit{issues} e commenti, senza però modificare o creare nulla
+	\end{itemize}
+\end{enumerate}
