@@ -34,4 +34,8 @@ public class PermissionService {
     public boolean canManageUsers(User user) {
         return user.getRole() == GlobalRole.ADMIN;
     }
+
+    public boolean canDeleteIssue(User user) {
+        return user.getRole() == GlobalRole.ADMIN;
+    }
 }

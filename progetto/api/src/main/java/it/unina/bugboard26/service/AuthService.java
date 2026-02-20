@@ -30,7 +30,7 @@ public class AuthService {
     }
 
     public AuthResponse login(LoginRequest request) {
-        User user = userRepository.findByEmail(request.email())
+        User user = userRepository.findByEmail(request.email().toLowerCase())
                 .orElseThrow(() -> new ResponseStatusException(UNAUTHORIZED, "Credenziali non valide"));
 
         if (!passwordEncoder.matches(request.password(), user.getPasswordHash())) {

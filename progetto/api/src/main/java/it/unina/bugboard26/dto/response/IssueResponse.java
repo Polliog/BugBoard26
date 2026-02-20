@@ -20,6 +20,8 @@ public record IssueResponse(
         boolean archived,
         Instant archivedAt,
         UserResponse archivedBy,
+        Instant deletedAt,
+        UserResponse deletedBy,
         List<String> labels,
         List<HistoryEntryResponse> history
 ) {
@@ -39,6 +41,8 @@ public record IssueResponse(
                 issue.isArchived(),
                 issue.getArchivedAt(),
                 issue.getArchivedBy() != null ? UserResponse.from(issue.getArchivedBy()) : null,
+                issue.getDeletedAt(),
+                issue.getDeletedBy() != null ? UserResponse.from(issue.getDeletedBy()) : null,
                 issue.getLabels().stream().map(l -> l.getName()).toList(),
                 issue.getHistory().stream().map(HistoryEntryResponse::from).toList()
         );

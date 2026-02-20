@@ -5,11 +5,11 @@ export const commentsApi = {
 	getByIssue: (issueId: string) =>
 		api.get<Comment[]>(`/api/issues/${issueId}/comments`),
 
-	create: (issueId: string, content: string) =>
-		api.post<Comment>(`/api/issues/${issueId}/comments`, { content }),
+	create: (issueId: string, content: string, image?: string | null) =>
+		api.post<Comment>(`/api/issues/${issueId}/comments`, { content, image: image ?? null }),
 
-	update: (issueId: string, commentId: string, content: string) =>
-		api.patch<Comment>(`/api/issues/${issueId}/comments/${commentId}`, { content }),
+	update: (issueId: string, commentId: string, content: string, image?: string | null) =>
+		api.patch<Comment>(`/api/issues/${issueId}/comments/${commentId}`, { content, image }),
 
 	delete: (issueId: string, commentId: string) =>
 		api.delete<void>(`/api/issues/${issueId}/comments/${commentId}`)

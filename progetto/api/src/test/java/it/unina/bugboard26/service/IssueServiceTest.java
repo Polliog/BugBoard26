@@ -122,7 +122,7 @@ class IssueServiceTest {
         when(issueRepository.save(any(Issue.class))).thenReturn(issue);
 
         UpdateIssueRequest req = new UpdateIssueRequest(
-                null, null, null, null, IssueStatus.RISOLTA, null, null, null
+                null, null, null, null, IssueStatus.RISOLTA, null, null, null, null
         );
         issueService.update(issue.getId(), req, assignee);
 
@@ -143,7 +143,7 @@ class IssueServiceTest {
         when(issueRepository.save(any(Issue.class))).thenReturn(issue);
 
         UpdateIssueRequest req = new UpdateIssueRequest(
-                null, null, null, null, IssueStatus.IN_PROGRESS, null, null, null
+                null, null, null, null, IssueStatus.IN_PROGRESS, null, null, null, null
         );
         issueService.update(issue.getId(), req, creator);
 
@@ -163,7 +163,7 @@ class IssueServiceTest {
         when(permissionService.canArchive(user)).thenReturn(false);
 
         UpdateIssueRequest req = new UpdateIssueRequest(
-                null, null, null, null, null, null, null, true
+                null, null, null, null, null, null, null, true, null
         );
         assertThrows(AccessDeniedException.class,
                 () -> issueService.update(issue.getId(), req, user));
@@ -183,7 +183,7 @@ class IssueServiceTest {
         when(issueRepository.save(any(Issue.class))).thenReturn(issue);
 
         UpdateIssueRequest req = new UpdateIssueRequest(
-                null, null, null, null, null, null, null, true
+                null, null, null, null, null, null, null, true, null
         );
         IssueResponse response = issueService.update(issue.getId(), req, admin);
 

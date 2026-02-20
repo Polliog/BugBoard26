@@ -23,6 +23,7 @@
 	let selectedStatuses = $state<IssueStatus[]>([]);
 	let selectedAssignee = $state('');
 	let showArchived = $state(false);
+	let showDeleted = $state(false);
 	let sortBy = $state('createdAt');
 	let currentPage = $state(0);
 	const pageSize = 20;
@@ -37,6 +38,7 @@
 				status: selectedStatuses.length ? selectedStatuses : undefined,
 				assignedToId: selectedAssignee || undefined,
 				archived: showArchived || undefined,
+				deleted: showDeleted || undefined,
 				page: currentPage,
 				pageSize,
 				sortBy,
@@ -132,7 +134,7 @@
 
 		<IssueFilters
 			bind:search bind:selectedTypes bind:selectedPriorities
-			bind:selectedStatuses bind:selectedAssignee bind:showArchived bind:sortBy
+			bind:selectedStatuses bind:selectedAssignee bind:showArchived bind:showDeleted bind:sortBy
 			{users} currentUser={authStore.user} onchange={handleFiltersChange}
 		/>
 

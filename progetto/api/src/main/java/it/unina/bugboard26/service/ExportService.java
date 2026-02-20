@@ -47,9 +47,9 @@ public class ExportService {
                         issue.getType().name(),
                         issue.getPriority() != null ? issue.getPriority().name() : "",
                         issue.getStatus().name(),
-                        issue.getCreatedBy().getName(),
+                        issue.getCreatedBy() != null ? issue.getCreatedBy().getName() : "",
                         issue.getAssignedTo() != null ? issue.getAssignedTo().getName() : "",
-                        issue.getCreatedAt().toString(),
+                        issue.getCreatedAt() != null ? issue.getCreatedAt().toString() : "",
                         String.valueOf(issue.isArchived())
                 };
                 writer.writeNext(row);
@@ -101,9 +101,9 @@ public class ExportService {
                 table.addCell(issue.getType().name());
                 table.addCell(issue.getPriority() != null ? issue.getPriority().name() : "-");
                 table.addCell(issue.getStatus().name());
-                table.addCell(issue.getCreatedBy().getName());
+                table.addCell(issue.getCreatedBy() != null ? issue.getCreatedBy().getName() : "-");
                 table.addCell(issue.getAssignedTo() != null ? issue.getAssignedTo().getName() : "-");
-                table.addCell(issue.getCreatedAt().toString());
+                table.addCell(issue.getCreatedAt() != null ? issue.getCreatedAt().toString() : "-");
             }
 
             document.add(table);

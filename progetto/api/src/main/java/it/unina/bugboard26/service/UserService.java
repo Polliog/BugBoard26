@@ -35,12 +35,13 @@ public class UserService {
 
     @Transactional
     public UserResponse create(CreateUserRequest request) {
-        if (userRepository.existsByEmail(request.email())) {
+        String email = request.email().toLowerCase();
+        if (userRepository.existsByEmail(email)) {
             throw new ResponseStatusException(CONFLICT, "Email gia' in uso");
         }
 
         User user = new User(
-                request.email(),
+                email,
                 passwordEncoder.encode(request.password()),
                 request.name(),
                 request.role()

@@ -11,6 +11,8 @@ export function can(user: User | null, action: string, issue?: Issue): boolean {
 			return user.role === 'ADMIN' || issue?.assignedTo?.id === user.id;
 		case 'archive':
 			return user.role === 'ADMIN';
+		case 'delete:issue':
+			return user.role === 'ADMIN';
 		case 'manage:users':
 			return user.role === 'ADMIN';
 		default:

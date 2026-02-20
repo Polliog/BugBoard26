@@ -4,6 +4,8 @@ import it.unina.bugboard26.model.enums.IssuePriority;
 import it.unina.bugboard26.model.enums.IssueStatus;
 import it.unina.bugboard26.model.enums.IssueType;
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,10 +37,12 @@ public class Issue {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "assigned_to_id")
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     private User assignedTo;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "created_by_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User createdBy;
 
     @Column(nullable = false, updatable = false)
@@ -56,7 +60,15 @@ public class Issue {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "archived_by_id")
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     private User archivedBy;
+
+    private Instant deletedAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "deleted_by_id")
+    @OnDelete(action = OnDeleteAction.SET_NULL)
+    private User deletedBy;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -213,5 +225,21 @@ public class Issue {
 
     public void setHistory(List<HistoryEntry> history) {
         this.history = history;
+    }
+
+    public Instant getDeletedAt() {
+        return deletedAt;
+    }
+
+    public void setDeletedAt(Instant deletedAt) {
+        this.deletedAt = deletedAt;
+    }
+
+    public User getDeletedBy() {
+        return deletedBy;
+    }
+
+    public void setDeletedBy(User deletedBy) {
+        this.deletedBy = deletedBy;
     }
 }

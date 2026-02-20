@@ -50,6 +50,7 @@ public class CommentService {
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Issue non trovata"));
 
         Comment comment = new Comment(issue, currentUser, request.content());
+        comment.setImage(request.image());
         Comment saved = commentRepository.save(comment);
         return CommentResponse.from(saved);
     }
@@ -64,6 +65,9 @@ public class CommentService {
         }
 
         comment.setContent(request.content());
+        if (request.image() != null) {
+            comment.setImage(request.image().isEmpty() ? null : request.image());
+        }
         Comment saved = commentRepository.save(comment);
         return CommentResponse.from(saved);
     }

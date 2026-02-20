@@ -54,17 +54,21 @@ public class IssueService {
                                                String assignedToId,
                                                Boolean archived,
                                                String search,
+                                               Boolean deleted,
                                                Pageable pageable) {
         Page<Issue> page = issueRepository.findFiltered(
-                types, statuses, priorities, assignedToId, archived, search, pageable
+                types, statuses, priorities, assignedToId, archived, search, deleted, pageable
         );
         Page<IssueResponse> responsePage = page.map(IssueResponse::from);
         return PagedResponse.of(responsePage);
     }
 
-    public IssueResponse getById(String id) {
+    public IssueResponse getById(String id, User currentUser) {
         Issue issue = issueRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Issue non trovata"));
+        if (issue.getDeletedAt() != null && !permissionService.canDeleteIssue(currentUser)) {
+            throw new ResponseStatusException(NOT_FOUND, "Issue non trovata");
+        }
         return IssueResponse.from(issue);
     }
 
@@ -100,6 +104,9 @@ public class IssueService {
     public IssueResponse update(String id, UpdateIssueRequest request, User currentUser) {
         Issue issue = issueRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Issue non trovata"));
+        if (issue.getDeletedAt() != null) {
+            throw new ResponseStatusException(NOT_FOUND, "Non puoi modificare un'issue eliminata");
+        }
 
         // RF13 - Archiviazione: solo ADMIN
         if (request.archived() != null) {
@@ -129,7 +136,7 @@ public class IssueService {
             issue.getHistory().add(new HistoryEntry(issue, currentUser, action));
 
             // Notifica il creatore del cambio stato
-            if (!issue.getCreatedBy().getId().equals(currentUser.getId())) {
+            if (issue.getCreatedBy() != null && !issue.getCreatedBy().getId().equals(currentUser.getId())) {
                 notificationService.notifyUser(
                         issue.getCreatedBy().getId(),
                         "La issue \"" + issue.getTitle() + "\" e' stata " + request.status().name().toLowerCase(),
@@ -141,7 +148,7 @@ public class IssueService {
         // Modifica campi generici (solo se l'utente puo modificare la issue)
         if (request.title() != null || request.type() != null ||
                 request.description() != null || request.priority() != null ||
-                request.assignedToId() != null) {
+                request.assignedToId() != null || request.image() != null) {
 
             if (!permissionService.canModifyIssue(currentUser, issue)) {
                 throw new AccessDeniedException("Non hai i permessi per modificare questa issue");
@@ -166,6 +173,9 @@ public class IssueService {
                 issue.getHistory().add(new HistoryEntry(issue, currentUser,
                         "Assegnata a " + assignee.getName()));
             }
+            if (request.image() != null) {
+                issue.setImage(request.image().isEmpty() ? null : request.image());
+            }
         }
 
         // Aggiorna labels
@@ -180,6 +190,39 @@ public class IssueService {
             issue.setLabels(labels);
         }
 
+        Issue saved = issueRepository.save(issue);
+        return IssueResponse.from(saved);
+    }
+
+    @Transactional
+    public void delete(String id, User currentUser) {
+        if (!permissionService.canDeleteIssue(currentUser)) {
+            throw new AccessDeniedException("Solo gli admin possono eliminare le issue");
+        }
+        Issue issue = issueRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Issue non trovata"));
+        if (issue.getDeletedAt() != null) {
+            throw new ResponseStatusException(NOT_FOUND, "Issue già eliminata");
+        }
+        issue.setDeletedAt(Instant.now());
+        issue.setDeletedBy(currentUser);
+        issue.getHistory().add(new HistoryEntry(issue, currentUser, "Issue eliminata"));
+        issueRepository.save(issue);
+    }
+
+    @Transactional
+    public IssueResponse restore(String id, User currentUser) {
+        if (!permissionService.canDeleteIssue(currentUser)) {
+            throw new AccessDeniedException("Solo gli admin possono ripristinare le issue");
+        }
+        Issue issue = issueRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Issue non trovata"));
+        if (issue.getDeletedAt() == null) {
+            throw new ResponseStatusException(NOT_FOUND, "L'issue non è eliminata");
+        }
+        issue.setDeletedAt(null);
+        issue.setDeletedBy(null);
+        issue.getHistory().add(new HistoryEntry(issue, currentUser, "Issue ripristinata dall'eliminazione"));
         Issue saved = issueRepository.save(issue);
         return IssueResponse.from(saved);
     }

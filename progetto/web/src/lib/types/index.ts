@@ -26,6 +26,8 @@ export interface Issue {
 	archived: boolean;
 	archivedAt: string | null;
 	archivedBy: User | null;
+	deletedAt: string | null;
+	deletedBy: User | null;
 	labels: string[];
 	history: HistoryEntry[];
 }
@@ -35,6 +37,7 @@ export interface Comment {
 	issueId: string;
 	author: User;
 	content: string;
+	image: string | null;
 	createdAt: string;
 	updatedAt: string | null;
 }

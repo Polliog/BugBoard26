@@ -3,7 +3,6 @@
 	import { goto } from '$app/navigation';
 	import { toast } from 'svelte-sonner';
 	import { notificationsApi } from '$lib/api/notifications.api';
-	import { can } from '$lib/utils/permissions';
 	import { onMount } from 'svelte';
 	import type { Notification } from '$lib/types';
 
@@ -66,22 +65,15 @@
 <nav aria-label="Navigazione principale" class="bg-white shadow-sm border-b border-gray-200">
 	<div class="max-w-7xl mx-auto px-4 py-4">
 		<div class="flex items-center justify-between">
-			<div class="flex items-center gap-6">
-				<a href="/issues" class="flex items-center gap-3">
-					<div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-						<svg class="w-6 h-6 text-white" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-								d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-						</svg>
-					</div>
-					<span class="text-xl font-bold text-gray-900">BugBoard26</span>
-				</a>
-				{#if can(authStore.user, 'manage:users')}
-					<a href="/admin/users" class="text-sm text-gray-600 hover:text-blue-600 transition-colors">
-						Gestione Utenti
-					</a>
-				{/if}
-			</div>
+			<a href="/issues" class="flex items-center gap-3">
+				<div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+					<svg class="w-6 h-6 text-white" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+							d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+					</svg>
+				</div>
+				<span class="text-xl font-bold text-gray-900">BugBoard26</span>
+			</a>
 
 			<div class="flex items-center gap-2">
 				<!-- Notifications -->
@@ -134,7 +126,7 @@
 						onclick={() => { showUserMenu = !showUserMenu; showNotifications = false; }}
 						aria-expanded={showUserMenu}
 						aria-haspopup="true"
-						class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+						class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
 					>
 						<div class="text-right">
 							<p class="text-sm font-medium text-gray-900">{authStore.user?.name}</p>
@@ -149,6 +141,15 @@
 
 					{#if showUserMenu}
 						<div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50" role="menu">
+							<a
+								href="/dashboard"
+								role="menuitem"
+								onclick={() => { showUserMenu = false; }}
+								class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+							>
+								Dashboard
+							</a>
+							<div class="border-t border-gray-200"></div>
 							<button
 								onclick={handleLogout}
 								role="menuitem"

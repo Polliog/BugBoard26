@@ -9,6 +9,7 @@
 		selectedStatuses: IssueStatus[];
 		selectedAssignee: string;
 		showArchived: boolean;
+		showDeleted: boolean;
 		sortBy: string;
 		users: User[];
 		currentUser: User | null;
@@ -22,6 +23,7 @@
 		selectedStatuses = $bindable(),
 		selectedAssignee = $bindable(),
 		showArchived = $bindable(),
+		showDeleted = $bindable(),
 		sortBy = $bindable(),
 		users,
 		currentUser = null,
@@ -84,6 +86,17 @@
 					/>
 					<span class="text-sm text-gray-700">Archiviate</span>
 				</label>
+				{#if currentUser?.role === 'ADMIN'}
+					<label class="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg">
+						<input
+							type="checkbox"
+							bind:checked={showDeleted}
+							onchange={onchange}
+							class="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
+						/>
+						<span class="text-sm text-gray-700">Eliminate</span>
+					</label>
+				{/if}
 			</div>
 		</div>
 

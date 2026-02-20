@@ -8,6 +8,7 @@ public record CommentResponse(
         String issueId,
         UserResponse author,
         String content,
+        String image,
         Instant createdAt,
         Instant updatedAt
 ) {
@@ -17,6 +18,7 @@ public record CommentResponse(
                 c.getIssue().getId(),
                 UserResponse.from(c.getUser()),
                 c.getContent(),
+                c.getImage(),
                 c.getCreatedAt(),
                 c.getUpdatedAt()
         );

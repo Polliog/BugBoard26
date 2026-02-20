@@ -1,9 +1,7 @@
 <script lang="ts">
 	import { authStore } from '$lib/stores/auth.svelte';
-	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
-	import Navbar from '$lib/components/Navbar.svelte';
 	import Spinner from '$lib/components/ui/Spinner.svelte';
 	import Modal from '$lib/components/ui/Modal.svelte';
 	import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte';
@@ -20,14 +18,12 @@
 		open: false, title: '', message: '', action: () => {}
 	});
 
-	// Create form
 	let createEmail = $state('');
 	let createName = $state('');
 	let createPassword = $state('');
 	let createRole = $state<GlobalRole>('USER');
 	let createErrors = $state<Record<string, string>>({});
 
-	// Edit form
 	let editEmail = $state('');
 	let editName = $state('');
 	let editRole = $state<GlobalRole>('USER');
@@ -40,11 +36,14 @@
 		{ value: 'EXTERNAL', label: 'External' }
 	];
 
+	const roleBadgeColors: Record<GlobalRole, string> = {
+		ADMIN: 'bg-red-100 text-red-800',
+		USER: 'bg-blue-100 text-blue-800',
+		EXTERNAL: 'bg-gray-100 text-gray-700'
+	};
+
 	onMount(() => {
-		if (!can(authStore.user, 'manage:users')) {
-			goto('/issues');
-			return;
-		}
+		if (!can(authStore.user, 'manage:users')) return;
 		loadUsers();
 	});
 
@@ -145,88 +144,73 @@
 			}
 		};
 	}
-
-	const roleBadgeColors: Record<GlobalRole, string> = {
-		ADMIN: 'bg-red-100 text-red-800',
-		USER: 'bg-blue-100 text-blue-800',
-		EXTERNAL: 'bg-gray-100 text-gray-700'
-	};
 </script>
 
-<svelte:head>
-	<title>Gestione Utenti - BugBoard26</title>
-</svelte:head>
-
-<div class="min-h-screen bg-gray-50">
-	<Navbar />
-
-	<div class="max-w-5xl mx-auto px-4 py-8">
-		<div class="flex items-center justify-between mb-8">
-			<div>
-				<h1 class="text-3xl font-bold text-gray-900 mb-2">Gestione Utenti</h1>
-				<p class="text-gray-600">Crea, modifica ed elimina gli utenti del sistema</p>
-			</div>
-			<button onclick={() => { resetCreateForm(); isCreateOpen = true; }}
-				class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
-				<svg class="w-5 h-5" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-				</svg>
-				Nuovo Utente
-			</button>
+{#if !can(authStore.user, 'manage:users')}
+	<!-- no-op -->
+{:else if loading}
+	<div class="flex justify-center py-12"><Spinner size="lg" /></div>
+{:else}
+	<div class="flex items-center justify-between mb-6">
+		<div>
+			<h2 class="text-xl font-semibold text-gray-900">Gestione Utenti</h2>
+			<p class="text-sm text-gray-600 mt-1">{users.length} utenti registrati</p>
 		</div>
-
-		{#if loading}
-			<div class="flex justify-center py-12"><Spinner size="lg" /></div>
-		{:else}
-			<div class="bg-white rounded-xl shadow-sm overflow-hidden">
-				<table class="w-full">
-					<thead class="bg-gray-50 border-b border-gray-200">
-						<tr>
-							<th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Nome</th>
-							<th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Email</th>
-							<th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Ruolo</th>
-							<th class="text-right px-6 py-3 text-xs font-medium text-gray-500 uppercase">Azioni</th>
-						</tr>
-					</thead>
-					<tbody class="divide-y divide-gray-200">
-						{#each users as user (user.id)}
-							<tr class="hover:bg-gray-50">
-								<td class="px-6 py-4">
-									<div class="flex items-center gap-3">
-										<div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-											<span class="text-blue-700 font-semibold text-sm">{user.name.charAt(0)}</span>
-										</div>
-										<span class="font-medium text-gray-900">{user.name}</span>
-									</div>
-								</td>
-								<td class="px-6 py-4 text-sm text-gray-600">{user.email}</td>
-								<td class="px-6 py-4">
-									<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {roleBadgeColors[user.role]}">
-										{user.role}
-									</span>
-								</td>
-								<td class="px-6 py-4 text-right">
-									<div class="flex justify-end gap-2">
-										<button onclick={() => startEdit(user)} class="text-blue-600 hover:text-blue-700 text-sm">
-											Modifica
-										</button>
-										{#if user.id !== authStore.user?.id}
-											<button onclick={() => confirmDelete(user)} class="text-red-600 hover:text-red-700 text-sm">
-												Elimina
-											</button>
-										{/if}
-									</div>
-								</td>
-							</tr>
-						{/each}
-					</tbody>
-				</table>
-			</div>
-		{/if}
+		<button onclick={() => { resetCreateForm(); isCreateOpen = true; }}
+			class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
+			<svg class="w-5 h-5" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+			</svg>
+			Nuovo Utente
+		</button>
 	</div>
-</div>
 
-<!-- Create User Modal -->
+	<div class="bg-white rounded-xl shadow-sm overflow-hidden">
+		<table class="w-full">
+			<thead class="bg-gray-50 border-b border-gray-200">
+				<tr>
+					<th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Nome</th>
+					<th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Email</th>
+					<th class="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Ruolo</th>
+					<th class="text-right px-6 py-3 text-xs font-medium text-gray-500 uppercase">Azioni</th>
+				</tr>
+			</thead>
+			<tbody class="divide-y divide-gray-200">
+				{#each users as user (user.id)}
+					<tr class="hover:bg-gray-50">
+						<td class="px-6 py-4">
+							<div class="flex items-center gap-3">
+								<div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+									<span class="text-blue-700 font-semibold text-sm">{user.name.charAt(0)}</span>
+								</div>
+								<span class="font-medium text-gray-900">{user.name}</span>
+							</div>
+						</td>
+						<td class="px-6 py-4 text-sm text-gray-600">{user.email}</td>
+						<td class="px-6 py-4">
+							<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {roleBadgeColors[user.role]}">
+								{user.role}
+							</span>
+						</td>
+						<td class="px-6 py-4 text-right">
+							<div class="flex justify-end gap-2">
+								<button onclick={() => startEdit(user)} class="text-blue-600 hover:text-blue-700 text-sm">
+									Modifica
+								</button>
+								{#if user.id !== authStore.user?.id}
+									<button onclick={() => confirmDelete(user)} class="text-red-600 hover:text-red-700 text-sm">
+										Elimina
+									</button>
+								{/if}
+							</div>
+						</td>
+					</tr>
+				{/each}
+			</tbody>
+		</table>
+	</div>
+{/if}
+
 <Modal isOpen={isCreateOpen} title="Nuovo Utente" onClose={() => { resetCreateForm(); isCreateOpen = false; }}>
 	<form onsubmit={(e) => { e.preventDefault(); handleCreate(); }} class="space-y-4">
 		<div>
@@ -269,7 +253,6 @@
 	</form>
 </Modal>
 
-<!-- Edit User Modal -->
 <Modal isOpen={editingUser !== null} title="Modifica Utente" onClose={() => { editingUser = null; }}>
 	<form onsubmit={(e) => { e.preventDefault(); handleEdit(); }} class="space-y-4">
 		<div>

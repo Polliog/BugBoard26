@@ -3,37 +3,76 @@
 	import { formatDateTime } from '$lib/utils/dates';
 	import Markdown from '$lib/components/ui/Markdown.svelte';
 
+	const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
+	const ALLOWED_TYPES = ['image/png', 'image/jpeg', 'image/gif', 'image/webp'];
+
 	interface Props {
 		comments: Comment[];
 		currentUser: User | null;
 		canComment: boolean;
-		onAdd: (content: string) => void;
-		onEdit: (commentId: string, content: string) => void;
+		onAdd: (content: string, image?: string | null) => void;
+		onEdit: (commentId: string, content: string, image?: string | null) => void;
 		onDelete: (commentId: string) => void;
 	}
 
 	let { comments, currentUser, canComment, onAdd, onEdit, onDelete }: Props = $props();
 
 	let newContent = $state('');
+	let newImage = $state<string | null>(null);
 	let editingId = $state<string | null>(null);
 	let editingContent = $state('');
+	let editingImage = $state<string | null>(null);
+	let editingImageChanged = $state(false);
+
+	function handleFileSelect(event: Event, target: 'new' | 'edit') {
+		const input = event.target as HTMLInputElement;
+		const file = input.files?.[0];
+		if (!file) return;
+
+		if (!ALLOWED_TYPES.includes(file.type)) {
+			alert('Formato non supportato. Usa PNG, JPG, GIF o WebP.');
+			input.value = '';
+			return;
+		}
+		if (file.size > MAX_IMAGE_SIZE) {
+			alert('Immagine troppo grande. Massimo 5MB.');
+			input.value = '';
+			return;
+		}
+
+		const reader = new FileReader();
+		reader.onload = () => {
+			if (target === 'new') {
+				newImage = reader.result as string;
+			} else {
+				editingImage = reader.result as string;
+				editingImageChanged = true;
+			}
+		};
+		reader.readAsDataURL(file);
+	}
 
 	function handleAdd() {
 		if (!newContent.trim()) return;
-		onAdd(newContent);
+		onAdd(newContent, newImage);
 		newContent = '';
+		newImage = null;
 	}
 
 	function startEdit(comment: Comment) {
 		editingId = comment.id;
 		editingContent = comment.content;
+		editingImage = comment.image;
+		editingImageChanged = false;
 	}
 
 	function saveEdit(id: string) {
 		if (!editingContent.trim()) return;
-		onEdit(id, editingContent);
+		onEdit(id, editingContent, editingImageChanged ? (editingImage ?? '') : undefined);
 		editingId = null;
 		editingContent = '';
+		editingImage = null;
+		editingImageChanged = false;
 	}
 </script>
 
@@ -81,6 +120,23 @@
 									<label for="edit-comment-{comment.id}" class="sr-only">Modifica commento</label>
 									<textarea id="edit-comment-{comment.id}" bind:value={editingContent} rows="3"
 										class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"></textarea>
+
+									{#if editingImage}
+										<div class="relative inline-block">
+											<img src={editingImage} alt="Allegato" class="max-h-40 rounded-lg border border-gray-200" />
+											<button onclick={() => { editingImage = null; editingImageChanged = true; }}
+												class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600" aria-label="Rimuovi immagine">
+												&times;
+											</button>
+										</div>
+									{:else}
+										<label class="inline-flex items-center gap-2 px-3 py-1.5 text-sm text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer">
+											<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+											Immagine
+											<input type="file" accept="image/png,image/jpeg,image/gif,image/webp" class="hidden" onchange={(e) => handleFileSelect(e, 'edit')} />
+										</label>
+									{/if}
+
 									<div class="flex gap-2">
 										<button onclick={() => saveEdit(comment.id)} class="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg">Salva</button>
 										<button onclick={() => { editingId = null; }} class="px-3 py-1 bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm rounded-lg">Annulla</button>
@@ -88,6 +144,9 @@
 								</div>
 							{:else}
 								<Markdown content={comment.content} />
+								{#if comment.image}
+									<img src={comment.image} alt="Allegato commento" class="mt-2 max-w-full max-h-80 rounded-lg border border-gray-200" />
+								{/if}
 							{/if}
 						</div>
 					</div>
@@ -103,7 +162,23 @@
 				<label for="new-comment" class="sr-only">Scrivi un commento</label>
 				<textarea id="new-comment" bind:value={newContent} rows="4" placeholder="Scrivi un commento..."
 					class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none mb-3"></textarea>
-				<div class="flex justify-end">
+
+				{#if newImage}
+					<div class="relative inline-block mb-3">
+						<img src={newImage} alt="Anteprima allegato" class="max-h-40 rounded-lg border border-gray-200" />
+						<button type="button" onclick={() => { newImage = null; }}
+							class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600" aria-label="Rimuovi immagine">
+							&times;
+						</button>
+					</div>
+				{/if}
+
+				<div class="flex items-center justify-between">
+					<label class="inline-flex items-center gap-2 px-3 py-2 text-sm text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer">
+						<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+						Allega immagine
+						<input type="file" accept="image/png,image/jpeg,image/gif,image/webp" class="hidden" onchange={(e) => handleFileSelect(e, 'new')} />
+					</label>
 					<button type="submit" disabled={!newContent.trim()}
 						class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
 						Aggiungi Commento

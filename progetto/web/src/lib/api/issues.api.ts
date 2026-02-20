@@ -8,6 +8,7 @@ export interface IssueFilters {
 	assignedToId?: string;
 	search?: string;
 	archived?: boolean;
+	deleted?: boolean;
 	page?: number;
 	pageSize?: number;
 	sortBy?: string;
@@ -22,6 +23,7 @@ function buildQuery(filters: IssueFilters): string {
 	if (filters.assignedToId) params.set('assignedToId', filters.assignedToId);
 	if (filters.search) params.set('search', filters.search);
 	if (filters.archived) params.set('archived', 'true');
+	if (filters.deleted) params.set('deleted', 'true');
 	if (filters.page !== undefined) params.set('page', String(filters.page));
 	if (filters.pageSize !== undefined) params.set('pageSize', String(filters.pageSize));
 	if (filters.sortBy) params.set('sortBy', filters.sortBy);
@@ -56,8 +58,13 @@ export const issuesApi = {
 			assignedToId?: string;
 			labelIds?: string[];
 			archived?: boolean;
+			image?: string | null;
 		}
 	) => api.patch<Issue>(`/api/issues/${id}`, data),
+
+	delete: (id: string) => api.delete<void>(`/api/issues/${id}`),
+
+	restore: (id: string) => api.patch<Issue>(`/api/issues/${id}/restore`, {}),
 
 	exportFile: async (format: 'csv' | 'pdf', filters: IssueFilters = {}) => {
 		const query = buildQuery(filters);

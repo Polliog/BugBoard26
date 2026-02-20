@@ -1,6 +1,8 @@
 package it.unina.bugboard26.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import java.time.Instant;
 
 @Entity
@@ -13,10 +15,12 @@ public class Notification {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "issue_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Issue issue;
 
     @Column(nullable = false)

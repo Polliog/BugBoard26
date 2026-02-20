@@ -1,6 +1,8 @@
 package it.unina.bugboard26.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import java.time.Instant;
 
 @Entity
@@ -13,14 +15,19 @@ public class Comment {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "issue_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Issue issue;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
     @Column(nullable = false, length = 1000)
     private String content;
+
+    @Column(columnDefinition = "TEXT")
+    private String image;
 
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
@@ -76,6 +83,14 @@ public class Comment {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public Instant getCreatedAt() {

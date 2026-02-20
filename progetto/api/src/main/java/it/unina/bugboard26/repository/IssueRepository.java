@@ -25,6 +25,8 @@ public interface IssueRepository extends JpaRepository<Issue, String> {
               AND (:search IS NULL
                    OR LOWER(CAST(i.title AS STRING)) LIKE LOWER(CONCAT('%', CAST(:search AS STRING), '%'))
                    OR LOWER(CAST(i.description AS STRING)) LIKE LOWER(CONCAT('%', CAST(:search AS STRING), '%')))
+              AND ((:deleted = TRUE AND i.deletedAt IS NOT NULL)
+                   OR ((:deleted IS NULL OR :deleted = FALSE) AND i.deletedAt IS NULL))
             """)
     Page<Issue> findFiltered(
             @Param("types") List<IssueType> types,
@@ -33,6 +35,7 @@ public interface IssueRepository extends JpaRepository<Issue, String> {
             @Param("assignedToId") String assignedToId,
             @Param("archived") Boolean archived,
             @Param("search") String search,
+            @Param("deleted") Boolean deleted,
             Pageable pageable
     );
 
@@ -46,6 +49,7 @@ public interface IssueRepository extends JpaRepository<Issue, String> {
               AND (:search IS NULL
                    OR LOWER(CAST(i.title AS STRING)) LIKE LOWER(CONCAT('%', CAST(:search AS STRING), '%'))
                    OR LOWER(CAST(i.description AS STRING)) LIKE LOWER(CONCAT('%', CAST(:search AS STRING), '%')))
+              AND i.deletedAt IS NULL
             ORDER BY i.createdAt DESC
             """)
     List<Issue> findFilteredAll(

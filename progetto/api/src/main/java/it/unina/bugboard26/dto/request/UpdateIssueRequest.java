@@ -12,5 +12,6 @@ public record UpdateIssueRequest(
         IssueStatus status,
         String assignedToId,
         List<String> labelIds,
-        Boolean archived
+        Boolean archived,
+        String image
 ) {}
