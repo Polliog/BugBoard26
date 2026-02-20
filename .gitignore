@@ -9,9 +9,6 @@
 /progetto/api/target/
 /progetto/api/.mvn/wrapper/maven-wrapper.jar
 
-# Old frontend (da eliminare)
-/progetto/frontend/
-
 # Env
 /progetto/.env
 
