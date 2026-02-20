@@ -15,10 +15,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-/**
- * Filtro JWT che intercetta ogni richiesta per estrarre e validare il token Bearer.
- * RF01 - Autenticazione.
- */
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
@@ -63,7 +59,6 @@ public class JwtFilter extends OncePerRequestFilter {
                 }
             }
         } catch (Exception e) {
-            // Token non valido: non impostare il SecurityContext
             logger.debug("Token JWT non valido: " + e.getMessage());
         }
 

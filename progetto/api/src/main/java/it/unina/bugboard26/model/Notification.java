@@ -3,10 +3,6 @@ package it.unina.bugboard26.model;
 import jakarta.persistence.*;
 import java.time.Instant;
 
-/**
- * Notifica per un utente relativa a una issue.
- * RF06 - Notifiche cambio stato.
- */
 @Entity
 @Table(name = "notifications")
 public class Notification {
@@ -45,8 +41,6 @@ public class Notification {
     protected void onCreate() {
         this.createdAt = Instant.now();
     }
-
-    // Getters and Setters
 
     public String getId() {
         return id;

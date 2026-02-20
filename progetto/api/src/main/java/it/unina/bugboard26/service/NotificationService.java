@@ -14,10 +14,6 @@ import java.util.List;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
-/**
- * Servizio per la gestione delle notifiche.
- * RF06 - Notifiche cambio stato.
- */
 @Service
 @Transactional(readOnly = true)
 public class NotificationService {
@@ -31,18 +27,12 @@ public class NotificationService {
         this.userRepository = userRepository;
     }
 
-    /**
-     * RF06 - Restituisce le notifiche dell'utente.
-     */
     public List<NotificationResponse> getByUser(String userId) {
         return notificationRepository.findByUserIdOrderByCreatedAtDesc(userId).stream()
                 .map(NotificationResponse::from)
                 .toList();
     }
 
-    /**
-     * RF06 - Segna una notifica come letta.
-     */
     @Transactional
     public NotificationResponse markAsRead(String id) {
         Notification notification = notificationRepository.findById(id)
@@ -53,9 +43,6 @@ public class NotificationService {
         return NotificationResponse.from(saved);
     }
 
-    /**
-     * RF06 - Crea una notifica per un utente relativa a una issue.
-     */
     @Transactional
     public void notifyUser(String userId, String message, Issue issue) {
         User user = userRepository.findById(userId)
@@ -65,9 +52,6 @@ public class NotificationService {
         notificationRepository.save(notification);
     }
 
-    /**
-     * RF06 - Crea una notifica per un utente con solo messaggio testuale.
-     */
     @Transactional
     public void notifyUser(String userId, String message) {
         notifyUser(userId, message, null);

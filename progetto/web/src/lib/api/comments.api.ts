@@ -1,4 +1,3 @@
-// Comments API
 import { api } from './client';
 import type { Comment } from '$lib/types';
 

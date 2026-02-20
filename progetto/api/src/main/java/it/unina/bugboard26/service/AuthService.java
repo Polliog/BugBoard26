@@ -13,10 +13,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
-/**
- * Servizio per l'autenticazione.
- * RF01 - Login e generazione token JWT.
- */
 @Service
 @Transactional(readOnly = true)
 public class AuthService {
@@ -33,9 +29,6 @@ public class AuthService {
         this.jwtService = jwtService;
     }
 
-    /**
-     * RF01 - Autentica l'utente e restituisce il token JWT.
-     */
     public AuthResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new ResponseStatusException(UNAUTHORIZED, "Credenziali non valide"));
@@ -48,9 +41,6 @@ public class AuthService {
         return new AuthResponse(token, UserResponse.from(user));
     }
 
-    /**
-     * RF01 - Restituisce l'utente corrente dato l'email.
-     */
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResponseStatusException(UNAUTHORIZED, "Utente non trovato"));

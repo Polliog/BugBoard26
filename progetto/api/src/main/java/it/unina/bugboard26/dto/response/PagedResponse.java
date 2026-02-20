@@ -3,10 +3,6 @@ package it.unina.bugboard26.dto.response;
 import org.springframework.data.domain.Page;
 import java.util.List;
 
-/**
- * DTO di risposta paginata generica.
- * RF03 - Paginazione lista issue.
- */
 public record PagedResponse<T>(
         List<T> data,
         long total,

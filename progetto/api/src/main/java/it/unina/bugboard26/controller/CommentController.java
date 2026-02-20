@@ -14,9 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * Controller per la gestione dei commenti su una issue.
- */
 @RestController
 @RequestMapping("/api/issues/{issueId}/comments")
 public class CommentController {
@@ -29,18 +26,11 @@ public class CommentController {
         this.authService = authService;
     }
 
-    /**
-     * Restituisce tutti i commenti di una issue.
-     */
     @GetMapping
     public ResponseEntity<List<CommentResponse>> getByIssue(@PathVariable String issueId) {
         return ResponseEntity.ok(commentService.getByIssue(issueId));
     }
 
-    /**
-     * Crea un nuovo commento su una issue.
-     * RF15 - EXTERNAL non puo commentare.
-     */
     @PostMapping
     public ResponseEntity<CommentResponse> create(@PathVariable String issueId,
                                                    @Valid @RequestBody CreateCommentRequest request,
@@ -50,9 +40,6 @@ public class CommentController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    /**
-     * Aggiorna un commento (solo l'autore).
-     */
     @PatchMapping("/{id}")
     public ResponseEntity<CommentResponse> update(@PathVariable String issueId,
                                                    @PathVariable String id,
@@ -63,9 +50,6 @@ public class CommentController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * Elimina un commento (autore o admin).
-     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable String issueId,
                                         @PathVariable String id,

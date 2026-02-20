@@ -1,5 +1,3 @@
-// BugBoard26 - TypeScript Types (allineati a CLAUDE.md)
-
 export type GlobalRole = 'ADMIN' | 'USER' | 'EXTERNAL';
 export type IssueType = 'QUESTION' | 'BUG' | 'DOCUMENTATION' | 'FEATURE';
 export type IssuePriority = 'BASSA' | 'MEDIA' | 'ALTA' | 'CRITICA';

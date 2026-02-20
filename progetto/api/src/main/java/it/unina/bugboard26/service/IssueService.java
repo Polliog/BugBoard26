@@ -26,10 +26,6 @@ import java.util.List;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
-/**
- * Servizio per la gestione delle issue.
- * RF02, RF03, RF06, RF11, RF13.
- */
 @Service
 @Transactional(readOnly = true)
 public class IssueService {
@@ -52,9 +48,6 @@ public class IssueService {
         this.notificationService = notificationService;
     }
 
-    /**
-     * RF03, RF11 - Recupera le issue con filtri e paginazione.
-     */
     public PagedResponse<IssueResponse> getAll(List<IssueType> types,
                                                List<IssueStatus> statuses,
                                                List<IssuePriority> priorities,
@@ -69,18 +62,12 @@ public class IssueService {
         return PagedResponse.of(responsePage);
     }
 
-    /**
-     * Recupera una issue per ID.
-     */
     public IssueResponse getById(String id) {
         Issue issue = issueRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Issue non trovata"));
         return IssueResponse.from(issue);
     }
 
-    /**
-     * RF02 - Crea una nuova issue.
-     */
     @Transactional
     public IssueResponse create(CreateIssueRequest request, User currentUser) {
         if (!permissionService.canCreateIssue(currentUser)) {
@@ -102,7 +89,6 @@ public class IssueService {
             issue.setAssignedTo(assignee);
         }
 
-        // Aggiungi voce di storico per la creazione
         HistoryEntry creation = new HistoryEntry(issue, currentUser, "Issue creata");
         issue.getHistory().add(creation);
 
@@ -110,10 +96,6 @@ public class IssueService {
         return IssueResponse.from(saved);
     }
 
-    /**
-     * RF06, RF13 - Aggiorna una issue (semantica PATCH).
-     * Gestisce cambio stato e archiviazione con controlli permessi e notifiche.
-     */
     @Transactional
     public IssueResponse update(String id, UpdateIssueRequest request, User currentUser) {
         Issue issue = issueRepository.findById(id)
@@ -202,9 +184,6 @@ public class IssueService {
         return IssueResponse.from(saved);
     }
 
-    /**
-     * RF08 - Recupera tutte le issue filtrate per export (senza paginazione).
-     */
     public List<Issue> getFilteredForExport(List<IssueType> types,
                                             List<IssueStatus> statuses,
                                             List<IssuePriority> priorities,

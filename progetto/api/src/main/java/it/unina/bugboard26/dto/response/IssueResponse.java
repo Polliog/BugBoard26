@@ -5,10 +5,6 @@ import it.unina.bugboard26.model.enums.*;
 import java.time.Instant;
 import java.util.List;
 
-/**
- * DTO di risposta per una issue.
- * RF02, RF03 - Visualizzazione issue.
- */
 public record IssueResponse(
         String id,
         String title,

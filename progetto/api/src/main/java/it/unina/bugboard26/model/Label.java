@@ -2,9 +2,6 @@ package it.unina.bugboard26.model;
 
 import jakarta.persistence.*;
 
-/**
- * Etichetta per categorizzare le issue.
- */
 @Entity
 @Table(name = "labels")
 public class Label {
@@ -22,8 +19,6 @@ public class Label {
     public Label(String name) {
         this.name = name;
     }
-
-    // Getters and Setters
 
     public String getId() {
         return id;

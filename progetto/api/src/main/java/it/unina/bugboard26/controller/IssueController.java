@@ -21,10 +21,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * Controller per la gestione delle issue.
- * RF02, RF03, RF06, RF11, RF13.
- */
 @RestController
 @RequestMapping("/api/issues")
 public class IssueController {
@@ -37,9 +33,6 @@ public class IssueController {
         this.authService = authService;
     }
 
-    /**
-     * RF03, RF11 - Lista issue con filtri, ricerca e paginazione.
-     */
     @GetMapping
     public ResponseEntity<PagedResponse<IssueResponse>> getAll(
             @RequestParam(required = false) List<IssueType> type,
@@ -64,17 +57,11 @@ public class IssueController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * Recupera una singola issue per ID.
-     */
     @GetMapping("/{id}")
     public ResponseEntity<IssueResponse> getById(@PathVariable String id) {
         return ResponseEntity.ok(issueService.getById(id));
     }
 
-    /**
-     * RF02 - Crea una nuova issue.
-     */
     @PostMapping
     public ResponseEntity<IssueResponse> create(@Valid @RequestBody CreateIssueRequest request,
                                                  Authentication authentication) {
@@ -83,9 +70,6 @@ public class IssueController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    /**
-     * RF06, RF13 - Aggiorna una issue (semantica PATCH).
-     */
     @PatchMapping("/{id}")
     public ResponseEntity<IssueResponse> update(@PathVariable String id,
                                                 @Valid @RequestBody UpdateIssueRequest request,

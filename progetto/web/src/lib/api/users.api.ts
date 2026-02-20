@@ -1,4 +1,3 @@
-// RF01 — Users API (solo ADMIN)
 import { api } from './client';
 import type { User } from '$lib/types';
 

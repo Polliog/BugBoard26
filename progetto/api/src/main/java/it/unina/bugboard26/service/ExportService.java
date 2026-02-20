@@ -13,10 +13,6 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-/**
- * Servizio per l'export delle issue in CSV e PDF.
- * RF08 - Export CSV/PDF.
- */
 @Service
 @Transactional(readOnly = true)
 public class ExportService {
@@ -27,9 +23,6 @@ public class ExportService {
         this.issueService = issueService;
     }
 
-    /**
-     * RF08 - Esporta le issue in formato CSV.
-     */
     public byte[] exportCsv(List<IssueType> types,
                             List<IssueStatus> statuses,
                             List<IssuePriority> priorities,
@@ -43,12 +36,10 @@ public class ExportService {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
              CSVWriter writer = new CSVWriter(new OutputStreamWriter(baos, StandardCharsets.UTF_8))) {
 
-            // Header
             String[] header = {"ID", "Titolo", "Tipo", "Priorita", "Stato", "Creato da",
                     "Assegnato a", "Data creazione", "Archiviata"};
             writer.writeNext(header);
 
-            // Dati
             for (Issue issue : issues) {
                 String[] row = {
                         issue.getId(),
@@ -71,9 +62,6 @@ public class ExportService {
         }
     }
 
-    /**
-     * RF08 - Esporta le issue in formato PDF.
-     */
     public byte[] exportPdf(List<IssueType> types,
                             List<IssueStatus> statuses,
                             List<IssuePriority> priorities,
@@ -89,26 +77,25 @@ public class ExportService {
                     new com.itextpdf.kernel.pdf.PdfDocument(new com.itextpdf.kernel.pdf.PdfWriter(baos));
             com.itextpdf.layout.Document document = new com.itextpdf.layout.Document(pdfDoc);
 
-            // Titolo
+            com.itextpdf.kernel.font.PdfFont bold = com.itextpdf.kernel.font.PdfFontFactory
+                    .createFont(com.itextpdf.io.font.constants.StandardFonts.HELVETICA_BOLD);
+
             document.add(new com.itextpdf.layout.element.Paragraph("BugBoard26 - Report Issue")
                     .setFontSize(18)
-                    .setBold());
+                    .setFont(bold));
 
             document.add(new com.itextpdf.layout.element.Paragraph("Totale issue: " + issues.size())
                     .setFontSize(12));
 
-            // Tabella
             com.itextpdf.layout.element.Table table = new com.itextpdf.layout.element.Table(7);
             table.setWidth(com.itextpdf.layout.properties.UnitValue.createPercentValue(100));
 
-            // Header tabella
             String[] headers = {"Titolo", "Tipo", "Priorita", "Stato", "Creato da", "Assegnato a", "Data"};
             for (String h : headers) {
                 table.addHeaderCell(new com.itextpdf.layout.element.Cell()
-                        .add(new com.itextpdf.layout.element.Paragraph(h).setBold()));
+                        .add(new com.itextpdf.layout.element.Paragraph(h).setFont(bold)));
             }
 
-            // Righe
             for (Issue issue : issues) {
                 table.addCell(issue.getTitle());
                 table.addCell(issue.getType().name());

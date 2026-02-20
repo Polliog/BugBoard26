@@ -13,10 +13,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Map;
 
-/**
- * Servizio per generazione e validazione dei token JWT.
- * RF01 - Autenticazione.
- */
 @Service
 public class JwtService {
 
@@ -28,10 +24,6 @@ public class JwtService {
         this.signingKey = Keys.hmacShaKeyFor(jwtConfig.getSecret().getBytes(StandardCharsets.UTF_8));
     }
 
-    /**
-     * Genera un token JWT per l'utente specificato.
-     * RF01 - Autenticazione.
-     */
     public String generateToken(User user) {
         return Jwts.builder()
                 .subject(user.getEmail())
@@ -45,16 +37,10 @@ public class JwtService {
                 .compact();
     }
 
-    /**
-     * Estrae l'email (subject) dal token.
-     */
     public String extractEmail(String token) {
         return extractClaims(token).getSubject();
     }
 
-    /**
-     * Verifica se il token e valido per l'utente specificato.
-     */
     public boolean isTokenValid(String token, UserDetails userDetails) {
         String email = extractEmail(token);
         return email.equals(userDetails.getUsername()) && !isTokenExpired(token);

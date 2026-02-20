@@ -4,10 +4,6 @@ import it.unina.bugboard26.model.User;
 import it.unina.bugboard26.model.enums.GlobalRole;
 import java.time.Instant;
 
-/**
- * DTO di risposta per l'utente.
- * RF01 - Mai esporre passwordHash.
- */
 public record UserResponse(
         String id,
         String email,

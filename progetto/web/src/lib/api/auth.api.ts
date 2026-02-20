@@ -1,4 +1,3 @@
-// RF01 — Auth API
 import { api } from './client';
 import type { AuthResponse, User } from '$lib/types';
 

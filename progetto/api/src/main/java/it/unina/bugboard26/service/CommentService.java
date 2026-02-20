@@ -18,10 +18,6 @@ import java.util.List;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
-/**
- * Servizio per la gestione dei commenti.
- * RF15 - EXTERNAL non puo commentare.
- */
 @Service
 @Transactional(readOnly = true)
 public class CommentService {
@@ -38,19 +34,12 @@ public class CommentService {
         this.permissionService = permissionService;
     }
 
-    /**
-     * Restituisce tutti i commenti di una issue.
-     */
     public List<CommentResponse> getByIssue(String issueId) {
         return commentRepository.findByIssueIdOrderByCreatedAtAsc(issueId).stream()
                 .map(CommentResponse::from)
                 .toList();
     }
 
-    /**
-     * Crea un nuovo commento su una issue.
-     * RF15 - EXTERNAL non puo commentare.
-     */
     @Transactional
     public CommentResponse create(String issueId, CreateCommentRequest request, User currentUser) {
         if (!permissionService.canComment(currentUser)) {
@@ -65,9 +54,6 @@ public class CommentService {
         return CommentResponse.from(saved);
     }
 
-    /**
-     * Aggiorna un commento (solo l'autore).
-     */
     @Transactional
     public CommentResponse update(String id, UpdateCommentRequest request, User currentUser) {
         Comment comment = commentRepository.findById(id)
@@ -82,9 +68,6 @@ public class CommentService {
         return CommentResponse.from(saved);
     }
 
-    /**
-     * Elimina un commento (autore o admin).
-     */
     @Transactional
     public void delete(String id, User currentUser) {
         Comment comment = commentRepository.findById(id)

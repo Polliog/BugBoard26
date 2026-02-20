@@ -3,10 +3,6 @@ package it.unina.bugboard26.dto.response;
 import it.unina.bugboard26.model.Notification;
 import java.time.Instant;
 
-/**
- * DTO di risposta per una notifica.
- * RF06 - Notifiche cambio stato.
- */
 public record NotificationResponse(
         String id,
         String message,

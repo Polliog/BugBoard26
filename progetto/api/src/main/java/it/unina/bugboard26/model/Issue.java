@@ -8,10 +8,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Entita issue del sistema.
- * RF02 - Segnalazione issue.
- */
 @Entity
 @Table(name = "issues")
 public class Issue {
@@ -90,8 +86,6 @@ public class Issue {
     protected void onUpdate() {
         this.updatedAt = Instant.now();
     }
-
-    // Getters and Setters
 
     public String getId() {
         return id;

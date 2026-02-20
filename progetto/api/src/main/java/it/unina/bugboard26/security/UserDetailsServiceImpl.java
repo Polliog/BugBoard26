@@ -10,10 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-/**
- * Implementazione di UserDetailsService per caricare gli utenti dal database.
- * RF01 - Autenticazione.
- */
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 

@@ -1,4 +1,3 @@
-// RF06 — Notifications API
 import { api } from './client';
 import type { Notification } from '$lib/types';
 

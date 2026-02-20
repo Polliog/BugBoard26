@@ -3,10 +3,6 @@ package it.unina.bugboard26.model;
 import jakarta.persistence.*;
 import java.time.Instant;
 
-/**
- * Voce di storico per tracciare le modifiche a una issue.
- * RF06 - Cambio stato e tracciamento.
- */
 @Entity
 @Table(name = "history_entries")
 public class HistoryEntry {
@@ -38,8 +34,6 @@ public class HistoryEntry {
         this.action = action;
         this.timestamp = Instant.now();
     }
-
-    // Getters and Setters
 
     public String getId() {
         return id;

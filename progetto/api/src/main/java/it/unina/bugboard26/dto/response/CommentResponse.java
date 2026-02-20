@@ -3,9 +3,6 @@ package it.unina.bugboard26.dto.response;
 import it.unina.bugboard26.model.Comment;
 import java.time.Instant;
 
-/**
- * DTO di risposta per un commento.
- */
 public record CommentResponse(
         String id,
         String issueId,

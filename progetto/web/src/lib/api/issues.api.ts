@@ -1,4 +1,3 @@
-// RF02, RF03, RF06, RF08, RF11, RF13 — Issues API
 import { api } from './client';
 import type { Issue, PagedResponse } from '$lib/types';
 
@@ -32,13 +31,11 @@ function buildQuery(filters: IssueFilters): string {
 }
 
 export const issuesApi = {
-	// RF03 — Lista con filtri e paginazione
 	getAll: (filters: IssueFilters = {}) =>
 		api.get<PagedResponse<Issue>>(`/api/issues${buildQuery(filters)}`),
 
 	getById: (id: string) => api.get<Issue>(`/api/issues/${id}`),
 
-	// RF02 — Creazione issue
 	create: (data: {
 		title: string;
 		type: string;
@@ -48,7 +45,6 @@ export const issuesApi = {
 		image?: string;
 	}) => api.post<Issue>('/api/issues', data),
 
-	// RF06, RF13 — Aggiornamento (stato, archiviazione, etc.)
 	update: (
 		id: string,
 		data: {
@@ -63,7 +59,6 @@ export const issuesApi = {
 		}
 	) => api.patch<Issue>(`/api/issues/${id}`, data),
 
-	// RF08 — Export CSV/PDF
 	exportFile: async (format: 'csv' | 'pdf', filters: IssueFilters = {}) => {
 		const query = buildQuery(filters);
 		const sep = query ? '&' : '?';

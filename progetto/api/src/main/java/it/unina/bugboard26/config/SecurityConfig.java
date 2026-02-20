@@ -21,10 +21,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
-/**
- * Configurazione Spring Security: CORS, sessioni stateless, filtro JWT,
- * regole di autorizzazione.
- */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity

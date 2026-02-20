@@ -12,17 +12,9 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import java.util.List;
 
-/**
- * Repository per l'entita Issue.
- * RF02, RF03, RF11 - Creazione, lista con filtri, ricerca.
- */
 @Repository
 public interface IssueRepository extends JpaRepository<Issue, String> {
 
-    /**
-     * RF03, RF11 - Ricerca filtrata e paginata.
-     * Tutti i parametri sono opzionali: se null, il filtro corrispondente viene ignorato.
-     */
     @Query("""
             SELECT i FROM Issue i
             WHERE (:types IS NULL OR i.type IN :types)
@@ -44,9 +36,6 @@ public interface IssueRepository extends JpaRepository<Issue, String> {
             Pageable pageable
     );
 
-    /**
-     * RF08 - Export: stessa query senza paginazione per ottenere tutte le issue filtrate.
-     */
     @Query("""
             SELECT i FROM Issue i
             WHERE (:types IS NULL OR i.type IN :types)

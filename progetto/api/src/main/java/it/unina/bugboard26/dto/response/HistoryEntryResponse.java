@@ -3,9 +3,6 @@ package it.unina.bugboard26.dto.response;
 import it.unina.bugboard26.model.HistoryEntry;
 import java.time.Instant;
 
-/**
- * DTO di risposta per una voce di storico.
- */
 public record HistoryEntryResponse(
         String id,
         UserResponse performedBy,

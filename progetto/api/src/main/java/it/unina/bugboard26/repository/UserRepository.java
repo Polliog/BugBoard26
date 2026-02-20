@@ -5,10 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
-/**
- * Repository per l'entita User.
- * RF01 - Gestione utenti.
- */
 @Repository
 public interface UserRepository extends JpaRepository<User, String> {
 

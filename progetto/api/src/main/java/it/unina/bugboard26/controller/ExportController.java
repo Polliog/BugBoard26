@@ -11,10 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * Controller per l'export delle issue.
- * RF08 - Export CSV/PDF.
- */
 @RestController
 @RequestMapping("/api/issues/export")
 public class ExportController {
@@ -25,9 +21,6 @@ public class ExportController {
         this.exportService = exportService;
     }
 
-    /**
-     * RF08 - Esporta le issue nel formato specificato (csv o pdf).
-     */
     @GetMapping
     public ResponseEntity<byte[]> export(
             @RequestParam String format,

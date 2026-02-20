@@ -11,10 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * Controller per la gestione degli utenti.
- * RF01 - Solo ADMIN.
- */
 @RestController
 @RequestMapping("/api/users")
 @PreAuthorize("hasRole('ADMIN')")
@@ -26,26 +22,17 @@ public class UserController {
         this.userService = userService;
     }
 
-    /**
-     * RF01 - Restituisce la lista di tutti gli utenti.
-     */
     @GetMapping
     public ResponseEntity<List<UserResponse>> getAll() {
         return ResponseEntity.ok(userService.getAll());
     }
 
-    /**
-     * RF01 - Crea un nuovo utente.
-     */
     @PostMapping
     public ResponseEntity<UserResponse> create(@Valid @RequestBody CreateUserRequest request) {
         UserResponse response = userService.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    /**
-     * RF01 - Elimina un utente per ID.
-     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable String id) {
         userService.delete(id);

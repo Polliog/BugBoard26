@@ -4,10 +4,6 @@ import it.unina.bugboard26.model.enums.GlobalRole;
 import jakarta.persistence.*;
 import java.time.Instant;
 
-/**
- * Entita utente del sistema.
- * RF01 - Autenticazione e gestione utenti.
- */
 @Entity
 @Table(name = "users")
 public class User {
@@ -46,8 +42,6 @@ public class User {
     protected void onCreate() {
         this.createdAt = Instant.now();
     }
-
-    // Getters and Setters
 
     public String getId() {
         return id;

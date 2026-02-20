@@ -1,4 +1,3 @@
-// RF15 — Helper permessi centralizzato
 import type { User, Issue } from '$lib/types';
 
 export function can(user: User | null, action: string, issue?: Issue): boolean {

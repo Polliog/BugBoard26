@@ -14,10 +14,6 @@ import java.util.List;
 import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
-/**
- * Servizio per la gestione degli utenti.
- * RF01 - Gestione utenti (solo ADMIN).
- */
 @Service
 @Transactional(readOnly = true)
 public class UserService {
@@ -30,18 +26,12 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    /**
-     * RF01 - Restituisce la lista di tutti gli utenti.
-     */
     public List<UserResponse> getAll() {
         return userRepository.findAll().stream()
                 .map(UserResponse::from)
                 .toList();
     }
 
-    /**
-     * RF01 - Crea un nuovo utente.
-     */
     @Transactional
     public UserResponse create(CreateUserRequest request) {
         if (userRepository.existsByEmail(request.email())) {
@@ -59,9 +49,6 @@ public class UserService {
         return UserResponse.from(saved);
     }
 
-    /**
-     * RF01 - Elimina un utente per ID.
-     */
     @Transactional
     public void delete(String id) {
         if (!userRepository.existsById(id)) {

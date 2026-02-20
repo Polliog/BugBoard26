@@ -3,9 +3,6 @@ package it.unina.bugboard26.model;
 import jakarta.persistence.*;
 import java.time.Instant;
 
-/**
- * Commento su una issue.
- */
 @Entity
 @Table(name = "comments")
 public class Comment {
@@ -49,8 +46,6 @@ public class Comment {
     protected void onUpdate() {
         this.updatedAt = Instant.now();
     }
-
-    // Getters and Setters
 
     public String getId() {
         return id;
