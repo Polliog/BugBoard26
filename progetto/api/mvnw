@@ -1,0 +1,47 @@
+#!/bin/sh
+# Maven Wrapper script
+# This script downloads and runs the Maven wrapper JAR
+
+set -e
+
+# Determine the project base directory
+if [ -z "$MAVEN_PROJECTBASEDIR" ]; then
+  MAVEN_PROJECTBASEDIR=$(cd "$(dirname "$0")" && pwd)
+  export MAVEN_PROJECTBASEDIR
+fi
+
+WRAPPER_JAR="$MAVEN_PROJECTBASEDIR/.mvn/wrapper/maven-wrapper.jar"
+WRAPPER_PROPERTIES="$MAVEN_PROJECTBASEDIR/.mvn/wrapper/maven-wrapper.properties"
+
+# If the wrapper JAR doesn't exist, download it
+if [ ! -f "$WRAPPER_JAR" ]; then
+  if [ -f "$WRAPPER_PROPERTIES" ]; then
+    WRAPPER_URL=$(grep 'wrapperUrl' "$WRAPPER_PROPERTIES" | cut -d'=' -f2- | tr -d '[:space:]')
+  fi
+  if [ -z "$WRAPPER_URL" ]; then
+    WRAPPER_URL="https://repo.maven.apache.org/maven2/org/apache/maven/wrapper/maven-wrapper/3.3.2/maven-wrapper-3.3.2.jar"
+  fi
+
+  echo "Downloading Maven Wrapper from $WRAPPER_URL"
+  if command -v curl > /dev/null 2>&1; then
+    curl -sL -o "$WRAPPER_JAR" "$WRAPPER_URL"
+  elif command -v wget > /dev/null 2>&1; then
+    wget -q -O "$WRAPPER_JAR" "$WRAPPER_URL"
+  else
+    echo "Error: curl or wget is required to download the Maven Wrapper"
+    exit 1
+  fi
+fi
+
+# Determine JAVA_HOME
+if [ -n "$JAVA_HOME" ]; then
+  JAVACMD="$JAVA_HOME/bin/java"
+else
+  JAVACMD="java"
+fi
+
+# Run the wrapper
+exec "$JAVACMD" \
+  $MAVEN_OPTS \
+  -classpath "$WRAPPER_JAR" \
+  org.apache.maven.wrapper.MavenWrapperMain "$@"
