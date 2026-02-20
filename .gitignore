@@ -12,6 +12,9 @@
 # Old frontend (da eliminare)
 /progetto/frontend/
 
+# Env
+/progetto/.env
+
 # AI / Claude
 .claude/
 /progetto/docs/PROGRESS-*.md
