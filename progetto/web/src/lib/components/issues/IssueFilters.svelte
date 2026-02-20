@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { IssueType, IssuePriority, IssueStatus, User } from '$lib/types';
+	import UserSearch from '$lib/components/ui/UserSearch.svelte';
 
 	interface Props {
 		search: string;
@@ -10,6 +11,7 @@
 		showArchived: boolean;
 		sortBy: string;
 		users: User[];
+		currentUser: User | null;
 		onchange: () => void;
 	}
 
@@ -22,12 +24,13 @@
 		showArchived = $bindable(),
 		sortBy = $bindable(),
 		users,
+		currentUser = null,
 		onchange
 	}: Props = $props();
 
 	const issueTypes: IssueType[] = ['QUESTION', 'BUG', 'DOCUMENTATION', 'FEATURE'];
 	const issuePriorities: IssuePriority[] = ['BASSA', 'MEDIA', 'ALTA', 'CRITICA'];
-	const issueStatuses: IssueStatus[] = ['APERTA', 'IN_PROGRESS', 'RISOLTA', 'CHIUSA'];
+	const issueStatuses: IssueStatus[] = ['TODO', 'IN_PROGRESS', 'RISOLTA'];
 
 	const typeLabels: Record<IssueType, string> = {
 		QUESTION: 'Question', BUG: 'Bug', DOCUMENTATION: 'Docs', FEATURE: 'Feature'
@@ -36,7 +39,7 @@
 		BASSA: 'Bassa', MEDIA: 'Media', ALTA: 'Alta', CRITICA: 'Critica'
 	};
 	const statusLabels: Record<IssueStatus, string> = {
-		APERTA: 'Aperta', IN_PROGRESS: 'In Progress', RISOLTA: 'Risolta', CHIUSA: 'Chiusa'
+		TODO: 'Todo', IN_PROGRESS: 'In Progress', RISOLTA: 'Risolta'
 	};
 
 	function toggleFilter<T>(array: T[], value: T): T[] {
@@ -50,8 +53,10 @@
 	<div class="space-y-4">
 		<div class="flex flex-col md:flex-row gap-4">
 			<div class="flex-1">
+				<label for="filter-search" class="sr-only">Cerca issue</label>
 				<input
 					type="text"
+					id="filter-search"
 					bind:value={search}
 					oninput={onchange}
 					placeholder="Cerca issue..."
@@ -59,7 +64,9 @@
 				/>
 			</div>
 			<div class="flex gap-2">
+				<label for="filter-sort" class="sr-only">Ordina per</label>
 				<select
+					id="filter-sort"
 					bind:value={sortBy}
 					onchange={onchange}
 					class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -81,12 +88,13 @@
 		</div>
 
 		<div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-			<div>
-				<p class="text-xs font-medium text-gray-700 mb-2">Tipo</p>
+			<fieldset>
+				<legend class="text-xs font-medium text-gray-700 mb-2">Tipo</legend>
 				<div class="flex flex-wrap gap-2">
 					{#each issueTypes as type}
 						<button
 							onclick={() => { selectedTypes = toggleFilter(selectedTypes, type); onchange(); }}
+							aria-pressed={selectedTypes.includes(type)}
 							class="px-3 py-1 text-xs rounded-full transition-colors"
 							class:bg-blue-600={selectedTypes.includes(type)}
 							class:text-white={selectedTypes.includes(type)}
@@ -97,14 +105,15 @@
 						</button>
 					{/each}
 				</div>
-			</div>
+			</fieldset>
 
-			<div>
-				<p class="text-xs font-medium text-gray-700 mb-2">Priorità</p>
+			<fieldset>
+				<legend class="text-xs font-medium text-gray-700 mb-2">Priorità</legend>
 				<div class="flex flex-wrap gap-2">
 					{#each issuePriorities as priority}
 						<button
 							onclick={() => { selectedPriorities = toggleFilter(selectedPriorities, priority); onchange(); }}
+							aria-pressed={selectedPriorities.includes(priority)}
 							class="px-3 py-1 text-xs rounded-full transition-colors"
 							class:bg-blue-600={selectedPriorities.includes(priority)}
 							class:text-white={selectedPriorities.includes(priority)}
@@ -115,14 +124,15 @@
 						</button>
 					{/each}
 				</div>
-			</div>
+			</fieldset>
 
-			<div>
-				<p class="text-xs font-medium text-gray-700 mb-2">Stato</p>
+			<fieldset>
+				<legend class="text-xs font-medium text-gray-700 mb-2">Stato</legend>
 				<div class="flex flex-wrap gap-2">
 					{#each issueStatuses as status}
 						<button
 							onclick={() => { selectedStatuses = toggleFilter(selectedStatuses, status); onchange(); }}
+							aria-pressed={selectedStatuses.includes(status)}
 							class="px-3 py-1 text-xs rounded-full transition-colors"
 							class:bg-blue-600={selectedStatuses.includes(status)}
 							class:text-white={selectedStatuses.includes(status)}
@@ -133,20 +143,17 @@
 						</button>
 					{/each}
 				</div>
-			</div>
+			</fieldset>
 
 			<div>
-				<p class="text-xs font-medium text-gray-700 mb-2">Assegnato a</p>
-				<select
-					bind:value={selectedAssignee}
-					onchange={onchange}
-					class="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-				>
-					<option value="">Tutti</option>
-					{#each users as user}
-						<option value={user.id}>{user.name}</option>
-					{/each}
-				</select>
+				<span class="text-xs font-medium text-gray-700 mb-2 block">Assegnato a</span>
+				<UserSearch
+					{users}
+					selectedId={selectedAssignee}
+					{currentUser}
+					placeholder="Cerca utente..."
+					onchange={(id) => { selectedAssignee = id; onchange(); }}
+				/>
 			</div>
 		</div>
 	</div>

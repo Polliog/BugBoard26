@@ -5,23 +5,23 @@
 
 	interface Props {
 		issue: Issue;
-		onclick: () => void;
+		href: string;
 	}
 
-	let { issue, onclick }: Props = $props();
+	let { issue, href }: Props = $props();
 </script>
 
-<button
-	{onclick}
-	class="w-full bg-white rounded-xl shadow-sm hover:shadow-md transition-all p-4 text-left border border-gray-200 hover:border-blue-300"
+<a
+	{href}
+	class="block w-full bg-white rounded-xl shadow-sm hover:shadow-md transition-all p-4 border border-gray-200 hover:border-blue-300"
 >
 	<div class="flex items-start gap-4">
 		<div class="flex-shrink-0 w-12 h-12">
 			{#if issue.image}
-				<img src={issue.image} alt="" class="w-full h-full rounded-lg object-cover" />
+				<img src={issue.image} alt="Allegato: {issue.title}" class="w-full h-full rounded-lg object-cover" />
 			{:else}
 				<div class="w-full h-full rounded-lg bg-gray-100 flex items-center justify-center">
-					<svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<svg class="w-6 h-6 text-gray-400" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
 					</svg>
 				</div>
@@ -42,7 +42,7 @@
 				<span>{formatDate(issue.createdAt)}</span>
 				{#if issue.assignedTo}
 					<span class="flex items-center gap-1">
-						<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+						<svg class="w-4 h-4" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
 							<path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
 						</svg>
 						{issue.assignedTo.name}
@@ -54,4 +54,4 @@
 			</div>
 		</div>
 	</div>
-</button>
+</a>

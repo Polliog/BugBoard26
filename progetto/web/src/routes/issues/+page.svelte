@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { authStore } from '$lib/stores/auth.svelte';
-	import { goto } from '$app/navigation';
 	import { toast } from 'svelte-sonner';
 	import Navbar from '$lib/components/Navbar.svelte';
 	import Spinner from '$lib/components/ui/Spinner.svelte';
@@ -121,7 +120,7 @@
 					{#if can(authStore.user, 'create:issue')}
 						<button onclick={() => (isFormOpen = true)}
 							class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
-							<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<svg class="w-5 h-5" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
 							</svg>
 							Crea Issue
@@ -134,7 +133,7 @@
 		<IssueFilters
 			bind:search bind:selectedTypes bind:selectedPriorities
 			bind:selectedStatuses bind:selectedAssignee bind:showArchived bind:sortBy
-			{users} onchange={handleFiltersChange}
+			{users} currentUser={authStore.user} onchange={handleFiltersChange}
 		/>
 
 		{#if loading}
@@ -143,7 +142,7 @@
 			</div>
 		{:else if issues.length === 0}
 			<div class="bg-white rounded-xl shadow-sm p-12 text-center">
-				<svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<svg class="w-16 h-16 text-gray-400 mx-auto mb-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
 						d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
 				</svg>
@@ -153,31 +152,33 @@
 		{:else}
 			<div class="space-y-3">
 				{#each issues as issue (issue.id)}
-					<IssueCard {issue} onclick={() => goto(`/issues/${issue.id}`)} />
+					<IssueCard {issue} href={`/issues/${issue.id}`} />
 				{/each}
 			</div>
 
 			{#if total > pageSize}
-				<div class="flex justify-center gap-2 mt-6">
+				<nav aria-label="Paginazione" class="flex justify-center gap-2 mt-6">
 					<button onclick={() => { currentPage = Math.max(0, currentPage - 1); loadIssues(); }}
 						disabled={currentPage === 0}
+						aria-label="Pagina precedente"
 						class="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-50">
 						Precedente
 					</button>
-					<span class="px-4 py-2 text-gray-600">
+					<span class="px-4 py-2 text-gray-600" aria-live="polite" aria-atomic="true">
 						Pagina {currentPage + 1} di {Math.ceil(total / pageSize)}
 					</span>
 					<button onclick={() => { currentPage++; loadIssues(); }}
 						disabled={(currentPage + 1) * pageSize >= total}
+						aria-label="Pagina successiva"
 						class="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-50">
 						Successiva
 					</button>
-				</div>
+				</nav>
 			{/if}
 		{/if}
 	</div>
 </div>
 
-<IssueForm isOpen={isFormOpen} {users}
+<IssueForm isOpen={isFormOpen} {users} currentUser={authStore.user}
 	onClose={() => (isFormOpen = false)}
 	onSubmit={handleCreateIssue} />

@@ -78,7 +78,7 @@ public class Issue {
         this.createdAt = Instant.now();
         this.updatedAt = Instant.now();
         if (this.status == null) {
-            this.status = IssueStatus.APERTA;
+            this.status = IssueStatus.TODO;
         }
     }
 

@@ -1,14 +1,12 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:bugboard;DB_CLOSE_DELAY=-1
-    driver-class-name: org.h2.Driver
+    url: jdbc:postgresql://localhost:5432/bugboard
+    username: bugboard
+    password: bugboard
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create
     show-sql: false
-  h2:
-    console:
-      enabled: true
 
 bugboard:
   jwt:

@@ -57,7 +57,7 @@ class IssueControllerTest {
         UserResponse creator = new UserResponse("user-id", "user@test.com", "User", GlobalRole.USER, Instant.now());
         IssueResponse issueResponse = new IssueResponse(
                 "issue-1", "Test Issue", IssueType.BUG, "Descrizione test",
-                IssuePriority.ALTA, IssueStatus.APERTA, null, creator,
+                IssuePriority.ALTA, IssueStatus.TODO, null, creator,
                 Instant.now(), Instant.now(), null, false, null, null,
                 List.of(), List.of()
         );
@@ -84,7 +84,7 @@ class IssueControllerTest {
         UserResponse creator = new UserResponse("user-id", "user@test.com", "User", GlobalRole.USER, Instant.now());
         IssueResponse issueResponse = new IssueResponse(
                 "issue-1", "Bug nel login", IssueType.BUG, "Descrizione dettagliata",
-                IssuePriority.CRITICA, IssueStatus.APERTA, null, creator,
+                IssuePriority.CRITICA, IssueStatus.TODO, null, creator,
                 Instant.now(), Instant.now(), null, false, null, null,
                 List.of(), List.of()
         );
@@ -112,7 +112,7 @@ class IssueControllerTest {
         UserResponse creator = UserResponse.from(user);
         IssueResponse issueResponse = new IssueResponse(
                 "new-issue-id", "Nuova feature", IssueType.FEATURE, "Descrizione della feature richiesta",
-                IssuePriority.MEDIA, IssueStatus.APERTA, null, creator,
+                IssuePriority.MEDIA, IssueStatus.TODO, null, creator,
                 Instant.now(), Instant.now(), null, false, null, null,
                 List.of(), List.of()
         );

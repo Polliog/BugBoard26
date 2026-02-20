@@ -79,7 +79,7 @@ public class IssueService {
         issue.setType(request.type());
         issue.setDescription(request.description());
         issue.setPriority(request.priority());
-        issue.setStatus(IssueStatus.APERTA);
+        issue.setStatus(IssueStatus.TODO);
         issue.setCreatedBy(currentUser);
         issue.setImage(request.image());
 

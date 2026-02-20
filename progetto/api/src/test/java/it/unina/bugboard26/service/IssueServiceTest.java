@@ -80,7 +80,7 @@ class IssueServiceTest {
         assertNotNull(response);
         assertEquals("Bug critico nel login", response.title());
         assertEquals(IssueType.BUG, response.type());
-        assertEquals(IssueStatus.APERTA, response.status());
+        assertEquals(IssueStatus.TODO, response.status());
         verify(issueRepository).save(any(Issue.class));
     }
 
@@ -136,7 +136,7 @@ class IssueServiceTest {
     @DisplayName("Cambio stato dal creatore non genera notifica a se stesso")
     void whenCreatorChangesStatus_thenNoSelfNotification() {
         User creator = buildUser("creator", GlobalRole.USER);
-        Issue issue = buildIssue(creator, creator, IssueStatus.APERTA);
+        Issue issue = buildIssue(creator, creator, IssueStatus.TODO);
 
         when(issueRepository.findById(issue.getId())).thenReturn(Optional.of(issue));
         when(permissionService.canChangeStatus(creator, issue)).thenReturn(true);
@@ -157,7 +157,7 @@ class IssueServiceTest {
     @DisplayName("USER non puo archiviare una issue")
     void whenUserTriesToArchive_thenThrowForbidden() {
         User user = buildUser("user", GlobalRole.USER);
-        Issue issue = buildIssue(user, user, IssueStatus.APERTA);
+        Issue issue = buildIssue(user, user, IssueStatus.TODO);
 
         when(issueRepository.findById(issue.getId())).thenReturn(Optional.of(issue));
         when(permissionService.canArchive(user)).thenReturn(false);
@@ -176,7 +176,7 @@ class IssueServiceTest {
     @DisplayName("ADMIN puo archiviare una issue")
     void whenAdminArchives_thenSuccess() {
         User admin = buildUser("admin", GlobalRole.ADMIN);
-        Issue issue = buildIssue(buildUser("creator", GlobalRole.USER), admin, IssueStatus.CHIUSA);
+        Issue issue = buildIssue(buildUser("creator", GlobalRole.USER), admin, IssueStatus.RISOLTA);
 
         when(issueRepository.findById(issue.getId())).thenReturn(Optional.of(issue));
         when(permissionService.canArchive(admin)).thenReturn(true);

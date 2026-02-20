@@ -1,8 +1,7 @@
 package it.unina.bugboard26.model.enums;
 
 public enum IssueStatus {
-    APERTA,
+    TODO,
     IN_PROGRESS,
-    RISOLTA,
-    CHIUSA
+    RISOLTA
 }

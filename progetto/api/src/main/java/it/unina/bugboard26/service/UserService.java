@@ -1,6 +1,7 @@
 package it.unina.bugboard26.service;
 
 import it.unina.bugboard26.dto.request.CreateUserRequest;
+import it.unina.bugboard26.dto.request.UpdateUserRequest;
 import it.unina.bugboard26.dto.response.UserResponse;
 import it.unina.bugboard26.model.User;
 import it.unina.bugboard26.repository.UserRepository;
@@ -44,6 +45,31 @@ public class UserService {
                 request.name(),
                 request.role()
         );
+
+        User saved = userRepository.save(user);
+        return UserResponse.from(saved);
+    }
+
+    @Transactional
+    public UserResponse update(String id, UpdateUserRequest request) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Utente non trovato"));
+
+        if (request.email() != null) {
+            if (!request.email().equals(user.getEmail()) && userRepository.existsByEmail(request.email())) {
+                throw new ResponseStatusException(CONFLICT, "Email gia' in uso");
+            }
+            user.setEmail(request.email());
+        }
+        if (request.name() != null) {
+            user.setName(request.name());
+        }
+        if (request.role() != null) {
+            user.setRole(request.role());
+        }
+        if (request.password() != null) {
+            user.setPasswordHash(passwordEncoder.encode(request.password()));
+        }
 
         User saved = userRepository.save(user);
         return UserResponse.from(saved);

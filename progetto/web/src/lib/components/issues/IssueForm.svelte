@@ -1,10 +1,12 @@
 <script lang="ts">
 	import type { IssueType, IssuePriority, User } from '$lib/types';
 	import Modal from '$lib/components/ui/Modal.svelte';
+	import UserSearch from '$lib/components/ui/UserSearch.svelte';
 
 	interface Props {
 		isOpen: boolean;
 		users: User[];
+		currentUser: User | null;
 		onClose: () => void;
 		onSubmit: (data: {
 			title: string;
@@ -16,7 +18,7 @@
 		}) => void;
 	}
 
-	let { isOpen, users, onClose, onSubmit }: Props = $props();
+	let { isOpen, users, currentUser = null, onClose, onSubmit }: Props = $props();
 
 	let title = $state('');
 	let type = $state<IssueType>('BUG');
@@ -116,12 +118,14 @@
 		</div>
 
 		<div>
-			<label for="issue-assigned" class="block text-sm font-medium text-gray-900 mb-2">Assegnato a</label>
-			<select id="issue-assigned" bind:value={assignedToId}
-				class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-				<option value="">Nessuno</option>
-				{#each users as u}<option value={u.id}>{u.name}</option>{/each}
-			</select>
+			<span class="block text-sm font-medium text-gray-900 mb-2">Assegnato a</span>
+			<UserSearch
+				{users}
+				selectedId={assignedToId}
+				{currentUser}
+				placeholder="Cerca utente..."
+				onchange={(id) => { assignedToId = id; }}
+			/>
 		</div>
 
 		<div>

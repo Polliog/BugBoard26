@@ -1,7 +1,7 @@
 export type GlobalRole = 'ADMIN' | 'USER' | 'EXTERNAL';
 export type IssueType = 'QUESTION' | 'BUG' | 'DOCUMENTATION' | 'FEATURE';
 export type IssuePriority = 'BASSA' | 'MEDIA' | 'ALTA' | 'CRITICA';
-export type IssueStatus = 'APERTA' | 'IN_PROGRESS' | 'RISOLTA' | 'CHIUSA';
+export type IssueStatus = 'TODO' | 'IN_PROGRESS' | 'RISOLTA';
 
 export interface User {
 	id: string;

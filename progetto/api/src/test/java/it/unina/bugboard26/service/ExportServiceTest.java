@@ -111,7 +111,7 @@ class ExportServiceTest {
         issue.setType(type);
         issue.setDescription("Descrizione test sufficientemente lunga per validazione");
         issue.setPriority(priority);
-        issue.setStatus(IssueStatus.APERTA);
+        issue.setStatus(IssueStatus.TODO);
         issue.setCreatedBy(creator);
         issue.setCreatedAt(Instant.now());
         issue.setUpdatedAt(Instant.now());

@@ -87,7 +87,7 @@ public class DataSeeder implements CommandLineRunner {
         feature1.setType(IssueType.FEATURE);
         feature1.setDescription("Nella lista issue servirebbe un filtro che permetta di selezionare un intervallo di date per la data di creazione. Utile per i report settimanali.");
         feature1.setPriority(IssuePriority.MEDIA);
-        feature1.setStatus(IssueStatus.APERTA);
+        feature1.setStatus(IssueStatus.TODO);
         feature1.setCreatedBy(lucia);
         feature1.setAssignedTo(mario);
         feature1 = issueRepository.save(feature1);
@@ -97,7 +97,7 @@ public class DataSeeder implements CommandLineRunner {
         doc1.setType(IssueType.DOCUMENTATION);
         doc1.setDescription("Le API di export non hanno documentazione. Serve una pagina che descriva i parametri accettati, i filtri applicabili e il formato di output per CSV e PDF.");
         doc1.setPriority(IssuePriority.BASSA);
-        doc1.setStatus(IssueStatus.APERTA);
+        doc1.setStatus(IssueStatus.TODO);
         doc1.setCreatedBy(admin);
         doc1.setAssignedTo(mario);
         doc1 = issueRepository.save(doc1);
@@ -105,9 +105,9 @@ public class DataSeeder implements CommandLineRunner {
         Issue bug2 = new Issue();
         bug2.setTitle("Notifica duplicata al cambio stato");
         bug2.setType(IssueType.BUG);
-        bug2.setDescription("Quando si cambia lo stato di una issue da APERTA a IN_PROGRESS, il creatore riceve due notifiche identiche invece di una sola. Probabilmente il service viene invocato due volte.");
+        bug2.setDescription("Quando si cambia lo stato di una issue da TODO a IN_PROGRESS, il creatore riceve due notifiche identiche invece di una sola. Probabilmente il service viene invocato due volte.");
         bug2.setPriority(IssuePriority.ALTA);
-        bug2.setStatus(IssueStatus.APERTA);
+        bug2.setStatus(IssueStatus.TODO);
         bug2.setCreatedBy(lucia);
         bug2 = issueRepository.save(bug2);
 
@@ -126,7 +126,7 @@ public class DataSeeder implements CommandLineRunner {
         feature2.setType(IssueType.FEATURE);
         feature2.setDescription("L'admin dovrebbe avere una dashboard con contatori: issue aperte, in progress, risolte, chiuse. Anche un grafico a torta per la distribuzione per tipo e priorita.");
         feature2.setPriority(IssuePriority.ALTA);
-        feature2.setStatus(IssueStatus.APERTA);
+        feature2.setStatus(IssueStatus.TODO);
         feature2.setCreatedBy(admin);
         feature2.setAssignedTo(lucia);
         feature2 = issueRepository.save(feature2);
@@ -136,7 +136,7 @@ public class DataSeeder implements CommandLineRunner {
         bug3.setType(IssueType.BUG);
         bug3.setDescription("Se una issue non ha la priorita impostata (campo opzionale), l'export PDF va in NullPointerException nella riga della tabella. Serve un controllo null nella generazione del PDF.");
         bug3.setPriority(IssuePriority.CRITICA);
-        bug3.setStatus(IssueStatus.CHIUSA);
+        bug3.setStatus(IssueStatus.RISOLTA);
         bug3.setCreatedBy(mario);
         bug3.setAssignedTo(lucia);
         bug3.setArchived(true);

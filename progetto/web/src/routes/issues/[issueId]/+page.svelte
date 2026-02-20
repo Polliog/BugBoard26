@@ -7,6 +7,8 @@
 	import Navbar from '$lib/components/Navbar.svelte';
 	import Spinner from '$lib/components/ui/Spinner.svelte';
 	import Badge from '$lib/components/ui/Badge.svelte';
+	import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte';
+	import Markdown from '$lib/components/ui/Markdown.svelte';
 	import CommentSection from '$lib/components/issues/CommentSection.svelte';
 	import { issuesApi } from '$lib/api/issues.api';
 	import { commentsApi } from '$lib/api/comments.api';
@@ -14,16 +16,18 @@
 	import { formatDate } from '$lib/utils/dates';
 	import type { Issue, Comment, IssueStatus } from '$lib/types';
 
-	let issueId = $derived($page.params.issueId);
+	let issueId = $derived($page.params.issueId!);
 	let issue = $state<Issue | null>(null);
 	let comments = $state<Comment[]>([]);
 	let loading = $state(true);
+	let confirmDialog = $state<{ open: boolean; title: string; message: string; variant: 'danger' | 'warning' | 'default'; action: () => void }>({
+		open: false, title: '', message: '', variant: 'default', action: () => {}
+	});
 
 	const statuses: { value: IssueStatus; label: string }[] = [
-		{ value: 'APERTA', label: 'Aperta' },
+		{ value: 'TODO', label: 'Todo' },
 		{ value: 'IN_PROGRESS', label: 'In Progress' },
-		{ value: 'RISOLTA', label: 'Risolta' },
-		{ value: 'CHIUSA', label: 'Chiusa' }
+		{ value: 'RISOLTA', label: 'Risolta' }
 	];
 
 	onMount(() => loadData());
@@ -50,15 +54,20 @@
 		}
 	}
 
-	async function archiveIssue() {
-		if (!confirm('Archiviare questa issue?')) return;
-		try {
-			await issuesApi.update(issueId, { archived: true });
-			toast.success('Issue archiviata');
-			goto('/issues');
-		} catch {
-			toast.error('Errore archiviazione');
-		}
+	function showConfirm(title: string, message: string, variant: 'danger' | 'warning' | 'default', action: () => void) {
+		confirmDialog = { open: true, title, message, variant, action };
+	}
+
+	function archiveIssue() {
+		showConfirm('Archivia Issue', 'Sei sicuro di voler archiviare questa issue?', 'warning', async () => {
+			try {
+				await issuesApi.update(issueId, { archived: true });
+				toast.success('Issue archiviata');
+				goto('/issues');
+			} catch {
+				toast.error('Errore archiviazione');
+			}
+		});
 	}
 
 	async function handleAddComment(content: string) {
@@ -81,15 +90,16 @@
 		}
 	}
 
-	async function handleDeleteComment(commentId: string) {
-		if (!confirm('Eliminare questo commento?')) return;
-		try {
-			await commentsApi.delete(issueId, commentId);
-			toast.success('Commento eliminato');
-			comments = await commentsApi.getByIssue(issueId);
-		} catch {
-			toast.error('Errore eliminazione commento');
-		}
+	function handleDeleteComment(commentId: string) {
+		showConfirm('Elimina Commento', 'Sei sicuro di voler eliminare questo commento?', 'danger', async () => {
+			try {
+				await commentsApi.delete(issueId, commentId);
+				toast.success('Commento eliminato');
+				comments = await commentsApi.getByIssue(issueId);
+			} catch {
+				toast.error('Errore eliminazione commento');
+			}
+		});
 	}
 </script>
 
@@ -102,10 +112,12 @@
 
 	<div class="max-w-5xl mx-auto px-4 py-8">
 		<div class="mb-6">
-			<nav class="flex items-center gap-2 text-sm text-gray-600">
-				<a href="/issues" class="hover:text-blue-600 transition-colors">Issue</a>
-				<span>/</span>
-				<span class="text-gray-900 font-medium">{issue?.title ?? '...'}</span>
+			<nav aria-label="Breadcrumb" class="text-sm text-gray-600">
+				<ol class="flex items-center gap-2">
+					<li><a href="/issues" class="hover:text-blue-600 transition-colors">Issue</a></li>
+					<li aria-hidden="true">/</li>
+					<li aria-current="page" class="text-gray-900 font-medium">{issue?.title ?? '...'}</li>
+				</ol>
 			</nav>
 		</div>
 
@@ -135,6 +147,7 @@
 						<div class="flex flex-wrap gap-2">
 							{#each statuses as s}
 								<button onclick={() => changeStatus(s.value)}
+									aria-pressed={issue.status === s.value}
 									class="px-3 py-1 text-sm rounded-lg transition-colors"
 									class:bg-blue-600={issue.status === s.value}
 									class:text-white={issue.status === s.value}
@@ -150,13 +163,13 @@
 
 				<div class="mb-6">
 					<h2 class="text-lg font-semibold text-gray-900 mb-3">Descrizione</h2>
-					<p class="text-gray-700 whitespace-pre-wrap">{issue.description}</p>
+					<Markdown content={issue.description} />
 				</div>
 
 				{#if issue.image}
 					<div class="mb-6">
 						<h2 class="text-lg font-semibold text-gray-900 mb-3">Allegato</h2>
-						<img src={issue.image} alt="Allegato" class="max-w-full rounded-lg border border-gray-200" />
+						<img src={issue.image} alt="Allegato issue: {issue.title}" class="max-w-full rounded-lg border border-gray-200" />
 					</div>
 				{/if}
 
@@ -195,3 +208,12 @@
 		{/if}
 	</div>
 </div>
+
+<ConfirmDialog
+	isOpen={confirmDialog.open}
+	title={confirmDialog.title}
+	message={confirmDialog.message}
+	variant={confirmDialog.variant}
+	onConfirm={() => { confirmDialog.open = false; confirmDialog.action(); }}
+	onCancel={() => { confirmDialog.open = false; }}
+/>

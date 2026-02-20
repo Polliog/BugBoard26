@@ -23,8 +23,8 @@ public interface IssueRepository extends JpaRepository<Issue, String> {
               AND (:assignedToId IS NULL OR i.assignedTo.id = :assignedToId)
               AND (:archived IS NULL OR i.archived = :archived)
               AND (:search IS NULL
-                   OR LOWER(i.title) LIKE LOWER(CONCAT('%', :search, '%'))
-                   OR LOWER(i.description) LIKE LOWER(CONCAT('%', :search, '%')))
+                   OR LOWER(CAST(i.title AS STRING)) LIKE LOWER(CONCAT('%', CAST(:search AS STRING), '%'))
+                   OR LOWER(CAST(i.description AS STRING)) LIKE LOWER(CONCAT('%', CAST(:search AS STRING), '%')))
             """)
     Page<Issue> findFiltered(
             @Param("types") List<IssueType> types,
@@ -44,8 +44,8 @@ public interface IssueRepository extends JpaRepository<Issue, String> {
               AND (:assignedToId IS NULL OR i.assignedTo.id = :assignedToId)
               AND (:archived IS NULL OR i.archived = :archived)
               AND (:search IS NULL
-                   OR LOWER(i.title) LIKE LOWER(CONCAT('%', :search, '%'))
-                   OR LOWER(i.description) LIKE LOWER(CONCAT('%', :search, '%')))
+                   OR LOWER(CAST(i.title AS STRING)) LIKE LOWER(CONCAT('%', CAST(:search AS STRING), '%'))
+                   OR LOWER(CAST(i.description AS STRING)) LIKE LOWER(CONCAT('%', CAST(:search AS STRING), '%')))
             ORDER BY i.createdAt DESC
             """)
     List<Issue> findFilteredAll(

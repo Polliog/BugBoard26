@@ -23,10 +23,9 @@
 	};
 
 	const statusColors: Record<IssueStatus, string> = {
-		APERTA: 'bg-gray-100 text-gray-700',
+		TODO: 'bg-gray-100 text-gray-700',
 		IN_PROGRESS: 'bg-blue-100 text-blue-800',
-		RISOLTA: 'bg-green-100 text-green-800',
-		CHIUSA: 'bg-gray-300 text-gray-800'
+		RISOLTA: 'bg-green-100 text-green-800'
 	};
 
 	const labels: Record<string, string> = {
@@ -38,10 +37,9 @@
 		ALTA: 'Alta',
 		MEDIA: 'Media',
 		BASSA: 'Bassa',
-		APERTA: 'Aperta',
+		TODO: 'Todo',
 		IN_PROGRESS: 'In Progress',
-		RISOLTA: 'Risolta',
-		CHIUSA: 'Chiusa'
+		RISOLTA: 'Risolta'
 	};
 
 	function getColorClass(): string {

@@ -1,6 +1,7 @@
 package it.unina.bugboard26.controller;
 
 import it.unina.bugboard26.dto.request.CreateUserRequest;
+import it.unina.bugboard26.dto.request.UpdateUserRequest;
 import it.unina.bugboard26.dto.response.UserResponse;
 import it.unina.bugboard26.service.UserService;
 import jakarta.validation.Valid;
@@ -31,6 +32,13 @@ public class UserController {
     public ResponseEntity<UserResponse> create(@Valid @RequestBody CreateUserRequest request) {
         UserResponse response = userService.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<UserResponse> update(@PathVariable String id,
+                                                @Valid @RequestBody UpdateUserRequest request) {
+        UserResponse response = userService.update(id, request);
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")

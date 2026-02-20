@@ -162,7 +162,7 @@ class PermissionServiceTest {
         issue.setTitle("Test Issue");
         issue.setType(IssueType.BUG);
         issue.setDescription("Descrizione test sufficientemente lunga");
-        issue.setStatus(IssueStatus.APERTA);
+        issue.setStatus(IssueStatus.TODO);
         issue.setCreatedBy(creator);
         issue.setAssignedTo(assignee);
         return issue;

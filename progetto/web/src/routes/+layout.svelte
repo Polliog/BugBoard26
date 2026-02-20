@@ -29,8 +29,9 @@
 {/if}
 
 {#if restoring}
-	<div class="min-h-screen flex items-center justify-center">
-		<div class="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full"></div>
+	<div class="min-h-screen flex items-center justify-center" role="status">
+		<div class="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full" aria-hidden="true"></div>
+		<span class="sr-only">Caricamento applicazione...</span>
 	</div>
 {:else}
 	{@render children?.()}

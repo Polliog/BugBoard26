@@ -16,9 +16,9 @@ export interface IssueFilters {
 
 function buildQuery(filters: IssueFilters): string {
 	const params = new URLSearchParams();
-	if (filters.type?.length) params.set('type', filters.type.join(','));
-	if (filters.status?.length) params.set('status', filters.status.join(','));
-	if (filters.priority?.length) params.set('priority', filters.priority.join(','));
+	if (filters.type?.length) filters.type.forEach((v) => params.append('type', v));
+	if (filters.status?.length) filters.status.forEach((v) => params.append('status', v));
+	if (filters.priority?.length) filters.priority.forEach((v) => params.append('priority', v));
 	if (filters.assignedToId) params.set('assignedToId', filters.assignedToId);
 	if (filters.search) params.set('search', filters.search);
 	if (filters.archived) params.set('archived', 'true');
