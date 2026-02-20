@@ -1,0 +1,72 @@
+package it.unina.bugboard26.service;
+
+import it.unina.bugboard26.dto.request.CreateUserRequest;
+import it.unina.bugboard26.dto.response.UserResponse;
+import it.unina.bugboard26.model.User;
+import it.unina.bugboard26.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
+
+import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+
+/**
+ * Servizio per la gestione degli utenti.
+ * RF01 - Gestione utenti (solo ADMIN).
+ */
+@Service
+@Transactional(readOnly = true)
+public class UserService {
+
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    /**
+     * RF01 - Restituisce la lista di tutti gli utenti.
+     */
+    public List<UserResponse> getAll() {
+        return userRepository.findAll().stream()
+                .map(UserResponse::from)
+                .toList();
+    }
+
+    /**
+     * RF01 - Crea un nuovo utente.
+     */
+    @Transactional
+    public UserResponse create(CreateUserRequest request) {
+        if (userRepository.existsByEmail(request.email())) {
+            throw new ResponseStatusException(CONFLICT, "Email gia' in uso");
+        }
+
+        User user = new User(
+                request.email(),
+                passwordEncoder.encode(request.password()),
+                request.name(),
+                request.role()
+        );
+
+        User saved = userRepository.save(user);
+        return UserResponse.from(saved);
+    }
+
+    /**
+     * RF01 - Elimina un utente per ID.
+     */
+    @Transactional
+    public void delete(String id) {
+        if (!userRepository.existsById(id)) {
+            throw new ResponseStatusException(NOT_FOUND, "Utente non trovato");
+        }
+        userRepository.deleteById(id);
+    }
+}
