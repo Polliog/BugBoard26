@@ -4,7 +4,6 @@
 /progetto/web/.svelte-kit/
 /progetto/web/node_modules/
 /progetto/web/build/
-/progetto/web/.claude/
 
 # Backend
 /progetto/api/target/
@@ -12,6 +11,10 @@
 
 # Old frontend (da eliminare)
 /progetto/frontend/
+
+# AI / Claude
+.claude/
+/progetto/docs/PROGRESS-*.md
 
 # OS
 .DS_Store
