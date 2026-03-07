@@ -59,13 +59,13 @@ class IssueControllerTest {
                 "issue-1", "Test Issue", IssueType.BUG, "Descrizione test",
                 IssuePriority.ALTA, IssueStatus.TODO, null, creator,
                 Instant.now(), Instant.now(), null, false, null, null,
-                List.of(), List.of()
+                null, null, List.of(), List.of()
         );
         PagedResponse<IssueResponse> pagedResponse = new PagedResponse<>(
                 List.of(issueResponse), 1, 0, 20
         );
 
-        when(issueService.getAll(any(), any(), any(), any(), any(), any(), any()))
+        when(issueService.getAll(any(), any(), any(), any(), any(), any(), any(), any()))
                 .thenReturn(pagedResponse);
 
         mockMvc.perform(get("/api/issues")
@@ -86,10 +86,10 @@ class IssueControllerTest {
                 "issue-1", "Bug nel login", IssueType.BUG, "Descrizione dettagliata",
                 IssuePriority.CRITICA, IssueStatus.TODO, null, creator,
                 Instant.now(), Instant.now(), null, false, null, null,
-                List.of(), List.of()
+                null, null, List.of(), List.of()
         );
 
-        when(issueService.getById("issue-1")).thenReturn(issueResponse);
+        when(issueService.getById(eq("issue-1"), any())).thenReturn(issueResponse);
 
         mockMvc.perform(get("/api/issues/issue-1"))
                 .andExpect(status().isOk())
@@ -114,7 +114,7 @@ class IssueControllerTest {
                 "new-issue-id", "Nuova feature", IssueType.FEATURE, "Descrizione della feature richiesta",
                 IssuePriority.MEDIA, IssueStatus.TODO, null, creator,
                 Instant.now(), Instant.now(), null, false, null, null,
-                List.of(), List.of()
+                null, null, List.of(), List.of()
         );
 
         when(authService.getUserByEmail("user@test.com")).thenReturn(user);
