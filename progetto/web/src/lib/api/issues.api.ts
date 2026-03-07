@@ -5,7 +5,6 @@ export interface IssueFilters {
 	type?: string[];
 	status?: string[];
 	priority?: string[];
-	assignedToId?: string;
 	search?: string;
 	archived?: boolean;
 	deleted?: boolean;
@@ -20,7 +19,6 @@ function buildQuery(filters: IssueFilters): string {
 	if (filters.type?.length) filters.type.forEach((v) => params.append('type', v));
 	if (filters.status?.length) filters.status.forEach((v) => params.append('status', v));
 	if (filters.priority?.length) filters.priority.forEach((v) => params.append('priority', v));
-	if (filters.assignedToId) params.set('assignedToId', filters.assignedToId);
 	if (filters.search) params.set('search', filters.search);
 	if (filters.archived) params.set('archived', 'true');
 	if (filters.deleted) params.set('deleted', 'true');
@@ -43,7 +41,6 @@ export const issuesApi = {
 		type: string;
 		description: string;
 		priority?: string;
-		assignedToId?: string;
 		image?: string;
 	}) => api.post<Issue>('/api/issues', data),
 
@@ -55,7 +52,6 @@ export const issuesApi = {
 			description?: string;
 			priority?: string;
 			status?: string;
-			assignedToId?: string;
 			labelIds?: string[];
 			archived?: boolean;
 			image?: string | null;
@@ -66,7 +62,7 @@ export const issuesApi = {
 
 	restore: (id: string) => api.patch<Issue>(`/api/issues/${id}/restore`, {}),
 
-	exportFile: async (format: 'csv' | 'pdf', filters: IssueFilters = {}) => {
+	exportFile: async (format: 'csv' | 'pdf' | 'excel', filters: IssueFilters = {}) => {
 		const query = buildQuery(filters);
 		const sep = query ? '&' : '?';
 		const path = `/api/issues/export${query}${query ? sep : '?'}format=${format}`;

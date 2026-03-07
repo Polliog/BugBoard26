@@ -71,7 +71,7 @@
 	let byStatus = $derived(countBy(allIssues, 'status'));
 	let byPriority = $derived(countBy(allIssues, 'priority'));
 	let byType = $derived(countBy(allIssues, 'type'));
-	let myIssues = $derived(allIssues.filter((i) => i.assignedTo?.id === authStore.user?.id));
+	let myIssues = $derived(allIssues.filter((i) => i.createdBy?.id === authStore.user?.id));
 	let recentIssues = $derived(allIssues.slice(0, 5));
 
 	function countBy<K extends keyof Issue>(items: Issue[], key: K): Record<string, number> {
@@ -184,8 +184,8 @@
 						</div>
 						<div>
 							<p class="text-3xl font-bold text-purple-600">{myIssues.length}</p>
-							<p class="text-sm font-medium text-gray-600 mt-0.5">Assegnate a me</p>
-							<p class="text-xs text-gray-400">In carico a te</p>
+							<p class="text-sm font-medium text-gray-600 mt-0.5">Create da me</p>
+							<p class="text-xs text-gray-400">Le tue segnalazioni</p>
 						</div>
 					</div>
 				</div>
@@ -278,7 +278,7 @@
 					<div class="bg-white rounded-xl shadow-sm p-5">
 						<h2 class="text-lg font-semibold text-gray-900 mb-4">Le Mie Issue</h2>
 						{#if myIssues.length === 0}
-							<p class="text-sm text-gray-500">Nessuna issue assegnata</p>
+							<p class="text-sm text-gray-500">Nessuna issue creata</p>
 						{:else}
 							<div class="space-y-3">
 								{#each myIssues.slice(0, 5) as issue (issue.id)}
@@ -294,7 +294,7 @@
 									</a>
 								{/each}
 								{#if myIssues.length > 5}
-									<a href="/issues?assignedToId={authStore.user?.id}" class="block text-center text-sm text-blue-600 hover:text-blue-700 py-2">
+									<a href="/issues" class="block text-center text-sm text-blue-600 hover:text-blue-700 py-2">
 										Vedi tutte ({myIssues.length})
 									</a>
 								{/if}

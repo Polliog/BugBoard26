@@ -18,8 +18,8 @@ public class PermissionService {
             return true;
 
         return user.getRole() == GlobalRole.USER
-                && issue.getAssignedTo() != null
-                && issue.getAssignedTo().getId().equals(user.getId());
+                && issue.getCreatedBy() != null
+                && issue.getCreatedBy().getId().equals(user.getId());
     }
 
     public boolean canChangeStatus(User user, Issue issue) {

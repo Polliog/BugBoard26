@@ -53,6 +53,28 @@ public class NotificationService {
     }
 
     @Transactional
+    public void markAllAsRead(String userEmail) {
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Utente non trovato"));
+        notificationRepository.markAllAsReadByUserId(user.getId());
+    }
+
+    @Transactional
+    public void deleteNotification(String id) {
+        if (!notificationRepository.existsById(id)) {
+            throw new ResponseStatusException(NOT_FOUND, "Notifica non trovata");
+        }
+        notificationRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void deleteAllByUser(String userEmail) {
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Utente non trovato"));
+        notificationRepository.deleteAllByUserId(user.getId());
+    }
+
+    @Transactional
     public void notifyUser(String userId, String message, Issue issue) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Utente non trovato"));

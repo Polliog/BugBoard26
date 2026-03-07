@@ -44,6 +44,28 @@
 		}
 	}
 
+	async function handleMarkAllRead() {
+		try {
+			await notificationsApi.markAllAsRead();
+			notifications = notifications.map((n) => ({ ...n, read: true }));
+		} catch { /* ignore */ }
+	}
+
+	async function handleDeleteNotification(e: Event, id: string) {
+		e.stopPropagation();
+		try {
+			await notificationsApi.delete(id);
+			notifications = notifications.filter((n) => n.id !== id);
+		} catch { /* ignore */ }
+	}
+
+	async function handleDeleteAll() {
+		try {
+			await notificationsApi.deleteAll();
+			notifications = [];
+		} catch { /* ignore */ }
+	}
+
 	const roleLabels: Record<string, string> = {
 		ADMIN: 'Admin',
 		USER: 'User',
@@ -72,7 +94,7 @@
 							d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
 					</svg>
 				</div>
-				<span class="text-xl font-bold text-gray-900">BugBoard26</span>
+				<span class="text-xl font-bold text-gray-900 hidden sm:inline">BugBoard26</span>
 			</a>
 
 			<div class="flex items-center gap-2">
@@ -94,27 +116,64 @@
 					</button>
 
 					{#if showNotifications}
-						<div class="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50 max-h-96 overflow-y-auto">
-							<div class="px-4 py-3 border-b border-gray-200">
+						<div class="absolute right-0 mt-2 w-96 bg-white rounded-xl shadow-lg border border-gray-200 z-50 overflow-hidden">
+							<div class="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
 								<h3 class="font-semibold text-gray-900">Notifiche</h3>
+								{#if notifications.length > 0}
+									<div class="flex gap-2">
+										{#if unreadCount > 0}
+											<button onclick={handleMarkAllRead}
+												class="text-xs text-blue-600 hover:text-blue-700 font-medium">
+												Segna tutte lette
+											</button>
+										{/if}
+										<button onclick={handleDeleteAll}
+											class="text-xs text-red-600 hover:text-red-700 font-medium">
+											Cancella tutte
+										</button>
+									</div>
+								{/if}
 							</div>
 							{#if notifications.length === 0}
-								<p class="px-4 py-6 text-sm text-gray-500 text-center">Nessuna notifica</p>
+								<div class="px-4 py-8 text-center">
+									<svg class="w-10 h-10 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+									</svg>
+									<p class="text-sm text-gray-500">Nessuna notifica</p>
+								</div>
 							{:else}
-								{#each notifications as notification (notification.id)}
-									<button
-										onclick={() => handleNotificationClick(notification)}
-										class="w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-0"
-										class:bg-blue-50={!notification.read}
-									>
-										<p class="text-sm text-gray-900" class:font-medium={!notification.read}>
-											{notification.message}
-										</p>
-										<p class="text-xs text-gray-500 mt-1">
-											{formatTimeAgo(notification.createdAt)}
-										</p>
-									</button>
-								{/each}
+								<div class="max-h-80 overflow-y-auto divide-y divide-gray-100">
+									{#each notifications as notification (notification.id)}
+										<div
+											class="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 transition-colors group"
+											class:bg-blue-50={!notification.read}
+										>
+											<button
+												onclick={() => handleNotificationClick(notification)}
+												class="flex-1 text-left min-w-0"
+											>
+												<p class="text-sm text-gray-900 line-clamp-2" class:font-medium={!notification.read}>
+													{notification.message}
+												</p>
+												{#if notification.issueTitle}
+													<p class="text-xs text-blue-600 mt-0.5 truncate">{notification.issueTitle}</p>
+												{/if}
+												<p class="text-xs text-gray-400 mt-1">
+													{formatTimeAgo(notification.createdAt)}
+												</p>
+											</button>
+											<button
+												onclick={(e) => handleDeleteNotification(e, notification.id)}
+												class="p-1 rounded text-gray-300 hover:text-red-600 hover:bg-red-50 transition-colors flex-shrink-0"
+												aria-label="Elimina notifica"
+											>
+												<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+													<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+												</svg>
+											</button>
+										</div>
+									{/each}
+								</div>
 							{/if}
 						</div>
 					{/if}

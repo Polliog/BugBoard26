@@ -7,12 +7,10 @@
 	import IssueFilters from '$lib/components/issues/IssueFilters.svelte';
 	import IssueForm from '$lib/components/issues/IssueForm.svelte';
 	import { issuesApi, type IssueFilters as Filters } from '$lib/api/issues.api';
-	import { usersApi } from '$lib/api/users.api';
 	import { can } from '$lib/utils/permissions';
-	import type { Issue, User, IssueType, IssuePriority, IssueStatus } from '$lib/types';
+	import type { Issue, IssueType, IssuePriority, IssueStatus } from '$lib/types';
 
 	let issues = $state<Issue[]>([]);
-	let users = $state<User[]>([]);
 	let total = $state(0);
 	let loading = $state(true);
 	let isFormOpen = $state(false);
@@ -21,7 +19,6 @@
 	let selectedTypes = $state<IssueType[]>([]);
 	let selectedPriorities = $state<IssuePriority[]>([]);
 	let selectedStatuses = $state<IssueStatus[]>([]);
-	let selectedAssignee = $state('');
 	let showArchived = $state(false);
 	let showDeleted = $state(false);
 	let sortBy = $state('createdAt');
@@ -36,7 +33,6 @@
 				type: selectedTypes.length ? selectedTypes : undefined,
 				priority: selectedPriorities.length ? selectedPriorities : undefined,
 				status: selectedStatuses.length ? selectedStatuses : undefined,
-				assignedToId: selectedAssignee || undefined,
 				archived: showArchived || undefined,
 				deleted: showDeleted || undefined,
 				page: currentPage,
@@ -54,16 +50,9 @@
 		}
 	}
 
-	async function loadUsers() {
-		try {
-			users = await usersApi.getAll();
-		} catch { /* ignore */ }
-	}
-
 	import { onMount } from 'svelte';
 	onMount(() => {
 		loadIssues();
-		loadUsers();
 	});
 
 	function handleFiltersChange() {
@@ -81,13 +70,14 @@
 		}
 	}
 
-	async function handleExport(format: 'csv' | 'pdf') {
+	async function handleExport(format: 'csv' | 'pdf' | 'excel') {
 		try {
 			const blob = await issuesApi.exportFile(format);
 			const url = URL.createObjectURL(blob);
 			const a = document.createElement('a');
 			a.href = url;
-			a.download = `issues.${format}`;
+			const ext = format === 'excel' ? 'xlsx' : format;
+			a.download = `issues.${ext}`;
 			a.click();
 			URL.revokeObjectURL(url);
 		} catch {
@@ -119,6 +109,10 @@
 						class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm">
 						Export PDF
 					</button>
+					<button onclick={() => handleExport('excel')}
+						class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm">
+						Export Excel
+					</button>
 					{#if can(authStore.user, 'create:issue')}
 						<button onclick={() => (isFormOpen = true)}
 							class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
@@ -134,8 +128,8 @@
 
 		<IssueFilters
 			bind:search bind:selectedTypes bind:selectedPriorities
-			bind:selectedStatuses bind:selectedAssignee bind:showArchived bind:showDeleted bind:sortBy
-			{users} currentUser={authStore.user} onchange={handleFiltersChange}
+			bind:selectedStatuses bind:showArchived bind:showDeleted bind:sortBy
+			currentUser={authStore.user} onchange={handleFiltersChange}
 		/>
 
 		{#if loading}
@@ -181,6 +175,6 @@
 	</div>
 </div>
 
-<IssueForm isOpen={isFormOpen} {users} currentUser={authStore.user}
+<IssueForm isOpen={isFormOpen}
 	onClose={() => (isFormOpen = false)}
 	onSubmit={handleCreateIssue} />

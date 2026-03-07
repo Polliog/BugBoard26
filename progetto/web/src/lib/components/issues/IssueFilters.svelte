@@ -1,17 +1,14 @@
 <script lang="ts">
 	import type { IssueType, IssuePriority, IssueStatus, User } from '$lib/types';
-	import UserSearch from '$lib/components/ui/UserSearch.svelte';
 
 	interface Props {
 		search: string;
 		selectedTypes: IssueType[];
 		selectedPriorities: IssuePriority[];
 		selectedStatuses: IssueStatus[];
-		selectedAssignee: string;
 		showArchived: boolean;
 		showDeleted: boolean;
 		sortBy: string;
-		users: User[];
 		currentUser: User | null;
 		onchange: () => void;
 	}
@@ -21,11 +18,9 @@
 		selectedTypes = $bindable(),
 		selectedPriorities = $bindable(),
 		selectedStatuses = $bindable(),
-		selectedAssignee = $bindable(),
 		showArchived = $bindable(),
 		showDeleted = $bindable(),
 		sortBy = $bindable(),
-		users,
 		currentUser = null,
 		onchange
 	}: Props = $props();
@@ -71,7 +66,7 @@
 					id="filter-sort"
 					bind:value={sortBy}
 					onchange={onchange}
-					class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+					class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent min-w-[160px]"
 				>
 					<option value="createdAt">Più recenti</option>
 					<option value="priority">Per priorità</option>
@@ -100,7 +95,7 @@
 			</div>
 		</div>
 
-		<div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+		<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 			<fieldset>
 				<legend class="text-xs font-medium text-gray-700 mb-2">Tipo</legend>
 				<div class="flex flex-wrap gap-2">
@@ -157,17 +152,6 @@
 					{/each}
 				</div>
 			</fieldset>
-
-			<div>
-				<span class="text-xs font-medium text-gray-700 mb-2 block">Assegnato a</span>
-				<UserSearch
-					{users}
-					selectedId={selectedAssignee}
-					{currentUser}
-					placeholder="Cerca utente..."
-					onchange={(id) => { selectedAssignee = id; onchange(); }}
-				/>
-			</div>
 		</div>
 	</div>
 </div>

@@ -8,7 +8,7 @@ export function can(user: User | null, action: string, issue?: Issue): boolean {
 		case 'comment':
 			return user.role !== 'EXTERNAL';
 		case 'change:status':
-			return user.role === 'ADMIN' || issue?.assignedTo?.id === user.id;
+			return user.role === 'ADMIN' || issue?.createdBy?.id === user.id;
 		case 'archive':
 			return user.role === 'ADMIN';
 		case 'delete:issue':

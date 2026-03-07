@@ -33,17 +33,6 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import com.itextpdf.io.font.constants.StandardFonts;
-import com.itextpdf.kernel.font.PdfFont;
-import com.itextpdf.kernel.font.PdfFontFactory;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.layout.Document;
-import com.itextpdf.layout.element.Cell;
-import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.element.Table;
-import com.itextpdf.layout.properties.UnitValue;
-
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -72,7 +61,7 @@ public class ExportService {
              CSVWriter writer = new CSVWriter(new OutputStreamWriter(baos, StandardCharsets.UTF_8))) {
 
             String[] header = {"ID", "Titolo", "Tipo", "Priorita", "Stato", "Creato da",
-                    "Assegnato a", "Data creazione", "Archiviata"};
+                    "Data creazione", "Archiviata"};
             writer.writeNext(header);
 
             for (Issue issue : issues) {
@@ -83,7 +72,6 @@ public class ExportService {
                         issue.getPriority() != null ? issue.getPriority().name() : "",
                         issue.getStatus().name(),
                         issue.getCreatedBy() != null ? issue.getCreatedBy().getName() : "",
-                        issue.getAssignedTo() != null ? issue.getAssignedTo().getName() : "",
                         issue.getCreatedAt() != null ? issue.getCreatedAt().toString() : "",
                         String.valueOf(issue.isArchived())
                 };
@@ -173,11 +161,11 @@ public class ExportService {
             document.add(statsTable);
 
             // --- Data table ---
-            float[] colWidths = {30, 10, 10, 10, 12, 12, 16};
+            float[] colWidths = {35, 12, 12, 12, 14, 15};
             Table table = new Table(UnitValue.createPercentArray(colWidths));
             table.setWidth(UnitValue.createPercentValue(100));
 
-            String[] headers = {"Titolo", "Tipo", "Priorita", "Stato", "Creato da", "Assegnato a", "Data creazione"};
+            String[] headers = {"Titolo", "Tipo", "Priorita", "Stato", "Creato da", "Data creazione"};
             for (String h : headers) {
                 Cell hCell = new Cell()
                         .add(new Paragraph(h).setFont(bold).setFontSize(9).setFontColor(new DeviceRgb(255, 255, 255)))
@@ -199,7 +187,6 @@ public class ExportService {
                 addDataCell(table, formatPriority(issue.getPriority()), regular, 9, rowBg, priorityColor(issue.getPriority()), borderColor);
                 addDataCell(table, formatStatus(issue.getStatus()), bold, 9, rowBg, statusColor(issue.getStatus()), borderColor);
                 addDataCell(table, issue.getCreatedBy() != null ? issue.getCreatedBy().getName() : "-", regular, 9, rowBg, null, borderColor);
-                addDataCell(table, issue.getAssignedTo() != null ? issue.getAssignedTo().getName() : "-", regular, 9, rowBg, null, borderColor);
                 addDataCell(table, issue.getCreatedAt() != null ? dateFmt.format(issue.getCreatedAt()) : "-", regular, 8, rowBg, mediumGray, borderColor);
             }
 
@@ -241,7 +228,7 @@ public class ExportService {
             headerStyle.setFont(font);
 
             String[] headers = {"ID", "Titolo", "Tipo", "Priorita", "Stato",
-                    "Creato da", "Assegnato a", "Data creazione", "Archiviata"};
+                    "Creato da", "Data creazione", "Archiviata"};
             Row headerRow = sheet.createRow(0);
             for (int i = 0; i < headers.length; i++) {
                 org.apache.poi.ss.usermodel.Cell cell = headerRow.createCell(i);
@@ -258,9 +245,8 @@ public class ExportService {
                 row.createCell(3).setCellValue(issue.getPriority() != null ? issue.getPriority().name() : "");
                 row.createCell(4).setCellValue(issue.getStatus().name());
                 row.createCell(5).setCellValue(issue.getCreatedBy() != null ? issue.getCreatedBy().getName() : "");
-                row.createCell(6).setCellValue(issue.getAssignedTo() != null ? issue.getAssignedTo().getName() : "");
-                row.createCell(7).setCellValue(issue.getCreatedAt() != null ? issue.getCreatedAt().toString() : "");
-                row.createCell(8).setCellValue(issue.isArchived());
+                row.createCell(6).setCellValue(issue.getCreatedAt() != null ? issue.getCreatedAt().toString() : "");
+                row.createCell(7).setCellValue(issue.isArchived());
             }
 
             for (int i = 0; i < headers.length; i++) {

@@ -116,18 +116,18 @@ class IssueServiceTest {
     @DisplayName("Cambio stato a RISOLTA notifica il creatore")
     void whenStatusSetToRisolta_thenNotifyCreator() {
         User creator = buildUser("creator", GlobalRole.USER);
-        User assignee = buildUser("assignee", GlobalRole.USER);
-        Issue issue = buildIssue(creator, assignee, IssueStatus.IN_PROGRESS);
+        User admin = buildUser("admin", GlobalRole.ADMIN);
+        Issue issue = buildIssue(creator, null, IssueStatus.IN_PROGRESS);
 
-        when(userRepository.findByEmail(assignee.getEmail())).thenReturn(Optional.of(assignee));
+        when(userRepository.findByEmail(admin.getEmail())).thenReturn(Optional.of(admin));
         when(issueRepository.findById(issue.getId())).thenReturn(Optional.of(issue));
-        when(permissionService.canChangeStatus(assignee, issue)).thenReturn(true);
+        when(permissionService.canChangeStatus(admin, issue)).thenReturn(true);
         when(issueRepository.save(any(Issue.class))).thenReturn(issue);
 
         UpdateIssueRequest req = new UpdateIssueRequest(
                 null, null, null, null, IssueStatus.RISOLTA, null, null, null, null
         );
-        issueService.update(issue.getId(), req, assignee.getEmail());
+        issueService.update(issue.getId(), req, admin.getEmail());
 
         verify(notificationService).notifyUser(eq(creator.getId()), contains("risolta"), any(Issue.class));
     }
@@ -139,18 +139,18 @@ class IssueServiceTest {
     @DisplayName("Cambio stato a IN_PROGRESS non genera notifica")
     void whenStatusSetToInProgress_thenNoNotification() {
         User creator = buildUser("creator", GlobalRole.USER);
-        User assignee = buildUser("assignee", GlobalRole.USER);
-        Issue issue = buildIssue(creator, assignee, IssueStatus.TODO);
+        User admin = buildUser("admin", GlobalRole.ADMIN);
+        Issue issue = buildIssue(creator, null, IssueStatus.TODO);
 
-        when(userRepository.findByEmail(assignee.getEmail())).thenReturn(Optional.of(assignee));
+        when(userRepository.findByEmail(admin.getEmail())).thenReturn(Optional.of(admin));
         when(issueRepository.findById(issue.getId())).thenReturn(Optional.of(issue));
-        when(permissionService.canChangeStatus(assignee, issue)).thenReturn(true);
+        when(permissionService.canChangeStatus(admin, issue)).thenReturn(true);
         when(issueRepository.save(any(Issue.class))).thenReturn(issue);
 
         UpdateIssueRequest req = new UpdateIssueRequest(
                 null, null, null, null, IssueStatus.IN_PROGRESS, null, null, null, null
         );
-        issueService.update(issue.getId(), req, assignee.getEmail());
+        issueService.update(issue.getId(), req, admin.getEmail());
 
         verify(notificationService, never()).notifyUser(anyString(), anyString(), any());
     }

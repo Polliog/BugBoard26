@@ -185,6 +185,15 @@
 		{#if loading}
 			<div class="flex justify-center py-12"><Spinner size="lg" /></div>
 		{:else if issue}
+			{#if issue.archived}
+				<div class="bg-orange-50 border border-orange-200 rounded-xl p-4 mb-6 flex items-center gap-3">
+					<svg class="w-5 h-5 text-orange-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+					</svg>
+					<span class="font-medium text-orange-800">Questa issue è archiviata{issue.archivedBy ? ` da ${issue.archivedBy.name}` : ''}</span>
+				</div>
+			{/if}
+
 			{#if issue.deletedAt}
 				<div class="bg-red-50 border border-red-200 rounded-xl p-4 mb-6 flex items-center justify-between">
 					<div class="flex items-center gap-2 text-red-800">
@@ -281,10 +290,6 @@
 						<div>
 							<p class="text-gray-500 mb-1">Data creazione</p>
 							<p class="font-medium text-gray-900">{formatDate(issue.createdAt)}</p>
-						</div>
-						<div>
-							<p class="text-gray-500 mb-1">Assegnato a</p>
-							<p class="font-medium text-gray-900">{issue.assignedTo?.name ?? 'Nessuno'}</p>
 						</div>
 						{#if issue.updatedAt}
 							<div>

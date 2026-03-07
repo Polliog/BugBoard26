@@ -29,4 +29,22 @@ public class NotificationController {
     public ResponseEntity<NotificationResponse> markAsRead(@PathVariable String id) {
         return ResponseEntity.ok(notificationService.markAsRead(id));
     }
+
+    @PatchMapping("/read-all")
+    public ResponseEntity<Void> markAllAsRead(Authentication authentication) {
+        notificationService.markAllAsRead(authentication.getName());
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable String id) {
+        notificationService.deleteNotification(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Void> deleteAll(Authentication authentication) {
+        notificationService.deleteAllByUser(authentication.getName());
+        return ResponseEntity.noContent().build();
+    }
 }

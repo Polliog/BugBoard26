@@ -61,6 +61,10 @@ public class IssueController {
                 : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, pageSize, sort);
 
+        if (archived == null) {
+            archived = false;
+        }
+
         PagedResponse<IssueResponse> response = issueService.getAll(
                 type, status, priority, assignedToId, archived, search, deleted,
                 authentication.getName(), pageable

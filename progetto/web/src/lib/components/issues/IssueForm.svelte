@@ -1,30 +1,25 @@
 <script lang="ts">
-	import type { IssueType, IssuePriority, User } from '$lib/types';
+	import type { IssueType, IssuePriority } from '$lib/types';
 	import Modal from '$lib/components/ui/Modal.svelte';
-	import UserSearch from '$lib/components/ui/UserSearch.svelte';
 
 	interface Props {
 		isOpen: boolean;
-		users: User[];
-		currentUser: User | null;
 		onClose: () => void;
 		onSubmit: (data: {
 			title: string;
 			type: IssueType;
 			description: string;
 			priority: IssuePriority;
-			assignedToId?: string;
 			image?: string;
 		}) => void;
 	}
 
-	let { isOpen, users, currentUser = null, onClose, onSubmit }: Props = $props();
+	let { isOpen, onClose, onSubmit }: Props = $props();
 
 	let title = $state('');
 	let type = $state<IssueType>('BUG');
 	let description = $state('');
 	let priority = $state<IssuePriority>('MEDIA');
-	let assignedToId = $state('');
 	let image = $state('');
 	let imagePreview = $state('');
 	let errors = $state<Record<string, string>>({});
@@ -48,7 +43,6 @@
 		type = 'BUG';
 		description = '';
 		priority = 'MEDIA';
-		assignedToId = '';
 		image = '';
 		imagePreview = '';
 		errors = {};
@@ -82,7 +76,6 @@
 		if (!validate()) return;
 		onSubmit({
 			title, type, description, priority,
-			assignedToId: assignedToId || undefined,
 			image: image || undefined
 		});
 		reset();
@@ -115,17 +108,6 @@
 					{#each issuePriorities as p}<option value={p.value}>{p.label}</option>{/each}
 				</select>
 			</div>
-		</div>
-
-		<div>
-			<span class="block text-sm font-medium text-gray-900 mb-2">Assegnato a</span>
-			<UserSearch
-				{users}
-				selectedId={assignedToId}
-				{currentUser}
-				placeholder="Cerca utente..."
-				onchange={(id) => { assignedToId = id; }}
-			/>
 		</div>
 
 		<div>

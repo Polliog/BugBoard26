@@ -105,12 +105,6 @@ public class IssueService {
         issue.setCreatedBy(currentUser);
         issue.setImage(request.image());
 
-        if (request.assignedToId() != null) {
-            User assignee = userRepository.findById(request.assignedToId())
-                    .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Utente assegnato non trovato"));
-            issue.setAssignedTo(assignee);
-        }
-
         HistoryEntry creation = new HistoryEntry(issue, currentUser, "Issue creata");
         issue.getHistory().add(creation);
 
@@ -169,7 +163,7 @@ public class IssueService {
         // Modifica campi generici (solo se l'utente puo modificare la issue)
         if (request.title() != null || request.type() != null ||
                 request.description() != null || request.priority() != null ||
-                request.assignedToId() != null || request.image() != null) {
+                request.image() != null) {
 
             if (!permissionService.canModifyIssue(currentUser, issue)) {
                 throw new AccessDeniedException("Non hai i permessi per modificare questa issue");
@@ -186,13 +180,6 @@ public class IssueService {
             }
             if (request.priority() != null) {
                 issue.setPriority(request.priority());
-            }
-            if (request.assignedToId() != null) {
-                User assignee = userRepository.findById(request.assignedToId())
-                        .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Utente assegnato non trovato"));
-                issue.setAssignedTo(assignee);
-                issue.getHistory().add(new HistoryEntry(issue, currentUser,
-                        "Assegnata a " + assignee.getName()));
             }
             if (request.image() != null) {
                 issue.setImage(request.image().isEmpty() ? null : request.image());

@@ -40,16 +40,19 @@
 			<p class="text-sm text-gray-600 mb-3 line-clamp-2">{issue.description}</p>
 			<div class="flex items-center gap-4 text-xs text-gray-500">
 				<span>{formatDate(issue.createdAt)}</span>
-				{#if issue.assignedTo}
-					<span class="flex items-center gap-1">
-						<svg class="w-4 h-4" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
-							<path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
-						</svg>
-						{issue.assignedTo.name}
-					</span>
-				{/if}
+				<span class="flex items-center gap-1">
+					<svg class="w-4 h-4" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
+						<path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+					</svg>
+					{issue.createdBy.name}
+				</span>
 				{#if issue.archived}
-					<span class="text-orange-600 font-medium">Archiviata</span>
+					<span class="inline-flex items-center gap-1 text-orange-600 font-medium">
+						<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+						</svg>
+						Archiviata
+					</span>
 				{/if}
 			</div>
 		</div>

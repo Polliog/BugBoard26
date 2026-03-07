@@ -59,19 +59,19 @@ class PermissionServiceTest {
     }
 
     @Test
-    @DisplayName("USER puo modificare issue assegnata a se stesso")
-    void userCanModifyAssignedIssue() {
+    @DisplayName("USER puo modificare issue creata da se stesso")
+    void userCanModifyOwnIssue() {
         User user = buildUser("user", GlobalRole.USER);
-        Issue issue = buildIssue(buildUser("other", GlobalRole.USER), user);
+        Issue issue = buildIssue(user, null);
         assertTrue(permissionService.canModifyIssue(user, issue));
     }
 
     @Test
-    @DisplayName("USER non puo modificare issue non assegnata a se stesso")
-    void userCannotModifyUnassignedIssue() {
+    @DisplayName("USER non puo modificare issue creata da altri")
+    void userCannotModifyOtherIssue() {
         User user = buildUser("user", GlobalRole.USER);
         User other = buildUser("other", GlobalRole.USER);
-        Issue issue = buildIssue(other, other);
+        Issue issue = buildIssue(other, null);
         assertFalse(permissionService.canModifyIssue(user, issue));
     }
 
@@ -79,7 +79,7 @@ class PermissionServiceTest {
     @DisplayName("EXTERNAL non puo modificare issue")
     void externalCannotModifyIssue() {
         User external = buildUser("external", GlobalRole.EXTERNAL);
-        Issue issue = buildIssue(buildUser("creator", GlobalRole.USER), external);
+        Issue issue = buildIssue(external, null);
         assertFalse(permissionService.canModifyIssue(external, issue));
     }
 
