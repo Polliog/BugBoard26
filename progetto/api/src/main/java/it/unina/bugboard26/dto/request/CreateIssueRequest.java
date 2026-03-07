@@ -2,6 +2,7 @@ package it.unina.bugboard26.dto.request;
 
 import it.unina.bugboard26.model.enums.IssuePriority;
 import it.unina.bugboard26.model.enums.IssueType;
+
 import jakarta.validation.constraints.*;
 
 public record CreateIssueRequest(

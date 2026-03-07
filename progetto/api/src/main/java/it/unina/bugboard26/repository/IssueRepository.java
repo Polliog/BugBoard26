@@ -4,6 +4,7 @@ import it.unina.bugboard26.model.Issue;
 import it.unina.bugboard26.model.enums.IssuePriority;
 import it.unina.bugboard26.model.enums.IssueStatus;
 import it.unina.bugboard26.model.enums.IssueType;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

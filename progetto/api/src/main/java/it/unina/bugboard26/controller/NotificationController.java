@@ -1,9 +1,12 @@
 package it.unina.bugboard26.controller;
 
 import it.unina.bugboard26.dto.response.NotificationResponse;
+
 import it.unina.bugboard26.model.User;
+
 import it.unina.bugboard26.service.AuthService;
 import it.unina.bugboard26.service.NotificationService;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;

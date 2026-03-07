@@ -3,8 +3,10 @@ package it.unina.bugboard26.controller;
 import it.unina.bugboard26.dto.request.LoginRequest;
 import it.unina.bugboard26.dto.response.AuthResponse;
 import it.unina.bugboard26.dto.response.UserResponse;
+
 import it.unina.bugboard26.model.User;
 import it.unina.bugboard26.service.AuthService;
+
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;

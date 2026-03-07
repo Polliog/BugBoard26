@@ -4,6 +4,7 @@ import it.unina.bugboard26.dto.request.CreateIssueRequest;
 import it.unina.bugboard26.dto.request.UpdateIssueRequest;
 import it.unina.bugboard26.dto.response.IssueResponse;
 import it.unina.bugboard26.dto.response.PagedResponse;
+
 import it.unina.bugboard26.model.HistoryEntry;
 import it.unina.bugboard26.model.Issue;
 import it.unina.bugboard26.model.Label;
@@ -11,9 +12,11 @@ import it.unina.bugboard26.model.User;
 import it.unina.bugboard26.model.enums.IssuePriority;
 import it.unina.bugboard26.model.enums.IssueStatus;
 import it.unina.bugboard26.model.enums.IssueType;
+
 import it.unina.bugboard26.repository.IssueRepository;
 import it.unina.bugboard26.repository.LabelRepository;
 import it.unina.bugboard26.repository.UserRepository;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;

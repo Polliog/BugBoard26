@@ -1,6 +1,7 @@
 package it.unina.bugboard26.model;
 
 import it.unina.bugboard26.model.enums.GlobalRole;
+
 import jakarta.persistence.*;
 import java.time.Instant;
 

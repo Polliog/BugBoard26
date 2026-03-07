@@ -1,6 +1,7 @@
 package it.unina.bugboard26.dto.request;
 
 import it.unina.bugboard26.model.enums.GlobalRole;
+
 import jakarta.validation.constraints.*;
 
 public record CreateUserRequest(

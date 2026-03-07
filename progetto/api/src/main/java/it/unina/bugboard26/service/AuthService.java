@@ -3,9 +3,11 @@ package it.unina.bugboard26.service;
 import it.unina.bugboard26.dto.request.LoginRequest;
 import it.unina.bugboard26.dto.response.AuthResponse;
 import it.unina.bugboard26.dto.response.UserResponse;
+
 import it.unina.bugboard26.model.User;
 import it.unina.bugboard26.repository.UserRepository;
 import it.unina.bugboard26.security.JwtService;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

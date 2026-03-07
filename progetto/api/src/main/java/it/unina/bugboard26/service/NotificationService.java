@@ -1,11 +1,14 @@
 package it.unina.bugboard26.service;
 
 import it.unina.bugboard26.dto.response.NotificationResponse;
+
 import it.unina.bugboard26.model.Issue;
 import it.unina.bugboard26.model.Notification;
 import it.unina.bugboard26.model.User;
+
 import it.unina.bugboard26.repository.NotificationRepository;
 import it.unina.bugboard26.repository.UserRepository;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;

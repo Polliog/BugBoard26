@@ -3,6 +3,7 @@ package it.unina.bugboard26.model;
 import it.unina.bugboard26.model.enums.IssuePriority;
 import it.unina.bugboard26.model.enums.IssueStatus;
 import it.unina.bugboard26.model.enums.IssueType;
+
 import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;

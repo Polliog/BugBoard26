@@ -1,10 +1,12 @@
 package it.unina.bugboard26.service;
 
 import com.opencsv.CSVWriter;
+
 import it.unina.bugboard26.model.Issue;
 import it.unina.bugboard26.model.enums.IssuePriority;
 import it.unina.bugboard26.model.enums.IssueStatus;
 import it.unina.bugboard26.model.enums.IssueType;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +14,21 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+
+import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.properties.UnitValue;
+
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 
 @Service
 @Transactional(readOnly = true)
@@ -68,32 +85,31 @@ public class ExportService {
                             String assignedToId,
                             Boolean archived,
                             String search) {
+
         List<Issue> issues = issueService.getFilteredForExport(
                 types, statuses, priorities, assignedToId, archived, search
         );
 
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            com.itextpdf.kernel.pdf.PdfDocument pdfDoc =
-                    new com.itextpdf.kernel.pdf.PdfDocument(new com.itextpdf.kernel.pdf.PdfWriter(baos));
-            com.itextpdf.layout.Document document = new com.itextpdf.layout.Document(pdfDoc);
+            PdfDocument pdfDoc = new PdfDocument(new PdfWriter(baos));
+            Document document = new Document(pdfDoc);
 
-            com.itextpdf.kernel.font.PdfFont bold = com.itextpdf.kernel.font.PdfFontFactory
-                    .createFont(com.itextpdf.io.font.constants.StandardFonts.HELVETICA_BOLD);
+            PdfFont bold = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD);
 
-            document.add(new com.itextpdf.layout.element.Paragraph("BugBoard26 - Report Issue")
+            document.add(new Paragraph("BugBoard26 - Report Issue")
                     .setFontSize(18)
                     .setFont(bold));
 
-            document.add(new com.itextpdf.layout.element.Paragraph("Totale issue: " + issues.size())
+            document.add(new Paragraph("Totale issue: " + issues.size())
                     .setFontSize(12));
 
-            com.itextpdf.layout.element.Table table = new com.itextpdf.layout.element.Table(7);
-            table.setWidth(com.itextpdf.layout.properties.UnitValue.createPercentValue(100));
+            Table table = new Table(7);
+            table.setWidth(UnitValue.createPercentValue(100));
 
             String[] headers = {"Titolo", "Tipo", "Priorita", "Stato", "Creato da", "Assegnato a", "Data"};
             for (String h : headers) {
-                table.addHeaderCell(new com.itextpdf.layout.element.Cell()
-                        .add(new com.itextpdf.layout.element.Paragraph(h).setFont(bold)));
+                table.addHeaderCell(new Cell()
+                        .add(new Paragraph(h).setFont(bold)));
             }
 
             for (Issue issue : issues) {
@@ -112,6 +128,62 @@ public class ExportService {
             return baos.toByteArray();
         } catch (Exception e) {
             throw new RuntimeException("Errore durante l'export PDF", e);
+        }
+    }
+
+
+    public byte[] exportExcel(List<IssueType> types,
+                              List<IssueStatus> statuses,
+                              List<IssuePriority> priorities,
+                              String assignedToId,
+                              Boolean archived,
+                              String search) {
+        List<Issue> issues = issueService.getFilteredForExport(
+                types, statuses, priorities, assignedToId, archived, search
+        );
+
+        try (Workbook workbook = new XSSFWorkbook();
+             ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+
+            Sheet sheet = workbook.createSheet("Issue");
+
+            CellStyle headerStyle = workbook.createCellStyle();
+            Font font = workbook.createFont();
+            font.setBold(true);
+            headerStyle.setFont(font);
+
+            String[] headers = {"ID", "Titolo", "Tipo", "Priorita", "Stato",
+                    "Creato da", "Assegnato a", "Data creazione", "Archiviata"};
+            Row headerRow = sheet.createRow(0);
+            for (int i = 0; i < headers.length; i++) {
+                org.apache.poi.ss.usermodel.Cell cell = headerRow.createCell(i);
+                cell.setCellValue(headers[i]);
+                cell.setCellStyle(headerStyle);
+            }
+
+            int rowIndex = 1;
+            for (Issue issue : issues) {
+                Row row = sheet.createRow(rowIndex++);
+                row.createCell(0).setCellValue(issue.getId());
+                row.createCell(1).setCellValue(issue.getTitle());
+                row.createCell(2).setCellValue(issue.getType().name());
+                row.createCell(3).setCellValue(issue.getPriority() != null ? issue.getPriority().name() : "");
+                row.createCell(4).setCellValue(issue.getStatus().name());
+                row.createCell(5).setCellValue(issue.getCreatedBy() != null ? issue.getCreatedBy().getName() : "");
+                row.createCell(6).setCellValue(issue.getAssignedTo() != null ? issue.getAssignedTo().getName() : "");
+                row.createCell(7).setCellValue(issue.getCreatedAt() != null ? issue.getCreatedAt().toString() : "");
+                row.createCell(8).setCellValue(issue.isArchived());
+            }
+
+            for (int i = 0; i < headers.length; i++) {
+                sheet.autoSizeColumn(i);
+            }
+
+            workbook.write(baos);
+            return baos.toByteArray();
+
+        } catch (Exception e) {
+            throw new RuntimeException("Errore durante l'export Excel", e);
         }
     }
 }

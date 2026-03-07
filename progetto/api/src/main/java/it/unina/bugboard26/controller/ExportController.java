@@ -3,7 +3,9 @@ package it.unina.bugboard26.controller;
 import it.unina.bugboard26.model.enums.IssuePriority;
 import it.unina.bugboard26.model.enums.IssueStatus;
 import it.unina.bugboard26.model.enums.IssueType;
+
 import it.unina.bugboard26.service.ExportService;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,18 @@ import java.util.List;
 public class ExportController {
 
     private final ExportService exportService;
+
+    public enum ExportFormat {
+        CSV, PDF, EXCEL;
+
+        public static ExportFormat from(String value) {
+            try {
+                return ExportFormat.valueOf(value.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                return null;
+            }
+        }
+    }
 
     public ExportController(ExportService exportService) {
         this.exportService = exportService;
@@ -31,22 +45,36 @@ public class ExportController {
             @RequestParam(required = false) String search,
             @RequestParam(defaultValue = "false") boolean includeArchived
     ) {
-        Boolean archived = includeArchived ? null : false;
+        ExportFormat exportFormat = ExportFormat.from(format);
 
-        if ("csv".equalsIgnoreCase(format)) {
-            byte[] data = exportService.exportCsv(type, status, priority, assignedToId, archived, search);
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=issues.csv")
-                    .contentType(MediaType.parseMediaType("text/csv"))
-                    .body(data);
-        } else if ("pdf".equalsIgnoreCase(format)) {
-            byte[] data = exportService.exportPdf(type, status, priority, assignedToId, archived, search);
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=issues.pdf")
-                    .contentType(MediaType.APPLICATION_PDF)
-                    .body(data);
-        } else {
+        if (exportFormat == null) {
             return ResponseEntity.badRequest().build();
         }
+
+        Boolean archived = includeArchived ? null : false;
+
+        return switch (exportFormat) {
+            case CSV -> {
+                byte[] data = exportService.exportCsv(type, status, priority, assignedToId, archived, search);
+                yield ResponseEntity.ok()
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=issues.csv")
+                        .contentType(MediaType.parseMediaType("text/csv"))
+                        .body(data);
+            }
+            case PDF -> {
+                byte[] data = exportService.exportPdf(type, status, priority, assignedToId, archived, search);
+                yield ResponseEntity.ok()
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=issues.pdf")
+                        .contentType(MediaType.APPLICATION_PDF)
+                        .body(data);
+            }
+            case EXCEL -> {
+                byte[] data = exportService.exportExcel(type, status, priority, assignedToId, archived, search);
+                yield ResponseEntity.ok()
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=issues.xlsx")
+                        .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                        .body(data);
+            }
+        };
     }
 }

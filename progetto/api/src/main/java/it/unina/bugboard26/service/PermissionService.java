@@ -3,6 +3,7 @@ package it.unina.bugboard26.service;
 import it.unina.bugboard26.model.Issue;
 import it.unina.bugboard26.model.User;
 import it.unina.bugboard26.model.enums.GlobalRole;
+
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,7 +14,9 @@ public class PermissionService {
     }
 
     public boolean canModifyIssue(User user, Issue issue) {
-        if (user.getRole() == GlobalRole.ADMIN) return true;
+        if (user.getRole() == GlobalRole.ADMIN)
+            return true;
+
         return user.getRole() == GlobalRole.USER
                 && issue.getAssignedTo() != null
                 && issue.getAssignedTo().getId().equals(user.getId());
