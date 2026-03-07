@@ -135,11 +135,13 @@ public class IssueService {
             String action = "Stato cambiato: " + oldStatus + " -> " + request.status();
             issue.getHistory().add(new HistoryEntry(issue, currentUser, action));
 
-            // Notifica il creatore del cambio stato
-            if (issue.getCreatedBy() != null && !issue.getCreatedBy().getId().equals(currentUser.getId())) {
+            // RF06 — Notifica il creatore solo quando la issue viene risolta
+            if (request.status() == IssueStatus.RISOLTA
+                    && issue.getCreatedBy() != null
+                    && !issue.getCreatedBy().getId().equals(currentUser.getId())) {
                 notificationService.notifyUser(
                         issue.getCreatedBy().getId(),
-                        "La issue \"" + issue.getTitle() + "\" e' stata " + request.status().name().toLowerCase(),
+                        "La tua issue \"" + issue.getTitle() + "\" è stata risolta",
                         issue
                 );
             }
