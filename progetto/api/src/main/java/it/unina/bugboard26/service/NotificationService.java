@@ -36,6 +36,12 @@ public class NotificationService {
                 .toList();
     }
 
+    public List<NotificationResponse> getByUserEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Utente non trovato"));
+        return getByUser(user.getId());
+    }
+
     @Transactional
     public NotificationResponse markAsRead(String id) {
         Notification notification = notificationRepository.findById(id)

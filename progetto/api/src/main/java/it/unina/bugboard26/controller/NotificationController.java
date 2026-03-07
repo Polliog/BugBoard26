@@ -2,9 +2,6 @@ package it.unina.bugboard26.controller;
 
 import it.unina.bugboard26.dto.response.NotificationResponse;
 
-import it.unina.bugboard26.model.User;
-
-import it.unina.bugboard26.service.AuthService;
 import it.unina.bugboard26.service.NotificationService;
 
 import org.springframework.http.ResponseEntity;
@@ -18,18 +15,14 @@ import java.util.List;
 public class NotificationController {
 
     private final NotificationService notificationService;
-    private final AuthService authService;
 
-    public NotificationController(NotificationService notificationService,
-                                   AuthService authService) {
+    public NotificationController(NotificationService notificationService) {
         this.notificationService = notificationService;
-        this.authService = authService;
     }
 
     @GetMapping
     public ResponseEntity<List<NotificationResponse>> getAll(Authentication authentication) {
-        User currentUser = authService.getUserByEmail(authentication.getName());
-        return ResponseEntity.ok(notificationService.getByUser(currentUser.getId()));
+        return ResponseEntity.ok(notificationService.getByUserEmail(authentication.getName()));
     }
 
     @PatchMapping("/{id}/read")

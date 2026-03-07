@@ -2,6 +2,7 @@ package it.unina.bugboard26.service;
 
 import it.unina.bugboard26.dto.request.LoginRequest;
 import it.unina.bugboard26.dto.response.AuthResponse;
+import it.unina.bugboard26.dto.response.UserResponse;
 import it.unina.bugboard26.model.User;
 import it.unina.bugboard26.model.enums.GlobalRole;
 import it.unina.bugboard26.repository.UserRepository;
@@ -85,24 +86,25 @@ class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("getUserByEmail restituisce utente esistente")
-    void getUserByEmailReturnsUser() {
+    @DisplayName("getMe restituisce UserResponse per utente esistente")
+    void getMeReturnsUserResponse() {
         User user = buildUser("test", GlobalRole.USER);
         when(userRepository.findByEmail("test@test.com")).thenReturn(Optional.of(user));
 
-        User result = authService.getUserByEmail("test@test.com");
+        UserResponse result = authService.getMe("test@test.com");
 
         assertNotNull(result);
-        assertEquals("test@test.com", result.getEmail());
+        assertEquals("test@test.com", result.email());
+        assertEquals("test", result.name());
     }
 
     @Test
-    @DisplayName("getUserByEmail lancia eccezione per email non trovata")
-    void getUserByEmailThrowsForUnknownEmail() {
+    @DisplayName("getMe lancia eccezione per email non trovata")
+    void getMeThrowsForUnknownEmail() {
         when(userRepository.findByEmail("unknown@test.com")).thenReturn(Optional.empty());
 
         assertThrows(ResponseStatusException.class,
-                () -> authService.getUserByEmail("unknown@test.com"));
+                () -> authService.getMe("unknown@test.com"));
     }
 
     private User buildUser(String name, GlobalRole role) {

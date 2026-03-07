@@ -11,6 +11,7 @@ import it.unina.bugboard26.model.enums.GlobalRole;
 
 import it.unina.bugboard26.repository.CommentRepository;
 import it.unina.bugboard26.repository.IssueRepository;
+import it.unina.bugboard26.repository.UserRepository;
 
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 @Service
 @Transactional(readOnly = true)
@@ -27,14 +29,22 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final IssueRepository issueRepository;
+    private final UserRepository userRepository;
     private final PermissionService permissionService;
 
     public CommentService(CommentRepository commentRepository,
                           IssueRepository issueRepository,
+                          UserRepository userRepository,
                           PermissionService permissionService) {
         this.commentRepository = commentRepository;
         this.issueRepository = issueRepository;
+        this.userRepository = userRepository;
         this.permissionService = permissionService;
+    }
+
+    private User resolveUser(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(UNAUTHORIZED, "Utente non trovato"));
     }
 
     public List<CommentResponse> getByIssue(String issueId) {
@@ -44,7 +54,8 @@ public class CommentService {
     }
 
     @Transactional
-    public CommentResponse create(String issueId, CreateCommentRequest request, User currentUser) {
+    public CommentResponse create(String issueId, CreateCommentRequest request, String userEmail) {
+        User currentUser = resolveUser(userEmail);
         if (!permissionService.canComment(currentUser)) {
             throw new AccessDeniedException("Non hai i permessi per commentare");
         }
@@ -59,7 +70,8 @@ public class CommentService {
     }
 
     @Transactional
-    public CommentResponse update(String id, UpdateCommentRequest request, User currentUser) {
+    public CommentResponse update(String id, UpdateCommentRequest request, String userEmail) {
+        User currentUser = resolveUser(userEmail);
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Commento non trovato"));
 
@@ -76,7 +88,8 @@ public class CommentService {
     }
 
     @Transactional
-    public void delete(String id, User currentUser) {
+    public void delete(String id, String userEmail) {
+        User currentUser = resolveUser(userEmail);
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Commento non trovato"));
 

@@ -4,9 +4,6 @@ import it.unina.bugboard26.dto.request.CreateCommentRequest;
 import it.unina.bugboard26.dto.request.UpdateCommentRequest;
 import it.unina.bugboard26.dto.response.CommentResponse;
 
-import it.unina.bugboard26.model.User;
-
-import it.unina.bugboard26.service.AuthService;
 import it.unina.bugboard26.service.CommentService;
 
 import jakarta.validation.Valid;
@@ -22,11 +19,9 @@ import java.util.List;
 public class CommentController {
 
     private final CommentService commentService;
-    private final AuthService authService;
 
-    public CommentController(CommentService commentService, AuthService authService) {
+    public CommentController(CommentService commentService) {
         this.commentService = commentService;
-        this.authService = authService;
     }
 
     @GetMapping
@@ -38,8 +33,7 @@ public class CommentController {
     public ResponseEntity<CommentResponse> create(@PathVariable String issueId,
                                                    @Valid @RequestBody CreateCommentRequest request,
                                                    Authentication authentication) {
-        User currentUser = authService.getUserByEmail(authentication.getName());
-        CommentResponse response = commentService.create(issueId, request, currentUser);
+        CommentResponse response = commentService.create(issueId, request, authentication.getName());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -48,8 +42,7 @@ public class CommentController {
                                                    @PathVariable String id,
                                                    @Valid @RequestBody UpdateCommentRequest request,
                                                    Authentication authentication) {
-        User currentUser = authService.getUserByEmail(authentication.getName());
-        CommentResponse response = commentService.update(id, request, currentUser);
+        CommentResponse response = commentService.update(id, request, authentication.getName());
         return ResponseEntity.ok(response);
     }
 
@@ -57,8 +50,7 @@ public class CommentController {
     public ResponseEntity<Void> delete(@PathVariable String issueId,
                                         @PathVariable String id,
                                         Authentication authentication) {
-        User currentUser = authService.getUserByEmail(authentication.getName());
-        commentService.delete(id, currentUser);
+        commentService.delete(id, authentication.getName());
         return ResponseEntity.noContent().build();
     }
 }

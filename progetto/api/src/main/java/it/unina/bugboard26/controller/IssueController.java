@@ -5,14 +5,11 @@ import it.unina.bugboard26.dto.request.UpdateIssueRequest;
 import it.unina.bugboard26.dto.response.IssueResponse;
 import it.unina.bugboard26.dto.response.PagedResponse;
 
-import it.unina.bugboard26.model.User;
 import it.unina.bugboard26.model.enums.IssuePriority;
 import it.unina.bugboard26.model.enums.IssueStatus;
 import it.unina.bugboard26.model.enums.IssueType;
 
-import it.unina.bugboard26.service.AuthService;
 import it.unina.bugboard26.service.IssueService;
-import it.unina.bugboard26.service.PermissionService;
 
 import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
@@ -35,13 +32,9 @@ public class IssueController {
     );
 
     private final IssueService issueService;
-    private final AuthService authService;
-    private final PermissionService permissionService;
 
-    public IssueController(IssueService issueService, AuthService authService, PermissionService permissionService) {
+    public IssueController(IssueService issueService) {
         this.issueService = issueService;
-        this.authService = authService;
-        this.permissionService = permissionService;
     }
 
     @GetMapping
@@ -62,12 +55,6 @@ public class IssueController {
         if (!ALLOWED_SORT_FIELDS.contains(sortBy)) {
             sortBy = "createdAt";
         }
-        if (Boolean.TRUE.equals(deleted)) {
-            User currentUser = authService.getUserByEmail(authentication.getName());
-            if (!permissionService.canDeleteIssue(currentUser)) {
-                deleted = null;
-            }
-        }
         pageSize = Math.max(1, Math.min(pageSize, 100));
         Sort sort = order.equalsIgnoreCase("asc")
                 ? Sort.by(sortBy).ascending()
@@ -75,22 +62,21 @@ public class IssueController {
         Pageable pageable = PageRequest.of(page, pageSize, sort);
 
         PagedResponse<IssueResponse> response = issueService.getAll(
-                type, status, priority, assignedToId, archived, search, deleted, pageable
+                type, status, priority, assignedToId, archived, search, deleted,
+                authentication.getName(), pageable
         );
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<IssueResponse> getById(@PathVariable String id, Authentication authentication) {
-        User currentUser = authService.getUserByEmail(authentication.getName());
-        return ResponseEntity.ok(issueService.getById(id, currentUser));
+        return ResponseEntity.ok(issueService.getById(id, authentication.getName()));
     }
 
     @PostMapping
     public ResponseEntity<IssueResponse> create(@Valid @RequestBody CreateIssueRequest request,
                                                  Authentication authentication) {
-        User currentUser = authService.getUserByEmail(authentication.getName());
-        IssueResponse response = issueService.create(request, currentUser);
+        IssueResponse response = issueService.create(request, authentication.getName());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -98,22 +84,19 @@ public class IssueController {
     public ResponseEntity<IssueResponse> update(@PathVariable String id,
                                                 @Valid @RequestBody UpdateIssueRequest request,
                                                 Authentication authentication) {
-        User currentUser = authService.getUserByEmail(authentication.getName());
-        IssueResponse response = issueService.update(id, request, currentUser);
+        IssueResponse response = issueService.update(id, request, authentication.getName());
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable String id, Authentication authentication) {
-        User currentUser = authService.getUserByEmail(authentication.getName());
-        issueService.delete(id, currentUser);
+        issueService.delete(id, authentication.getName());
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{id}/restore")
     public ResponseEntity<IssueResponse> restore(@PathVariable String id, Authentication authentication) {
-        User currentUser = authService.getUserByEmail(authentication.getName());
-        IssueResponse response = issueService.restore(id, currentUser);
+        IssueResponse response = issueService.restore(id, authentication.getName());
         return ResponseEntity.ok(response);
     }
 }

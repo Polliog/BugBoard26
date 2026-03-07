@@ -4,7 +4,6 @@ import it.unina.bugboard26.dto.request.LoginRequest;
 import it.unina.bugboard26.dto.response.AuthResponse;
 import it.unina.bugboard26.dto.response.UserResponse;
 
-import it.unina.bugboard26.model.User;
 import it.unina.bugboard26.service.AuthService;
 
 import jakarta.validation.Valid;
@@ -30,7 +29,6 @@ public class AuthController {
 
     @GetMapping("/me")
     public ResponseEntity<UserResponse> me(Authentication authentication) {
-        User user = authService.getUserByEmail(authentication.getName());
-        return ResponseEntity.ok(UserResponse.from(user));
+        return ResponseEntity.ok(authService.getMe(authentication.getName()));
     }
 }

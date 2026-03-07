@@ -43,8 +43,9 @@ public class AuthService {
         return new AuthResponse(token, UserResponse.from(user));
     }
 
-    public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email)
+    public UserResponse getMe(String email) {
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResponseStatusException(UNAUTHORIZED, "Utente non trovato"));
+        return UserResponse.from(user);
     }
 }

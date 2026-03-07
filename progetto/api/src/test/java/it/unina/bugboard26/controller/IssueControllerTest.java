@@ -3,11 +3,9 @@ package it.unina.bugboard26.controller;
 import it.unina.bugboard26.dto.response.IssueResponse;
 import it.unina.bugboard26.dto.response.PagedResponse;
 import it.unina.bugboard26.dto.response.UserResponse;
-import it.unina.bugboard26.model.User;
 import it.unina.bugboard26.model.enums.*;
 import it.unina.bugboard26.security.JwtService;
 import it.unina.bugboard26.security.UserDetailsServiceImpl;
-import it.unina.bugboard26.service.AuthService;
 import it.unina.bugboard26.service.IssueService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -42,9 +40,6 @@ class IssueControllerTest {
     private IssueService issueService;
 
     @MockitoBean
-    private AuthService authService;
-
-    @MockitoBean
     private JwtService jwtService;
 
     @MockitoBean
@@ -65,7 +60,7 @@ class IssueControllerTest {
                 List.of(issueResponse), 1, 0, 20
         );
 
-        when(issueService.getAll(any(), any(), any(), any(), any(), any(), any(), any()))
+        when(issueService.getAll(any(), any(), any(), any(), any(), any(), any(), any(), any()))
                 .thenReturn(pagedResponse);
 
         mockMvc.perform(get("/api/issues")
@@ -89,7 +84,7 @@ class IssueControllerTest {
                 null, null, List.of(), List.of()
         );
 
-        when(issueService.getById(eq("issue-1"), any())).thenReturn(issueResponse);
+        when(issueService.getById(eq("issue-1"), anyString())).thenReturn(issueResponse);
 
         mockMvc.perform(get("/api/issues/issue-1"))
                 .andExpect(status().isOk())
@@ -102,14 +97,7 @@ class IssueControllerTest {
     @DisplayName("POST /api/issues crea una nuova issue")
     @WithMockUser(username = "user@test.com", roles = "USER")
     void createIssueReturnsCreated() throws Exception {
-        User user = new User();
-        user.setId("user-id");
-        user.setEmail("user@test.com");
-        user.setName("User");
-        user.setRole(GlobalRole.USER);
-        user.setCreatedAt(Instant.now());
-
-        UserResponse creator = UserResponse.from(user);
+        UserResponse creator = new UserResponse("user-id", "user@test.com", "User", GlobalRole.USER, Instant.now());
         IssueResponse issueResponse = new IssueResponse(
                 "new-issue-id", "Nuova feature", IssueType.FEATURE, "Descrizione della feature richiesta",
                 IssuePriority.MEDIA, IssueStatus.TODO, null, creator,
@@ -117,8 +105,7 @@ class IssueControllerTest {
                 null, null, List.of(), List.of()
         );
 
-        when(authService.getUserByEmail("user@test.com")).thenReturn(user);
-        when(issueService.create(any(), any())).thenReturn(issueResponse);
+        when(issueService.create(any(), anyString())).thenReturn(issueResponse);
 
         String body = """
                 {

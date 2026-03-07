@@ -28,6 +28,7 @@ import java.time.Instant;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 @Service
 @Transactional(readOnly = true)
@@ -51,6 +52,11 @@ public class IssueService {
         this.notificationService = notificationService;
     }
 
+    private User resolveUser(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(UNAUTHORIZED, "Utente non trovato"));
+    }
+
     public PagedResponse<IssueResponse> getAll(List<IssueType> types,
                                                List<IssueStatus> statuses,
                                                List<IssuePriority> priorities,
@@ -58,7 +64,14 @@ public class IssueService {
                                                Boolean archived,
                                                String search,
                                                Boolean deleted,
+                                               String userEmail,
                                                Pageable pageable) {
+        if (Boolean.TRUE.equals(deleted)) {
+            User currentUser = resolveUser(userEmail);
+            if (!permissionService.canDeleteIssue(currentUser)) {
+                deleted = null;
+            }
+        }
         Page<Issue> page = issueRepository.findFiltered(
                 types, statuses, priorities, assignedToId, archived, search, deleted, pageable
         );
@@ -66,7 +79,8 @@ public class IssueService {
         return PagedResponse.of(responsePage);
     }
 
-    public IssueResponse getById(String id, User currentUser) {
+    public IssueResponse getById(String id, String userEmail) {
+        User currentUser = resolveUser(userEmail);
         Issue issue = issueRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Issue non trovata"));
         if (issue.getDeletedAt() != null && !permissionService.canDeleteIssue(currentUser)) {
@@ -76,7 +90,8 @@ public class IssueService {
     }
 
     @Transactional
-    public IssueResponse create(CreateIssueRequest request, User currentUser) {
+    public IssueResponse create(CreateIssueRequest request, String userEmail) {
+        User currentUser = resolveUser(userEmail);
         if (!permissionService.canCreateIssue(currentUser)) {
             throw new AccessDeniedException("Non hai i permessi per creare issue");
         }
@@ -104,7 +119,8 @@ public class IssueService {
     }
 
     @Transactional
-    public IssueResponse update(String id, UpdateIssueRequest request, User currentUser) {
+    public IssueResponse update(String id, UpdateIssueRequest request, String userEmail) {
+        User currentUser = resolveUser(userEmail);
         Issue issue = issueRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Issue non trovata"));
         if (issue.getDeletedAt() != null) {
@@ -200,7 +216,8 @@ public class IssueService {
     }
 
     @Transactional
-    public void delete(String id, User currentUser) {
+    public void delete(String id, String userEmail) {
+        User currentUser = resolveUser(userEmail);
         if (!permissionService.canDeleteIssue(currentUser)) {
             throw new AccessDeniedException("Solo gli admin possono eliminare le issue");
         }
@@ -216,7 +233,8 @@ public class IssueService {
     }
 
     @Transactional
-    public IssueResponse restore(String id, User currentUser) {
+    public IssueResponse restore(String id, String userEmail) {
+        User currentUser = resolveUser(userEmail);
         if (!permissionService.canDeleteIssue(currentUser)) {
             throw new AccessDeniedException("Solo gli admin possono ripristinare le issue");
         }

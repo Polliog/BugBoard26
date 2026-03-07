@@ -66,6 +66,7 @@ class IssueServiceTest {
                 null
         );
 
+        when(userRepository.findByEmail(admin.getEmail())).thenReturn(Optional.of(admin));
         when(permissionService.canCreateIssue(admin)).thenReturn(true);
         when(issueRepository.save(any(Issue.class))).thenAnswer(invocation -> {
             Issue saved = invocation.getArgument(0);
@@ -75,7 +76,7 @@ class IssueServiceTest {
             return saved;
         });
 
-        IssueResponse response = issueService.create(request, admin);
+        IssueResponse response = issueService.create(request, admin.getEmail());
 
         assertNotNull(response);
         assertEquals("Bug critico nel login", response.title());
@@ -100,10 +101,11 @@ class IssueServiceTest {
                 null
         );
 
+        when(userRepository.findByEmail(external.getEmail())).thenReturn(Optional.of(external));
         when(permissionService.canCreateIssue(external)).thenReturn(false);
 
         assertThrows(AccessDeniedException.class,
-                () -> issueService.create(request, external));
+                () -> issueService.create(request, external.getEmail()));
         verify(issueRepository, never()).save(any());
     }
 
@@ -117,6 +119,7 @@ class IssueServiceTest {
         User assignee = buildUser("assignee", GlobalRole.USER);
         Issue issue = buildIssue(creator, assignee, IssueStatus.IN_PROGRESS);
 
+        when(userRepository.findByEmail(assignee.getEmail())).thenReturn(Optional.of(assignee));
         when(issueRepository.findById(issue.getId())).thenReturn(Optional.of(issue));
         when(permissionService.canChangeStatus(assignee, issue)).thenReturn(true);
         when(issueRepository.save(any(Issue.class))).thenReturn(issue);
@@ -124,7 +127,7 @@ class IssueServiceTest {
         UpdateIssueRequest req = new UpdateIssueRequest(
                 null, null, null, null, IssueStatus.RISOLTA, null, null, null, null
         );
-        issueService.update(issue.getId(), req, assignee);
+        issueService.update(issue.getId(), req, assignee.getEmail());
 
         verify(notificationService).notifyUser(eq(creator.getId()), contains("risolta"), any(Issue.class));
     }
@@ -139,6 +142,7 @@ class IssueServiceTest {
         User assignee = buildUser("assignee", GlobalRole.USER);
         Issue issue = buildIssue(creator, assignee, IssueStatus.TODO);
 
+        when(userRepository.findByEmail(assignee.getEmail())).thenReturn(Optional.of(assignee));
         when(issueRepository.findById(issue.getId())).thenReturn(Optional.of(issue));
         when(permissionService.canChangeStatus(assignee, issue)).thenReturn(true);
         when(issueRepository.save(any(Issue.class))).thenReturn(issue);
@@ -146,7 +150,7 @@ class IssueServiceTest {
         UpdateIssueRequest req = new UpdateIssueRequest(
                 null, null, null, null, IssueStatus.IN_PROGRESS, null, null, null, null
         );
-        issueService.update(issue.getId(), req, assignee);
+        issueService.update(issue.getId(), req, assignee.getEmail());
 
         verify(notificationService, never()).notifyUser(anyString(), anyString(), any());
     }
@@ -160,6 +164,7 @@ class IssueServiceTest {
         User creator = buildUser("creator", GlobalRole.USER);
         Issue issue = buildIssue(creator, creator, IssueStatus.TODO);
 
+        when(userRepository.findByEmail(creator.getEmail())).thenReturn(Optional.of(creator));
         when(issueRepository.findById(issue.getId())).thenReturn(Optional.of(issue));
         when(permissionService.canChangeStatus(creator, issue)).thenReturn(true);
         when(issueRepository.save(any(Issue.class))).thenReturn(issue);
@@ -167,7 +172,7 @@ class IssueServiceTest {
         UpdateIssueRequest req = new UpdateIssueRequest(
                 null, null, null, null, IssueStatus.IN_PROGRESS, null, null, null, null
         );
-        issueService.update(issue.getId(), req, creator);
+        issueService.update(issue.getId(), req, creator.getEmail());
 
         verify(notificationService, never()).notifyUser(anyString(), anyString(), any());
     }
@@ -181,6 +186,7 @@ class IssueServiceTest {
         User user = buildUser("user", GlobalRole.USER);
         Issue issue = buildIssue(user, user, IssueStatus.TODO);
 
+        when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
         when(issueRepository.findById(issue.getId())).thenReturn(Optional.of(issue));
         when(permissionService.canArchive(user)).thenReturn(false);
 
@@ -188,7 +194,7 @@ class IssueServiceTest {
                 null, null, null, null, null, null, null, true, null
         );
         assertThrows(AccessDeniedException.class,
-                () -> issueService.update(issue.getId(), req, user));
+                () -> issueService.update(issue.getId(), req, user.getEmail()));
     }
 
     /**
@@ -200,6 +206,7 @@ class IssueServiceTest {
         User admin = buildUser("admin", GlobalRole.ADMIN);
         Issue issue = buildIssue(buildUser("creator", GlobalRole.USER), admin, IssueStatus.RISOLTA);
 
+        when(userRepository.findByEmail(admin.getEmail())).thenReturn(Optional.of(admin));
         when(issueRepository.findById(issue.getId())).thenReturn(Optional.of(issue));
         when(permissionService.canArchive(admin)).thenReturn(true);
         when(issueRepository.save(any(Issue.class))).thenReturn(issue);
@@ -207,7 +214,7 @@ class IssueServiceTest {
         UpdateIssueRequest req = new UpdateIssueRequest(
                 null, null, null, null, null, null, null, true, null
         );
-        IssueResponse response = issueService.update(issue.getId(), req, admin);
+        IssueResponse response = issueService.update(issue.getId(), req, admin.getEmail());
 
         assertNotNull(response);
         assertTrue(issue.isArchived());
