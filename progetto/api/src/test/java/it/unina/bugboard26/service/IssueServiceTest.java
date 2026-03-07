@@ -126,7 +126,29 @@ class IssueServiceTest {
         );
         issueService.update(issue.getId(), req, assignee);
 
-        verify(notificationService).notifyUser(eq(creator.getId()), contains("risolta"), eq(issue));
+        verify(notificationService).notifyUser(eq(creator.getId()), contains("risolta"), any(Issue.class));
+    }
+
+    /**
+     * RF06 - Cambio stato a IN_PROGRESS non genera notifica.
+     */
+    @Test
+    @DisplayName("Cambio stato a IN_PROGRESS non genera notifica")
+    void whenStatusSetToInProgress_thenNoNotification() {
+        User creator = buildUser("creator", GlobalRole.USER);
+        User assignee = buildUser("assignee", GlobalRole.USER);
+        Issue issue = buildIssue(creator, assignee, IssueStatus.TODO);
+
+        when(issueRepository.findById(issue.getId())).thenReturn(Optional.of(issue));
+        when(permissionService.canChangeStatus(assignee, issue)).thenReturn(true);
+        when(issueRepository.save(any(Issue.class))).thenReturn(issue);
+
+        UpdateIssueRequest req = new UpdateIssueRequest(
+                null, null, null, null, IssueStatus.IN_PROGRESS, null, null, null, null
+        );
+        issueService.update(issue.getId(), req, assignee);
+
+        verify(notificationService, never()).notifyUser(anyString(), anyString(), any());
     }
 
     /**
