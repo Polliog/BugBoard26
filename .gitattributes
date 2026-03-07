@@ -1,0 +1,5 @@
+﻿
+# Ensure LF line endings
+* text=auto
+*.sh text eol=lf
+mvnw text eol=lf
