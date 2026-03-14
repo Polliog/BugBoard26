@@ -7,7 +7,7 @@ import it.unina.bugboard26.dto.response.CommentResponse;
 import it.unina.bugboard26.model.Comment;
 import it.unina.bugboard26.model.Issue;
 import it.unina.bugboard26.model.User;
-import it.unina.bugboard26.model.enums.GlobalRole;
+import it.unina.bugboard26.enums.GlobalRole;
 
 import it.unina.bugboard26.repository.CommentRepository;
 import it.unina.bugboard26.repository.IssueRepository;

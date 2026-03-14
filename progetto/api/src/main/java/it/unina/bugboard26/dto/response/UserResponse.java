@@ -1,7 +1,7 @@
 package it.unina.bugboard26.dto.response;
 
 import it.unina.bugboard26.model.User;
-import it.unina.bugboard26.model.enums.GlobalRole;
+import it.unina.bugboard26.enums.GlobalRole;
 import java.time.Instant;
 
 public record UserResponse(

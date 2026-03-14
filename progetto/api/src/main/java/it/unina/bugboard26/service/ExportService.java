@@ -18,9 +18,9 @@ import com.itextpdf.layout.properties.VerticalAlignment;
 import com.opencsv.CSVWriter;
 
 import it.unina.bugboard26.model.Issue;
-import it.unina.bugboard26.model.enums.IssuePriority;
-import it.unina.bugboard26.model.enums.IssueStatus;
-import it.unina.bugboard26.model.enums.IssueType;
+import it.unina.bugboard26.enums.IssuePriority;
+import it.unina.bugboard26.enums.IssueStatus;
+import it.unina.bugboard26.enums.IssueType;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

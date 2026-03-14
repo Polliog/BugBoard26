@@ -1,6 +1,8 @@
 package it.unina.bugboard26.dto.request;
 
-import it.unina.bugboard26.model.enums.*;
+import it.unina.bugboard26.enums.IssuePriority;
+import it.unina.bugboard26.enums.IssueStatus;
+import it.unina.bugboard26.enums.IssueType;
 import jakarta.validation.constraints.*;
 import java.util.List;
 

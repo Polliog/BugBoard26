@@ -1,7 +1,10 @@
 package it.unina.bugboard26.dto.response;
 
+import it.unina.bugboard26.enums.IssuePriority;
+import it.unina.bugboard26.enums.IssueStatus;
+import it.unina.bugboard26.enums.IssueType;
 import it.unina.bugboard26.model.Issue;
-import it.unina.bugboard26.model.enums.*;
+
 import java.time.Instant;
 import java.util.List;
 
