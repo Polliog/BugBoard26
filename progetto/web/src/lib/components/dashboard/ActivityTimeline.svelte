@@ -34,33 +34,33 @@
 	}
 </script>
 
-<div class="bg-white rounded-xl shadow-sm p-5">
-	<h2 class="text-lg font-semibold text-gray-900 mb-4">Attività Recente</h2>
+<div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-5 border border-gray-100 dark:border-gray-800 transition-colors">
+	<h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 transition-colors">Attività Recente</h2>
 	{#if feed.length === 0}
 		<div class="text-center py-6">
-			<svg class="w-10 h-10 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+			<svg class="w-10 h-10 text-gray-300 dark:text-gray-700 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
 			</svg>
-			<p class="text-sm text-gray-500">Nessuna attività recente</p>
+			<p class="text-sm text-gray-500 dark:text-gray-400 transition-colors">Nessuna attività recente</p>
 		</div>
 	{:else}
 		<div class="space-y-0">
 			{#each feed as entry (entry.id)}
-				<div class="flex items-start gap-3 py-2.5 border-b border-gray-100 last:border-0">
-					<div class="w-7 h-7 bg-indigo-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-						<span class="text-indigo-700 font-semibold text-xs">{entry.performedBy.name.charAt(0)}</span>
+				<div class="flex items-start gap-3 py-2.5 border-b border-gray-100 dark:border-gray-800 last:border-0 transition-colors">
+					<div class="w-7 h-7 bg-indigo-100 dark:bg-indigo-900/30 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors">
+						<span class="text-indigo-700 dark:text-indigo-300 font-semibold text-xs transition-colors">{entry.performedBy.name.charAt(0)}</span>
 					</div>
 					<div class="flex-1 min-w-0">
-						<p class="text-sm text-gray-900">
+						<p class="text-sm text-gray-900 dark:text-gray-100 transition-colors">
 							<span class="font-medium">{entry.performedBy.name}</span>
-							<span class="text-gray-500">&mdash;</span>
+							<span class="text-gray-500 dark:text-gray-400">&mdash;</span>
 							{entry.action}
 						</p>
-						<a href="/issues/{entry.issueId}" class="text-xs text-blue-600 hover:underline truncate block mt-0.5">
+						<a href="/issues/{entry.issueId}" class="text-xs text-blue-600 dark:text-blue-400 hover:underline truncate block mt-0.5 transition-colors">
 							{entry.issueTitle}
 						</a>
 					</div>
-					<span class="text-xs text-gray-400 flex-shrink-0 mt-0.5">{formatTimeAgo(entry.timestamp)}</span>
+					<span class="text-xs text-gray-400 dark:text-gray-500 flex-shrink-0 mt-0.5 transition-colors">{formatTimeAgo(entry.timestamp)}</span>
 				</div>
 			{/each}
 		</div>

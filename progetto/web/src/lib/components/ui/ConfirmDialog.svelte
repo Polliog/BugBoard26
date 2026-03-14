@@ -22,9 +22,9 @@
 	}: Props = $props();
 
 	const variantClasses: Record<string, string> = {
-		danger: 'bg-red-600 hover:bg-red-700 text-white',
-		warning: 'bg-orange-600 hover:bg-orange-700 text-white',
-		default: 'bg-blue-600 hover:bg-blue-700 text-white'
+		danger: 'bg-red-600 hover:bg-red-700 text-white shadow-sm shadow-red-500/20',
+		warning: 'bg-orange-600 hover:bg-orange-700 text-white shadow-sm shadow-orange-500/20',
+		default: 'bg-blue-600 hover:bg-blue-700 text-white shadow-sm shadow-blue-500/20'
 	};
 </script>
 
@@ -37,7 +37,7 @@
 	>
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<div
-			class="bg-white rounded-xl shadow-2xl max-w-md w-full"
+			class="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-w-md w-full border border-gray-200 dark:border-gray-800 transition-colors"
 			role="alertdialog"
 			aria-modal="true"
 			aria-labelledby="confirm-title"
@@ -47,19 +47,19 @@
 			onkeydown={(e) => e.stopPropagation()}
 		>
 			<div class="p-4 sm:p-6">
-				<h2 id="confirm-title" class="text-lg font-bold text-gray-900 mb-2">{title}</h2>
-				<p id="confirm-message" class="text-sm sm:text-base text-gray-600">{message}</p>
+				<h2 id="confirm-title" class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-2 transition-colors">{title}</h2>
+				<p id="confirm-message" class="text-sm sm:text-base text-gray-600 dark:text-gray-400 transition-colors">{message}</p>
 			</div>
-			<div class="flex justify-end gap-3 px-4 pb-4 sm:px-6 sm:pb-6">
+			<div class="flex flex-col sm:flex-row justify-end gap-3 px-4 pb-4 sm:px-6 sm:pb-6">
 				<button
 					onclick={onCancel}
-					class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+					class="px-4 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors order-2 sm:order-1"
 				>
 					{cancelLabel}
 				</button>
 				<button
 					onclick={onConfirm}
-					class="px-4 py-2 rounded-lg transition-colors {variantClasses[variant]}"
+					class="px-4 py-2 rounded-lg transition-colors font-medium order-1 sm:order-2 {variantClasses[variant]}"
 				>
 					{confirmLabel}
 				</button>

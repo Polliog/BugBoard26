@@ -18,7 +18,7 @@
 	>
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<div
-			class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+			class="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-200 dark:border-gray-800 transition-colors"
 			role="dialog"
 			aria-modal="true"
 			aria-labelledby="modal-title"
@@ -26,11 +26,11 @@
 			onclick={(e) => e.stopPropagation()}
 			onkeydown={(e) => e.stopPropagation()}
 		>
-			<div class="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200">
-				<h2 id="modal-title" class="text-xl sm:text-2xl font-bold text-gray-900">{title}</h2>
+			<div class="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200 dark:border-gray-800 transition-colors">
+				<h2 id="modal-title" class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">{title}</h2>
 				<button
 					onclick={onClose}
-					class="text-gray-400 hover:text-gray-600 transition-colors"
+					class="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors"
 					aria-label="Chiudi"
 				>
 					<svg class="w-6 h-6" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">

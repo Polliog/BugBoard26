@@ -86,49 +86,49 @@
 <Modal {isOpen} title="Nuova Issue" onClose={() => { reset(); onClose(); }}>
 	<form onsubmit={(e) => { e.preventDefault(); handleSubmit(); }} class="space-y-6">
 		<div>
-			<label for="issue-title" class="block text-sm font-medium text-gray-900 mb-2">Titolo *</label>
+			<label for="issue-title" class="block text-sm font-medium text-gray-900 dark:text-gray-200 mb-2">Titolo *</label>
 			<input type="text" id="issue-title" bind:value={title} maxlength="200"
-				class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+				class="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-gray-100 transition-colors"
 				class:border-red-500={errors.title} placeholder="Breve descrizione del problema" />
-			{#if errors.title}<p class="mt-1 text-sm text-red-600">{errors.title}</p>{/if}
+			{#if errors.title}<p class="mt-1 text-sm text-red-600 dark:text-red-400">{errors.title}</p>{/if}
 		</div>
 
 		<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 			<div>
-				<label for="issue-type" class="block text-sm font-medium text-gray-900 mb-2">Tipo *</label>
+				<label for="issue-type" class="block text-sm font-medium text-gray-900 dark:text-gray-200 mb-2">Tipo *</label>
 				<select id="issue-type" bind:value={type}
-					class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-					{#each issueTypes as t}<option value={t.value}>{t.label}</option>{/each}
+					class="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-gray-100 transition-colors">
+					{#each issueTypes as t}<option value={t.value} class="dark:bg-gray-800">{t.label}</option>{/each}
 				</select>
 			</div>
 			<div>
-				<label for="issue-priority" class="block text-sm font-medium text-gray-900 mb-2">Priorità</label>
+				<label for="issue-priority" class="block text-sm font-medium text-gray-900 dark:text-gray-200 mb-2">Priorità</label>
 				<select id="issue-priority" bind:value={priority}
-					class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-					{#each issuePriorities as p}<option value={p.value}>{p.label}</option>{/each}
+					class="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-gray-100 transition-colors">
+					{#each issuePriorities as p}<option value={p.value} class="dark:bg-gray-800">{p.label}</option>{/each}
 				</select>
 			</div>
 		</div>
 
 		<div>
-			<label for="issue-desc" class="block text-sm font-medium text-gray-900 mb-2">Descrizione *</label>
+			<label for="issue-desc" class="block text-sm font-medium text-gray-900 dark:text-gray-200 mb-2">Descrizione *</label>
 			<textarea id="issue-desc" bind:value={description} rows="6"
-				class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+				class="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-gray-900 dark:text-gray-100 transition-colors"
 				class:border-red-500={errors.description} placeholder="Descrivi in dettaglio..."></textarea>
-			{#if errors.description}<p class="mt-1 text-sm text-red-600">{errors.description}</p>{/if}
+			{#if errors.description}<p class="mt-1 text-sm text-red-600 dark:text-red-400">{errors.description}</p>{/if}
 		</div>
 
 		<div>
-			<label for="issue-image" class="block text-sm font-medium text-gray-900 mb-2">Immagine</label>
+			<label for="issue-image" class="block text-sm font-medium text-gray-900 dark:text-gray-200 mb-2">Immagine</label>
 			<input type="file" id="issue-image" accept="image/*" onchange={handleImageUpload}
-				class="w-full px-4 py-2.5 border border-gray-300 rounded-lg" />
-			{#if errors.image}<p class="mt-1 text-sm text-red-600">{errors.image}</p>{/if}
-			<p class="mt-1 text-xs text-gray-500">Max 5MB</p>
+				class="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-900 dark:text-gray-100 transition-colors" />
+			{#if errors.image}<p class="mt-1 text-sm text-red-600 dark:text-red-400">{errors.image}</p>{/if}
+			<p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Max 5MB</p>
 			{#if imagePreview}
 				<div class="mt-4 relative">
-					<img src={imagePreview} alt="Preview" class="w-full rounded-lg" />
+					<img src={imagePreview} alt="Preview" class="w-full rounded-lg border border-gray-200 dark:border-gray-700 transition-colors" />
 					<button type="button" onclick={() => { image = ''; imagePreview = ''; }}
-						aria-label="Rimuovi" class="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white rounded-full p-2">
+						aria-label="Rimuovi" class="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white rounded-full p-2 transition-colors">
 						<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
 						</svg>
@@ -137,12 +137,12 @@
 			{/if}
 		</div>
 
-		<div class="flex gap-3 justify-end pt-4 border-t border-gray-200">
+		<div class="flex gap-3 justify-end pt-4 border-t border-gray-200 dark:border-gray-800 transition-colors">
 			<button type="button" onclick={() => { reset(); onClose(); }}
-				class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+				class="px-4 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
 				Annulla
 			</button>
-			<button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+			<button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors shadow-sm">
 				Crea Issue
 			</button>
 		</div>

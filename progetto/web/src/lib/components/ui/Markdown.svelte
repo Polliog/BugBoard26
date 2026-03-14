@@ -16,6 +16,6 @@
 	let html = $derived(inline ? marked.parseInline(content) : marked.parse(content));
 </script>
 
-<div class="prose prose-sm max-w-none prose-gray">
+<div class="prose prose-sm max-w-none prose-gray dark:prose-invert transition-colors">
 	{@html html}
 </div>

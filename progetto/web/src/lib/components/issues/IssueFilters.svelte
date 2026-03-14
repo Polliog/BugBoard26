@@ -46,7 +46,7 @@
 	}
 </script>
 
-<div class="bg-white rounded-xl shadow-sm p-4 mb-6">
+<div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-4 mb-6 border border-gray-200 dark:border-gray-800 transition-colors">
 	<div class="space-y-4">
 		<div class="flex flex-col gap-3">
 			<div class="flex flex-col sm:flex-row gap-3">
@@ -58,7 +58,7 @@
 						bind:value={search}
 						oninput={onchange}
 						placeholder="Cerca issue..."
-						class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+						class="w-full px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-gray-100 transition-colors"
 					/>
 				</div>
 				<div>
@@ -67,7 +67,7 @@
 						id="filter-sort"
 						bind:value={sortBy}
 						onchange={onchange}
-						class="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent min-w-[160px]"
+						class="w-full sm:w-auto px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent min-w-[160px] text-gray-900 dark:text-gray-100 transition-colors"
 					>
 						<option value="createdAt">Più recenti</option>
 						<option value="priority">Per priorità</option>
@@ -76,24 +76,24 @@
 				</div>
 			</div>
 			<div class="flex flex-wrap gap-2">
-				<label class="flex items-center gap-2 px-3 py-1.5 border border-gray-300 rounded-lg text-sm">
+				<label class="flex items-center gap-2 px-3 py-1.5 border border-gray-300 dark:border-gray-700 rounded-lg text-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
 					<input
 						type="checkbox"
 						bind:checked={showArchived}
 						onchange={onchange}
-						class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+						class="w-4 h-4 text-blue-600 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500 bg-white dark:bg-gray-700"
 					/>
-					<span class="text-gray-700">Archiviate</span>
+					<span class="text-gray-700 dark:text-gray-300">Archiviate</span>
 				</label>
 				{#if currentUser?.role === 'ADMIN'}
-					<label class="flex items-center gap-2 px-3 py-1.5 border border-gray-300 rounded-lg text-sm">
+					<label class="flex items-center gap-2 px-3 py-1.5 border border-gray-300 dark:border-gray-700 rounded-lg text-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
 						<input
 							type="checkbox"
 							bind:checked={showDeleted}
 							onchange={onchange}
-							class="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
+							class="w-4 h-4 text-red-600 border-gray-300 dark:border-gray-600 rounded focus:ring-red-500 bg-white dark:bg-gray-700"
 						/>
-						<span class="text-gray-700">Eliminate</span>
+						<span class="text-gray-700 dark:text-gray-300">Eliminate</span>
 					</label>
 				{/if}
 			</div>
@@ -101,17 +101,13 @@
 
 		<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 			<fieldset>
-				<legend class="text-xs font-medium text-gray-700 mb-2">Tipo</legend>
+				<legend class="text-xs font-medium text-gray-700 dark:text-gray-400 mb-2">Tipo</legend>
 				<div class="flex flex-wrap gap-2">
 					{#each issueTypes as type}
 						<button
 							onclick={() => { selectedTypes = toggleFilter(selectedTypes, type); onchange(); }}
 							aria-pressed={selectedTypes.includes(type)}
-							class="px-3 py-1 text-xs rounded-full transition-colors"
-							class:bg-blue-600={selectedTypes.includes(type)}
-							class:text-white={selectedTypes.includes(type)}
-							class:bg-gray-200={!selectedTypes.includes(type)}
-							class:text-gray-700={!selectedTypes.includes(type)}
+							class="px-3 py-1 text-xs rounded-full transition-all {selectedTypes.includes(type) ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300'}"
 						>
 							{typeLabels[type]}
 						</button>
@@ -120,17 +116,13 @@
 			</fieldset>
 
 			<fieldset>
-				<legend class="text-xs font-medium text-gray-700 mb-2">Priorità</legend>
+				<legend class="text-xs font-medium text-gray-700 dark:text-gray-400 mb-2">Priorità</legend>
 				<div class="flex flex-wrap gap-2">
 					{#each issuePriorities as priority}
 						<button
 							onclick={() => { selectedPriorities = toggleFilter(selectedPriorities, priority); onchange(); }}
 							aria-pressed={selectedPriorities.includes(priority)}
-							class="px-3 py-1 text-xs rounded-full transition-colors"
-							class:bg-blue-600={selectedPriorities.includes(priority)}
-							class:text-white={selectedPriorities.includes(priority)}
-							class:bg-gray-200={!selectedPriorities.includes(priority)}
-							class:text-gray-700={!selectedPriorities.includes(priority)}
+							class="px-3 py-1 text-xs rounded-full transition-all {selectedPriorities.includes(priority) ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300'}"
 						>
 							{priorityLabels[priority]}
 						</button>
@@ -139,17 +131,13 @@
 			</fieldset>
 
 			<fieldset>
-				<legend class="text-xs font-medium text-gray-700 mb-2">Stato</legend>
+				<legend class="text-xs font-medium text-gray-700 dark:text-gray-400 mb-2">Stato</legend>
 				<div class="flex flex-wrap gap-2">
 					{#each issueStatuses as status}
 						<button
 							onclick={() => { selectedStatuses = toggleFilter(selectedStatuses, status); onchange(); }}
 							aria-pressed={selectedStatuses.includes(status)}
-							class="px-3 py-1 text-xs rounded-full transition-colors"
-							class:bg-blue-600={selectedStatuses.includes(status)}
-							class:text-white={selectedStatuses.includes(status)}
-							class:bg-gray-200={!selectedStatuses.includes(status)}
-							class:text-gray-700={!selectedStatuses.includes(status)}
+							class="px-3 py-1 text-xs rounded-full transition-all {selectedStatuses.includes(status) ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300'}"
 						>
 							{statusLabels[status]}
 						</button>

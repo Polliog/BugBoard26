@@ -168,16 +168,16 @@
 	<title>{issue?.title || 'Issue'} - BugBoard26</title>
 </svelte:head>
 
-<div class="min-h-screen bg-gray-50">
+<div class="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors">
 	<Navbar />
 
 	<div class="max-w-5xl mx-auto px-4 py-4 sm:py-8">
 		<div class="mb-4 sm:mb-6">
-			<nav aria-label="Breadcrumb" class="text-sm text-gray-600">
+			<nav aria-label="Breadcrumb" class="text-sm text-gray-600 dark:text-gray-400">
 				<ol class="flex items-center gap-2">
-					<li><a href="/issues" class="hover:text-blue-600 transition-colors">Issue</a></li>
-					<li aria-hidden="true">/</li>
-					<li aria-current="page" class="text-gray-900 font-medium truncate">{issue?.title ?? '...'}</li>
+					<li><a href="/issues" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Issue</a></li>
+					<li aria-hidden="true" class="text-gray-400 dark:text-gray-600">/</li>
+					<li aria-current="page" class="text-gray-900 dark:text-gray-100 font-medium truncate transition-colors">{issue?.title ?? '...'}</li>
 				</ol>
 			</nav>
 		</div>
@@ -186,17 +186,17 @@
 			<div class="flex justify-center py-12"><Spinner size="lg" /></div>
 		{:else if issue}
 			{#if issue.archived}
-				<div class="bg-orange-50 border border-orange-200 rounded-xl p-4 mb-6 flex items-center gap-3">
-					<svg class="w-5 h-5 text-orange-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<div class="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-xl p-4 mb-6 flex items-center gap-3 transition-colors">
+					<svg class="w-5 h-5 text-orange-600 dark:text-orange-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
 					</svg>
-					<span class="font-medium text-orange-800">Questa issue è archiviata{issue.archivedBy ? ` da ${issue.archivedBy.name}` : ''}</span>
+					<span class="font-medium text-orange-800 dark:text-orange-300">Questa issue è archiviata{issue.archivedBy ? ` da ${issue.archivedBy.name}` : ''}</span>
 				</div>
 			{/if}
 
 			{#if issue.deletedAt}
-				<div class="bg-red-50 border border-red-200 rounded-xl p-4 mb-6 flex items-center justify-between">
-					<div class="flex items-center gap-2 text-red-800">
+				<div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4 mb-6 flex items-center justify-between transition-colors">
+					<div class="flex items-center gap-2 text-red-800 dark:text-red-300">
 						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
 						</svg>
@@ -204,26 +204,26 @@
 					</div>
 					{#if can(authStore.user, 'delete:issue')}
 						<button onclick={restoreIssue}
-							class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors text-sm font-medium">
+							class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors text-sm font-medium shadow-sm">
 							Ripristina
 						</button>
 					{/if}
 				</div>
 			{/if}
 
-			<div class="bg-white rounded-xl shadow-sm p-4 sm:p-6 mb-6">
+			<div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-4 sm:p-6 mb-6 border border-gray-200 dark:border-gray-800 transition-colors">
 				<div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
-					<h1 class="text-2xl sm:text-3xl font-bold text-gray-900">{issue.title}</h1>
+					<h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white transition-colors">{issue.title}</h1>
 					<div class="flex gap-2 flex-shrink-0">
 						{#if !issue.deletedAt && can(authStore.user, 'archive')}
 							<button onclick={archiveIssue}
-								class="px-3 py-1.5 sm:px-4 sm:py-2 border border-orange-300 text-orange-700 rounded-lg hover:bg-orange-50 transition-colors text-sm">
+								class="px-3 py-1.5 sm:px-4 sm:py-2 bg-white dark:bg-gray-900 border border-orange-300 dark:border-orange-800 text-orange-700 dark:text-orange-400 rounded-lg hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-colors text-sm">
 								Archivia
 							</button>
 						{/if}
 						{#if !issue.deletedAt && can(authStore.user, 'delete:issue')}
 							<button onclick={deleteIssue}
-								class="px-3 py-1.5 sm:px-4 sm:py-2 border border-red-300 text-red-700 rounded-lg hover:bg-red-50 transition-colors text-sm">
+								class="px-3 py-1.5 sm:px-4 sm:py-2 bg-white dark:bg-gray-900 border border-red-300 dark:border-red-800 text-red-700 dark:text-red-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-sm">
 								Elimina
 							</button>
 						{/if}
@@ -238,17 +238,13 @@
 
 				{#if !issue.deletedAt && can(authStore.user, 'change:status', issue)}
 					<div class="mb-6">
-						<p class="text-sm font-medium text-gray-700 mb-2">Cambia stato:</p>
+						<p class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors">Cambia stato:</p>
 						<div class="flex flex-wrap gap-2">
 							{#each statuses as s}
 								<button onclick={() => changeStatus(s.value)}
 									aria-pressed={issue.status === s.value}
-									class="px-3 py-1 text-sm rounded-lg transition-colors"
-									class:bg-blue-600={issue.status === s.value}
-									class:text-white={issue.status === s.value}
-									class:bg-gray-200={issue.status !== s.value}
-									class:text-gray-700={issue.status !== s.value}
-									class:hover:bg-gray-300={issue.status !== s.value}>
+									class="px-3 py-1 text-sm rounded-lg transition-colors {issue.status === s.value ? 'bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700'}"
+								>
 									{s.label}
 								</button>
 							{/each}
@@ -257,44 +253,46 @@
 				{/if}
 
 				<div class="mb-6">
-					<h2 class="text-lg font-semibold text-gray-900 mb-3">Descrizione</h2>
-					<Markdown content={issue.description} />
+					<h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3 transition-colors">Descrizione</h2>
+					<div class="prose dark:prose-invert max-w-none">
+						<Markdown content={issue.description} />
+					</div>
 				</div>
 
 				<div class="mb-6">
 					<div class="flex items-center gap-3 mb-3">
-						<h2 class="text-lg font-semibold text-gray-900">Allegato</h2>
+						<h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 transition-colors">Allegato</h2>
 						{#if !issue.deletedAt && can(authStore.user, 'change:status', issue)}
 							{#if issue.image}
-								<button onclick={removeIssueImage} class="text-red-600 hover:text-red-700 text-sm">Rimuovi</button>
+								<button onclick={removeIssueImage} class="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 text-sm transition-colors">Rimuovi</button>
 							{/if}
-							<label class="inline-flex items-center gap-1 px-2 py-1 text-sm text-blue-600 hover:text-blue-700 cursor-pointer">
+							<label class="inline-flex items-center gap-1 px-2 py-1 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 cursor-pointer transition-colors">
 								{issue.image ? 'Cambia' : 'Aggiungi'}
 								<input type="file" accept="image/png,image/jpeg,image/gif,image/webp" class="hidden" onchange={handleIssueImageSelect} />
 							</label>
 						{/if}
 					</div>
 					{#if issue.image}
-						<img src={issue.image} alt="Allegato issue: {issue.title}" class="max-w-full rounded-lg border border-gray-200" />
+						<img src={issue.image} alt="Allegato issue: {issue.title}" class="max-w-full rounded-lg border border-gray-200 dark:border-gray-800 transition-colors" />
 					{:else}
-						<p class="text-gray-400 text-sm">Nessun allegato</p>
+						<p class="text-gray-400 dark:text-gray-600 text-sm transition-colors">Nessun allegato</p>
 					{/if}
 				</div>
 
-				<div class="pt-6 border-t border-gray-200">
+				<div class="pt-6 border-t border-gray-200 dark:border-gray-800 transition-colors">
 					<div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
 						<div>
-							<p class="text-gray-500 mb-1">Creato da</p>
-							<p class="font-medium text-gray-900">{issue.createdBy.name}</p>
+							<p class="text-gray-500 dark:text-gray-400 mb-1 transition-colors">Creato da</p>
+							<p class="font-medium text-gray-900 dark:text-gray-100 transition-colors">{issue.createdBy.name}</p>
 						</div>
 						<div>
-							<p class="text-gray-500 mb-1">Data creazione</p>
-							<p class="font-medium text-gray-900">{formatDate(issue.createdAt)}</p>
+							<p class="text-gray-500 dark:text-gray-400 mb-1 transition-colors">Data creazione</p>
+							<p class="font-medium text-gray-900 dark:text-gray-100 transition-colors">{formatDate(issue.createdAt)}</p>
 						</div>
 						{#if issue.updatedAt}
 							<div>
-								<p class="text-gray-500 mb-1">Ultimo aggiornamento</p>
-								<p class="font-medium text-gray-900">{formatDate(issue.updatedAt)}</p>
+								<p class="text-gray-500 dark:text-gray-400 mb-1 transition-colors">Ultimo aggiornamento</p>
+								<p class="font-medium text-gray-900 dark:text-gray-100 transition-colors">{formatDate(issue.updatedAt)}</p>
 							</div>
 						{/if}
 					</div>

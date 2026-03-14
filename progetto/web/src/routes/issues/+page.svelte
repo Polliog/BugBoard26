@@ -90,32 +90,32 @@
 	<title>Issue - BugBoard26</title>
 </svelte:head>
 
-<div class="min-h-screen bg-gray-50">
+<div class="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors">
 	<Navbar />
 
 	<div class="max-w-7xl mx-auto px-4 py-8">
 		<div class="mb-8">
 			<div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
 				<div>
-					<h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">Issue</h1>
-					<p class="text-gray-600 text-sm sm:text-base">Gestisci le issue del team</p>
+					<h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-1">Issue</h1>
+					<p class="text-gray-600 dark:text-gray-400 text-sm sm:text-base">Gestisci le issue del team</p>
 				</div>
 				<div class="flex flex-wrap gap-2">
 					<button onclick={() => handleExport('csv')}
-						class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm">
+						class="px-4 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-sm">
 						Export CSV
 					</button>
 					<button onclick={() => handleExport('pdf')}
-						class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm">
+						class="px-4 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-sm">
 						Export PDF
 					</button>
 					<button onclick={() => handleExport('excel')}
-						class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm">
+						class="px-4 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-sm">
 						Export Excel
 					</button>
 					{#if can(authStore.user, 'create:issue')}
 						<button onclick={() => (isFormOpen = true)}
-							class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg transition-colors flex items-center gap-2 text-sm">
+							class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg transition-colors flex items-center gap-2 text-sm shadow-sm">
 							<svg class="w-5 h-5" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
 							</svg>
@@ -137,13 +137,13 @@
 				<Spinner size="lg" />
 			</div>
 		{:else if issues.length === 0}
-			<div class="bg-white rounded-xl shadow-sm p-12 text-center">
-				<svg class="w-16 h-16 text-gray-400 mx-auto mb-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+			<div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm p-12 text-center border border-gray-200 dark:border-gray-800 transition-colors">
+				<svg class="w-16 h-16 text-gray-400 dark:text-gray-600 mx-auto mb-4" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
 						d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
 				</svg>
-				<h3 class="text-lg font-medium text-gray-900 mb-2">Nessuna issue trovata</h3>
-				<p class="text-gray-600">Prova a modificare i filtri</p>
+				<h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">Nessuna issue trovata</h3>
+				<p class="text-gray-600 dark:text-gray-400">Prova a modificare i filtri</p>
 			</div>
 		{:else}
 			<div class="space-y-3">
@@ -157,16 +157,16 @@
 					<button onclick={() => { currentPage = Math.max(0, currentPage - 1); loadIssues(); }}
 						disabled={currentPage === 0}
 						aria-label="Pagina precedente"
-						class="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-50">
+						class="px-4 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg disabled:opacity-50 transition-colors">
 						Precedente
 					</button>
-					<span class="px-4 py-2 text-gray-600" aria-live="polite" aria-atomic="true">
+					<span class="px-4 py-2 text-gray-600 dark:text-gray-400" aria-live="polite" aria-atomic="true">
 						Pagina {currentPage + 1} di {Math.ceil(total / pageSize)}
 					</span>
 					<button onclick={() => { currentPage++; loadIssues(); }}
 						disabled={(currentPage + 1) * pageSize >= total}
 						aria-label="Pagina successiva"
-						class="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-50">
+						class="px-4 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg disabled:opacity-50 transition-colors">
 						Successiva
 					</button>
 				</nav>

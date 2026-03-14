@@ -2,6 +2,12 @@
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
 
+@variant dark (&:where(.dark, .dark *));
+
 button, [role="button"], select, label, a {
 	cursor: pointer;
+}
+
+:root {
+	color-scheme: light dark;
 }
