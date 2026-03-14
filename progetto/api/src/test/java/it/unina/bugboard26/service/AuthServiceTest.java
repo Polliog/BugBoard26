@@ -4,7 +4,7 @@ import it.unina.bugboard26.dto.request.LoginRequest;
 import it.unina.bugboard26.dto.response.AuthResponse;
 import it.unina.bugboard26.dto.response.UserResponse;
 import it.unina.bugboard26.model.User;
-import it.unina.bugboard26.model.enums.GlobalRole;
+import it.unina.bugboard26.enums.GlobalRole;
 import it.unina.bugboard26.repository.UserRepository;
 import it.unina.bugboard26.security.JwtService;
 import org.junit.jupiter.api.DisplayName;

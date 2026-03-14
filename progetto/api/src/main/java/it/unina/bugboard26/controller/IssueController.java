@@ -5,9 +5,9 @@ import it.unina.bugboard26.dto.request.UpdateIssueRequest;
 import it.unina.bugboard26.dto.response.IssueResponse;
 import it.unina.bugboard26.dto.response.PagedResponse;
 
-import it.unina.bugboard26.model.enums.IssuePriority;
-import it.unina.bugboard26.model.enums.IssueStatus;
-import it.unina.bugboard26.model.enums.IssueType;
+import it.unina.bugboard26.enums.IssuePriority;
+import it.unina.bugboard26.enums.IssueStatus;
+import it.unina.bugboard26.enums.IssueType;
 
 import it.unina.bugboard26.service.IssueService;
 

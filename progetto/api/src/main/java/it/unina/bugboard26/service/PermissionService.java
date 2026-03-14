@@ -2,7 +2,7 @@ package it.unina.bugboard26.service;
 
 import it.unina.bugboard26.model.Issue;
 import it.unina.bugboard26.model.User;
-import it.unina.bugboard26.model.enums.GlobalRole;
+import it.unina.bugboard26.enums.GlobalRole;
 
 import org.springframework.stereotype.Service;
 

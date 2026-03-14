@@ -2,9 +2,9 @@ package it.unina.bugboard26.service;
 
 import it.unina.bugboard26.model.Issue;
 import it.unina.bugboard26.model.User;
-import it.unina.bugboard26.model.enums.GlobalRole;
-import it.unina.bugboard26.model.enums.IssueStatus;
-import it.unina.bugboard26.model.enums.IssueType;
+import it.unina.bugboard26.enums.GlobalRole;
+import it.unina.bugboard26.enums.IssueStatus;
+import it.unina.bugboard26.enums.IssueType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
