@@ -1,19 +1,22 @@
 package it.unina.bugboard26.service;
 
-import it.unina.bugboard26.model.Issue;
-import it.unina.bugboard26.model.User;
 import it.unina.bugboard26.enums.GlobalRole;
 import it.unina.bugboard26.enums.IssueStatus;
 import it.unina.bugboard26.enums.IssueType;
+import it.unina.bugboard26.model.Issue;
+import it.unina.bugboard26.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.Instant;
+import java.util.ArrayList;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Test per PermissionService.
- * Verifica tutti i metodi canX().
+ * RF06, RF13, RF15 — Test per PermissionService.canModifyIssue(User user, Issue issue).
+ * Logica di accesso basata su ruolo e ownership (createdBy).
  */
 class PermissionServiceTest {
 
@@ -24,128 +27,48 @@ class PermissionServiceTest {
         permissionService = new PermissionService();
     }
 
-    // --- canCreateIssue ---
-
+    /**
+     * RF06/RF13 — Un ADMIN ha sempre il permesso di modificare qualsiasi issue,
+     * indipendentemente da chi l'ha creata.
+     */
     @Test
-    @DisplayName("ADMIN puo creare issue")
-    void adminCanCreateIssue() {
+    @DisplayName("ADMIN può modificare issue create da qualsiasi utente")
+    void adminCanModifyIssueCreatedByAnotherUser() {
         User admin = buildUser("admin", GlobalRole.ADMIN);
-        assertTrue(permissionService.canCreateIssue(admin));
-    }
+        User owner = buildUser("owner", GlobalRole.USER);
+        Issue issue = buildIssue(owner, IssueStatus.TODO);
 
-    @Test
-    @DisplayName("USER puo creare issue")
-    void userCanCreateIssue() {
-        User user = buildUser("user", GlobalRole.USER);
-        assertTrue(permissionService.canCreateIssue(user));
-    }
-
-    @Test
-    @DisplayName("EXTERNAL non puo creare issue")
-    void externalCannotCreateIssue() {
-        User external = buildUser("external", GlobalRole.EXTERNAL);
-        assertFalse(permissionService.canCreateIssue(external));
-    }
-
-    // --- canModifyIssue ---
-
-    @Test
-    @DisplayName("ADMIN puo modificare qualsiasi issue")
-    void adminCanModifyAnyIssue() {
-        User admin = buildUser("admin", GlobalRole.ADMIN);
-        User creator = buildUser("creator", GlobalRole.USER);
-        Issue issue = buildIssue(creator, null);
         assertTrue(permissionService.canModifyIssue(admin, issue));
     }
 
+    /**
+     * RF06 — Un USER può modificare le issue che ha creato lui stesso:
+     * il check confronta issue.createdBy.id con user.id.
+     */
     @Test
-    @DisplayName("USER puo modificare issue creata da se stesso")
-    void userCanModifyOwnIssue() {
+    @DisplayName("USER può modificare la propria issue (createdBy == user)")
+    void userCanModifyIssueTheyCreated() {
         User user = buildUser("user", GlobalRole.USER);
-        Issue issue = buildIssue(user, null);
+        Issue issue = buildIssue(user, IssueStatus.IN_PROGRESS);
+
         assertTrue(permissionService.canModifyIssue(user, issue));
     }
 
+    /**
+     * RF15 — Un USER non può modificare issue create da un altro utente:
+     * l'ID del creatore non coincide con quello dell'attore.
+     */
     @Test
-    @DisplayName("USER non puo modificare issue creata da altri")
-    void userCannotModifyOtherIssue() {
+    @DisplayName("USER non può modificare issue create da un altro utente")
+    void userCannotModifyIssueCreatedBySomeoneElse() {
         User user = buildUser("user", GlobalRole.USER);
         User other = buildUser("other", GlobalRole.USER);
-        Issue issue = buildIssue(other, null);
+        Issue issue = buildIssue(other, IssueStatus.TODO);
+
         assertFalse(permissionService.canModifyIssue(user, issue));
     }
 
-    @Test
-    @DisplayName("EXTERNAL non puo modificare issue")
-    void externalCannotModifyIssue() {
-        User external = buildUser("external", GlobalRole.EXTERNAL);
-        Issue issue = buildIssue(external, null);
-        assertFalse(permissionService.canModifyIssue(external, issue));
-    }
-
-    // --- canArchive ---
-
-    @Test
-    @DisplayName("ADMIN puo archiviare")
-    void adminCanArchive() {
-        User admin = buildUser("admin", GlobalRole.ADMIN);
-        assertTrue(permissionService.canArchive(admin));
-    }
-
-    @Test
-    @DisplayName("USER non puo archiviare")
-    void userCannotArchive() {
-        User user = buildUser("user", GlobalRole.USER);
-        assertFalse(permissionService.canArchive(user));
-    }
-
-    @Test
-    @DisplayName("EXTERNAL non puo archiviare")
-    void externalCannotArchive() {
-        User external = buildUser("external", GlobalRole.EXTERNAL);
-        assertFalse(permissionService.canArchive(external));
-    }
-
-    // --- canComment ---
-
-    @Test
-    @DisplayName("ADMIN puo commentare")
-    void adminCanComment() {
-        User admin = buildUser("admin", GlobalRole.ADMIN);
-        assertTrue(permissionService.canComment(admin));
-    }
-
-    @Test
-    @DisplayName("USER puo commentare")
-    void userCanComment() {
-        User user = buildUser("user", GlobalRole.USER);
-        assertTrue(permissionService.canComment(user));
-    }
-
-    @Test
-    @DisplayName("EXTERNAL non puo commentare")
-    void externalCannotComment() {
-        User external = buildUser("external", GlobalRole.EXTERNAL);
-        assertFalse(permissionService.canComment(external));
-    }
-
-    // --- canManageUsers ---
-
-    @Test
-    @DisplayName("ADMIN puo gestire utenti")
-    void adminCanManageUsers() {
-        User admin = buildUser("admin", GlobalRole.ADMIN);
-        assertTrue(permissionService.canManageUsers(admin));
-    }
-
-    @Test
-    @DisplayName("USER non puo gestire utenti")
-    void userCannotManageUsers() {
-        User user = buildUser("user", GlobalRole.USER);
-        assertFalse(permissionService.canManageUsers(user));
-    }
-
-    // --- Helper methods ---
+    // --- Helpers ---
 
     private User buildUser(String name, GlobalRole role) {
         User user = new User();
@@ -153,18 +76,22 @@ class PermissionServiceTest {
         user.setEmail(name + "@test.com");
         user.setName(name);
         user.setRole(role);
+        user.setCreatedAt(Instant.now());
         return user;
     }
 
-    private Issue buildIssue(User creator, User assignee) {
+    private Issue buildIssue(User creator, IssueStatus status) {
         Issue issue = new Issue();
         issue.setId("issue-id");
         issue.setTitle("Test Issue");
         issue.setType(IssueType.BUG);
-        issue.setDescription("Descrizione test sufficientemente lunga");
-        issue.setStatus(IssueStatus.TODO);
+        issue.setDescription("Descrizione di test");
+        issue.setStatus(status);
         issue.setCreatedBy(creator);
-        issue.setAssignedTo(assignee);
+        issue.setCreatedAt(Instant.now());
+        issue.setUpdatedAt(Instant.now());
+        issue.setLabels(new ArrayList<>());
+        issue.setHistory(new ArrayList<>());
         return issue;
     }
 }

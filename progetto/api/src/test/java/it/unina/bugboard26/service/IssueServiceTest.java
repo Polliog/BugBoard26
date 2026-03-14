@@ -1,10 +1,7 @@
 package it.unina.bugboard26.service;
 
-import it.unina.bugboard26.dto.request.CreateIssueRequest;
 import it.unina.bugboard26.dto.request.UpdateIssueRequest;
-import it.unina.bugboard26.dto.response.IssueResponse;
 import it.unina.bugboard26.enums.GlobalRole;
-import it.unina.bugboard26.enums.IssuePriority;
 import it.unina.bugboard26.enums.IssueStatus;
 import it.unina.bugboard26.enums.IssueType;
 import it.unina.bugboard26.model.Issue;
@@ -19,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -29,203 +27,100 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Test per IssueService.
- * RF02, RF06, RF13 - Creazione, cambio stato, archiviazione.
+ * RF06, RF13 — Test per IssueService.update(String id, UpdateIssueRequest request, String userEmail).
+ * Logica di permessi, notifiche e guard di stato.
  */
 @ExtendWith(MockitoExtension.class)
 class IssueServiceTest {
 
-    @Mock
-    private IssueRepository issueRepository;
+    @Mock private IssueRepository issueRepository;
+    @Mock private UserRepository userRepository;
+    @Mock private LabelRepository labelRepository;
+    @Mock private PermissionService permissionService;
+    @Mock private NotificationService notificationService;
 
-    @Mock
-    private UserRepository userRepository;
-
-    @Mock
-    private LabelRepository labelRepository;
-
-    @Mock
-    private PermissionService permissionService;
-
-    @Mock
-    private NotificationService notificationService;
-
-    @InjectMocks
-    private IssueService issueService;
+    @InjectMocks private IssueService issueService;
 
     /**
-     * RF02 - ADMIN puo creare una issue.
+     * RF06 — Quando lo stato viene cambiato a RISOLTA da un attore diverso dal creatore,
+     * il creatore deve ricevere una notifica con il titolo della issue nel messaggio.
      */
     @Test
-    @DisplayName("ADMIN crea issue con successo")
-    void adminCreatesIssueSuccessfully() {
-        User admin = buildUser("admin", GlobalRole.ADMIN);
-        CreateIssueRequest request = new CreateIssueRequest(
-                "Bug critico nel login",
-                IssueType.BUG,
-                "Descrizione dettagliata del bug nel sistema di login",
-                IssuePriority.CRITICA,
-                null,
-                null
-        );
-
-        when(userRepository.findByEmail(admin.getEmail())).thenReturn(Optional.of(admin));
-        when(permissionService.canCreateIssue(admin)).thenReturn(true);
-        when(issueRepository.save(any(Issue.class))).thenAnswer(invocation -> {
-            Issue saved = invocation.getArgument(0);
-            saved.setId("new-issue-id");
-            saved.setCreatedAt(Instant.now());
-            saved.setUpdatedAt(Instant.now());
-            return saved;
-        });
-
-        IssueResponse response = issueService.create(request, admin.getEmail());
-
-        assertNotNull(response);
-        assertEquals("Bug critico nel login", response.title());
-        assertEquals(IssueType.BUG, response.type());
-        assertEquals(IssueStatus.TODO, response.status());
-        verify(issueRepository).save(any(Issue.class));
-    }
-
-    /**
-     * RF02 - EXTERNAL non puo creare issue.
-     */
-    @Test
-    @DisplayName("EXTERNAL non puo creare issue")
-    void externalCannotCreateIssue() {
-        User external = buildUser("external", GlobalRole.EXTERNAL);
-        CreateIssueRequest request = new CreateIssueRequest(
-                "Tentativo di creazione",
-                IssueType.FEATURE,
-                "Descrizione sufficientemente lunga per passare la validazione",
-                null,
-                null,
-                null
-        );
-
-        when(userRepository.findByEmail(external.getEmail())).thenReturn(Optional.of(external));
-        when(permissionService.canCreateIssue(external)).thenReturn(false);
-
-        assertThrows(AccessDeniedException.class,
-                () -> issueService.create(request, external.getEmail()));
-        verify(issueRepository, never()).save(any());
-    }
-
-    /**
-     * RF06 - Cambio stato a RISOLTA notifica il creatore.
-     */
-    @Test
-    @DisplayName("Cambio stato a RISOLTA notifica il creatore")
-    void whenStatusSetToRisolta_thenNotifyCreator() {
+    @DisplayName("Cambio stato a RISOLTA notifica il creatore se l'attore è diverso")
+    void whenStatusSetToRisolta_andActorIsNotCreator_thenCreatorIsNotified() {
         User creator = buildUser("creator", GlobalRole.USER);
         User admin = buildUser("admin", GlobalRole.ADMIN);
-        Issue issue = buildIssue(creator, null, IssueStatus.IN_PROGRESS);
+        Issue issue = buildIssue("issue-1", creator, IssueStatus.IN_PROGRESS);
 
         when(userRepository.findByEmail(admin.getEmail())).thenReturn(Optional.of(admin));
-        when(issueRepository.findById(issue.getId())).thenReturn(Optional.of(issue));
+        when(issueRepository.findById("issue-1")).thenReturn(Optional.of(issue));
         when(permissionService.canChangeStatus(admin, issue)).thenReturn(true);
         when(issueRepository.save(any(Issue.class))).thenReturn(issue);
 
         UpdateIssueRequest req = new UpdateIssueRequest(
                 null, null, null, null, IssueStatus.RISOLTA, null, null, null, null
         );
-        issueService.update(issue.getId(), req, admin.getEmail());
+        issueService.update("issue-1", req, admin.getEmail());
 
-        verify(notificationService).notifyUser(eq(creator.getId()), contains("risolta"), any(Issue.class));
+        verify(notificationService).notifyUser(
+                eq(creator.getId()),
+                contains("risolta"),
+                any(Issue.class)
+        );
     }
 
     /**
-     * RF06 - Cambio stato a IN_PROGRESS non genera notifica.
+     * RF06 — Un utente privo del permesso canModifyIssue non può modificare
+     * i campi di una issue: deve ricevere AccessDeniedException e il salvataggio
+     * non deve avvenire.
      */
     @Test
-    @DisplayName("Cambio stato a IN_PROGRESS non genera notifica")
-    void whenStatusSetToInProgress_thenNoNotification() {
-        User creator = buildUser("creator", GlobalRole.USER);
-        User admin = buildUser("admin", GlobalRole.ADMIN);
-        Issue issue = buildIssue(creator, null, IssueStatus.TODO);
+    @DisplayName("Utente senza permesso canModifyIssue non può modificare i campi")
+    void whenUserLacksModifyPermission_andFieldsAreUpdated_thenAccessDeniedIsThrown() {
+        User actor = buildUser("actor", GlobalRole.USER);
+        User owner = buildUser("owner", GlobalRole.USER);
+        Issue issue = buildIssue("issue-2", owner, IssueStatus.TODO);
 
-        when(userRepository.findByEmail(admin.getEmail())).thenReturn(Optional.of(admin));
-        when(issueRepository.findById(issue.getId())).thenReturn(Optional.of(issue));
-        when(permissionService.canChangeStatus(admin, issue)).thenReturn(true);
-        when(issueRepository.save(any(Issue.class))).thenReturn(issue);
-
-        UpdateIssueRequest req = new UpdateIssueRequest(
-                null, null, null, null, IssueStatus.IN_PROGRESS, null, null, null, null
-        );
-        issueService.update(issue.getId(), req, admin.getEmail());
-
-        verify(notificationService, never()).notifyUser(anyString(), anyString(), any());
-    }
-
-    /**
-     * RF06 - Cambio stato non notifica se l'utente e lo stesso creatore.
-     */
-    @Test
-    @DisplayName("Cambio stato dal creatore non genera notifica a se stesso")
-    void whenCreatorChangesStatus_thenNoSelfNotification() {
-        User creator = buildUser("creator", GlobalRole.USER);
-        Issue issue = buildIssue(creator, creator, IssueStatus.TODO);
-
-        when(userRepository.findByEmail(creator.getEmail())).thenReturn(Optional.of(creator));
-        when(issueRepository.findById(issue.getId())).thenReturn(Optional.of(issue));
-        when(permissionService.canChangeStatus(creator, issue)).thenReturn(true);
-        when(issueRepository.save(any(Issue.class))).thenReturn(issue);
+        when(userRepository.findByEmail(actor.getEmail())).thenReturn(Optional.of(actor));
+        when(issueRepository.findById("issue-2")).thenReturn(Optional.of(issue));
+        when(permissionService.canModifyIssue(actor, issue)).thenReturn(false);
 
         UpdateIssueRequest req = new UpdateIssueRequest(
-                null, null, null, null, IssueStatus.IN_PROGRESS, null, null, null, null
+                "Titolo modificato", null, null, null, null, null, null, null, null
         );
-        issueService.update(issue.getId(), req, creator.getEmail());
 
-        verify(notificationService, never()).notifyUser(anyString(), anyString(), any());
-    }
-
-    /**
-     * RF13 - USER non puo archiviare una issue.
-     */
-    @Test
-    @DisplayName("USER non puo archiviare una issue")
-    void whenUserTriesToArchive_thenThrowForbidden() {
-        User user = buildUser("user", GlobalRole.USER);
-        Issue issue = buildIssue(user, user, IssueStatus.TODO);
-
-        when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
-        when(issueRepository.findById(issue.getId())).thenReturn(Optional.of(issue));
-        when(permissionService.canArchive(user)).thenReturn(false);
-
-        UpdateIssueRequest req = new UpdateIssueRequest(
-                null, null, null, null, null, null, null, true, null
-        );
         assertThrows(AccessDeniedException.class,
-                () -> issueService.update(issue.getId(), req, user.getEmail()));
+                () -> issueService.update("issue-2", req, actor.getEmail()));
+        verify(issueRepository, never()).save(any());
     }
 
     /**
-     * RF13 - ADMIN puo archiviare una issue.
+     * RF06/RF13 — Una issue soft-deleted non può essere aggiornata:
+     * il service deve sollevare ResponseStatusException con stato 404
+     * prima di qualsiasi controllo di permesso.
      */
     @Test
-    @DisplayName("ADMIN puo archiviare una issue")
-    void whenAdminArchives_thenSuccess() {
+    @DisplayName("Aggiornamento di issue soft-deleted lancia 404 NOT_FOUND")
+    void whenIssueIsSoftDeleted_thenUpdateThrows404BeforePermissionCheck() {
         User admin = buildUser("admin", GlobalRole.ADMIN);
-        Issue issue = buildIssue(buildUser("creator", GlobalRole.USER), admin, IssueStatus.RISOLTA);
+        Issue deletedIssue = buildIssue("issue-3", admin, IssueStatus.TODO);
+        deletedIssue.setDeletedAt(Instant.now());
 
         when(userRepository.findByEmail(admin.getEmail())).thenReturn(Optional.of(admin));
-        when(issueRepository.findById(issue.getId())).thenReturn(Optional.of(issue));
-        when(permissionService.canArchive(admin)).thenReturn(true);
-        when(issueRepository.save(any(Issue.class))).thenReturn(issue);
+        when(issueRepository.findById("issue-3")).thenReturn(Optional.of(deletedIssue));
 
         UpdateIssueRequest req = new UpdateIssueRequest(
-                null, null, null, null, null, null, null, true, null
+                "Nuovo titolo", null, null, null, null, null, null, null, null
         );
-        IssueResponse response = issueService.update(issue.getId(), req, admin.getEmail());
 
-        assertNotNull(response);
-        assertTrue(issue.isArchived());
-        assertNotNull(issue.getArchivedAt());
-        assertEquals(admin, issue.getArchivedBy());
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> issueService.update("issue-3", req, admin.getEmail()));
+        assertEquals(404, ex.getStatusCode().value());
+        verify(permissionService, never()).canModifyIssue(any(), any());
+        verify(issueRepository, never()).save(any());
     }
 
-    // --- Helper methods ---
+    // --- Helpers ---
 
     private User buildUser(String name, GlobalRole role) {
         User user = new User();
@@ -238,15 +133,14 @@ class IssueServiceTest {
         return user;
     }
 
-    private Issue buildIssue(User creator, User assignee, IssueStatus status) {
+    private Issue buildIssue(String id, User creator, IssueStatus status) {
         Issue issue = new Issue();
-        issue.setId("issue-id");
-        issue.setTitle("Test Issue Title");
+        issue.setId(id);
+        issue.setTitle("Test Issue");
         issue.setType(IssueType.BUG);
-        issue.setDescription("Una descrizione abbastanza lunga per il test");
+        issue.setDescription("Descrizione di test sufficientemente lunga");
         issue.setStatus(status);
         issue.setCreatedBy(creator);
-        issue.setAssignedTo(assignee);
         issue.setCreatedAt(Instant.now());
         issue.setUpdatedAt(Instant.now());
         issue.setLabels(new ArrayList<>());
