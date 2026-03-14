@@ -151,21 +151,51 @@
 {:else if loading}
 	<div class="flex justify-center py-12"><Spinner size="lg" /></div>
 {:else}
-	<div class="flex items-center justify-between mb-6">
+	<div class="flex items-center justify-between mb-4 sm:mb-6">
 		<div>
-			<h2 class="text-xl font-semibold text-gray-900">Gestione Utenti</h2>
+			<h2 class="text-lg sm:text-xl font-semibold text-gray-900">Gestione Utenti</h2>
 			<p class="text-sm text-gray-600 mt-1">{users.length} utenti registrati</p>
 		</div>
 		<button onclick={() => { resetCreateForm(); isCreateOpen = true; }}
-			class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
+			class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-3 py-2 sm:px-4 rounded-lg transition-colors flex items-center gap-2 text-sm">
 			<svg class="w-5 h-5" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
 			</svg>
-			Nuovo Utente
+			<span class="hidden sm:inline">Nuovo Utente</span>
+			<span class="sm:hidden">Nuovo</span>
 		</button>
 	</div>
 
-	<div class="bg-white rounded-xl shadow-sm overflow-hidden">
+	<!-- Mobile card layout -->
+	<div class="sm:hidden space-y-3">
+		{#each users as user (user.id)}
+			<div class="bg-white rounded-xl shadow-sm p-4 border border-gray-200">
+				<div class="flex items-center justify-between mb-2">
+					<div class="flex items-center gap-3">
+						<div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+							<span class="text-blue-700 font-semibold text-sm">{user.name.charAt(0)}</span>
+						</div>
+						<div>
+							<p class="font-medium text-gray-900">{user.name}</p>
+							<p class="text-sm text-gray-500">{user.email}</p>
+						</div>
+					</div>
+					<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {roleBadgeColors[user.role]}">
+						{user.role}
+					</span>
+				</div>
+				<div class="flex justify-end gap-3 pt-2 border-t border-gray-100">
+					<button onclick={() => startEdit(user)} class="text-blue-600 hover:text-blue-700 text-sm">Modifica</button>
+					{#if user.id !== authStore.user?.id}
+						<button onclick={() => confirmDelete(user)} class="text-red-600 hover:text-red-700 text-sm">Elimina</button>
+					{/if}
+				</div>
+			</div>
+		{/each}
+	</div>
+
+	<!-- Desktop table layout -->
+	<div class="hidden sm:block bg-white rounded-xl shadow-sm overflow-hidden">
 		<table class="w-full">
 			<thead class="bg-gray-50 border-b border-gray-200">
 				<tr>

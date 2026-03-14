@@ -95,12 +95,12 @@
 
 	<div class="max-w-7xl mx-auto px-4 py-8">
 		<div class="mb-8">
-			<div class="flex items-start justify-between mb-4">
+			<div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
 				<div>
-					<h1 class="text-3xl font-bold text-gray-900 mb-2">Issue</h1>
-					<p class="text-gray-600">Gestisci le issue del team</p>
+					<h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">Issue</h1>
+					<p class="text-gray-600 text-sm sm:text-base">Gestisci le issue del team</p>
 				</div>
-				<div class="flex gap-2">
+				<div class="flex flex-wrap gap-2">
 					<button onclick={() => handleExport('csv')}
 						class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm">
 						Export CSV
@@ -115,7 +115,7 @@
 					</button>
 					{#if can(authStore.user, 'create:issue')}
 						<button onclick={() => (isFormOpen = true)}
-							class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
+							class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg transition-colors flex items-center gap-2 text-sm">
 							<svg class="w-5 h-5" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
 							</svg>

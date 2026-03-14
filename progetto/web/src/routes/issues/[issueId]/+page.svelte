@@ -171,13 +171,13 @@
 <div class="min-h-screen bg-gray-50">
 	<Navbar />
 
-	<div class="max-w-5xl mx-auto px-4 py-8">
-		<div class="mb-6">
+	<div class="max-w-5xl mx-auto px-4 py-4 sm:py-8">
+		<div class="mb-4 sm:mb-6">
 			<nav aria-label="Breadcrumb" class="text-sm text-gray-600">
 				<ol class="flex items-center gap-2">
 					<li><a href="/issues" class="hover:text-blue-600 transition-colors">Issue</a></li>
 					<li aria-hidden="true">/</li>
-					<li aria-current="page" class="text-gray-900 font-medium">{issue?.title ?? '...'}</li>
+					<li aria-current="page" class="text-gray-900 font-medium truncate">{issue?.title ?? '...'}</li>
 				</ol>
 			</nav>
 		</div>
@@ -211,19 +211,19 @@
 				</div>
 			{/if}
 
-			<div class="bg-white rounded-xl shadow-sm p-6 mb-6">
-				<div class="flex items-start justify-between mb-4">
-					<h1 class="text-3xl font-bold text-gray-900 flex-1">{issue.title}</h1>
-					<div class="flex gap-2">
+			<div class="bg-white rounded-xl shadow-sm p-4 sm:p-6 mb-6">
+				<div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
+					<h1 class="text-2xl sm:text-3xl font-bold text-gray-900">{issue.title}</h1>
+					<div class="flex gap-2 flex-shrink-0">
 						{#if !issue.deletedAt && can(authStore.user, 'archive')}
 							<button onclick={archiveIssue}
-								class="px-4 py-2 border border-orange-300 text-orange-700 rounded-lg hover:bg-orange-50 transition-colors text-sm">
+								class="px-3 py-1.5 sm:px-4 sm:py-2 border border-orange-300 text-orange-700 rounded-lg hover:bg-orange-50 transition-colors text-sm">
 								Archivia
 							</button>
 						{/if}
 						{#if !issue.deletedAt && can(authStore.user, 'delete:issue')}
 							<button onclick={deleteIssue}
-								class="px-4 py-2 border border-red-300 text-red-700 rounded-lg hover:bg-red-50 transition-colors text-sm">
+								class="px-3 py-1.5 sm:px-4 sm:py-2 border border-red-300 text-red-700 rounded-lg hover:bg-red-50 transition-colors text-sm">
 								Elimina
 							</button>
 						{/if}

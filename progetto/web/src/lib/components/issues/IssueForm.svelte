@@ -93,7 +93,7 @@
 			{#if errors.title}<p class="mt-1 text-sm text-red-600">{errors.title}</p>{/if}
 		</div>
 
-		<div class="grid grid-cols-2 gap-4">
+		<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 			<div>
 				<label for="issue-type" class="block text-sm font-medium text-gray-900 mb-2">Tipo *</label>
 				<select id="issue-type" bind:value={type}

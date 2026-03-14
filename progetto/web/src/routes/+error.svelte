@@ -8,8 +8,8 @@
 
 <div class="min-h-screen bg-gray-50 flex items-center justify-center px-4">
 	<div class="text-center">
-		<p class="text-7xl font-bold text-blue-600 mb-4">{$page.status}</p>
-		<h1 class="text-2xl font-bold text-gray-900 mb-2">
+		<p class="text-6xl sm:text-7xl font-bold text-blue-600 mb-4">{$page.status}</p>
+		<h1 class="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
 			{#if $page.status === 404}
 				Pagina non trovata
 			{:else}

@@ -102,10 +102,10 @@
 <div class="min-h-screen bg-gray-50">
 	<Navbar />
 
-	<div class="max-w-7xl mx-auto px-4 py-8">
-		<div class="mb-6">
-			<h1 class="text-3xl font-bold text-gray-900 mb-1">Dashboard</h1>
-			<p class="text-gray-600">Panoramica delle issue del team</p>
+	<div class="max-w-7xl mx-auto px-4 py-4 sm:py-8">
+		<div class="mb-4 sm:mb-6">
+			<h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">Dashboard</h1>
+			<p class="text-gray-600 text-sm sm:text-base">Panoramica delle issue del team</p>
 		</div>
 
 		<!-- Tab bar -->
@@ -137,61 +137,61 @@
 				<div class="flex justify-center py-12"><Spinner size="lg" /></div>
 			{:else}
 				<!-- Summary cards -->
-				<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-					<div class="bg-white rounded-xl shadow-sm p-5 flex items-start gap-4">
-						<div class="p-2.5 bg-gray-100 rounded-lg flex-shrink-0">
-							<svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+					<div class="bg-white rounded-xl shadow-sm p-3 sm:p-5 flex items-start gap-3 sm:gap-4">
+						<div class="p-2 sm:p-2.5 bg-gray-100 rounded-lg flex-shrink-0">
+							<svg class="w-5 h-5 sm:w-6 sm:h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
 							</svg>
 						</div>
 						<div>
-							<p class="text-3xl font-bold text-gray-900">{allIssues.length}</p>
-							<p class="text-sm font-medium text-gray-600 mt-0.5">Totale Issue</p>
+							<p class="text-2xl sm:text-3xl font-bold text-gray-900">{allIssues.length}</p>
+							<p class="text-xs sm:text-sm font-medium text-gray-600 mt-0.5">Totale Issue</p>
 						</div>
 					</div>
 
-					<div class="bg-white rounded-xl shadow-sm p-5 flex items-start gap-4">
-						<div class="p-2.5 bg-blue-100 rounded-lg flex-shrink-0">
-							<svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<div class="bg-white rounded-xl shadow-sm p-3 sm:p-5 flex items-start gap-3 sm:gap-4">
+						<div class="p-2 sm:p-2.5 bg-blue-100 rounded-lg flex-shrink-0">
+							<svg class="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
 							</svg>
 						</div>
 						<div>
-							<p class="text-3xl font-bold text-blue-600">{(byStatus['TODO'] || 0) + (byStatus['IN_PROGRESS'] || 0)}</p>
-							<p class="text-sm font-medium text-gray-600 mt-0.5">Aperte</p>
-							<p class="text-xs text-gray-400">TODO + In Progress</p>
+							<p class="text-2xl sm:text-3xl font-bold text-blue-600">{(byStatus['TODO'] || 0) + (byStatus['IN_PROGRESS'] || 0)}</p>
+							<p class="text-xs sm:text-sm font-medium text-gray-600 mt-0.5">Aperte</p>
+							<p class="text-xs text-gray-400 hidden sm:block">TODO + In Progress</p>
 						</div>
 					</div>
 
-					<div class="bg-white rounded-xl shadow-sm p-5 flex items-start gap-4">
-						<div class="p-2.5 bg-green-100 rounded-lg flex-shrink-0">
-							<svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<div class="bg-white rounded-xl shadow-sm p-3 sm:p-5 flex items-start gap-3 sm:gap-4">
+						<div class="p-2 sm:p-2.5 bg-green-100 rounded-lg flex-shrink-0">
+							<svg class="w-5 h-5 sm:w-6 sm:h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
 							</svg>
 						</div>
 						<div>
-							<p class="text-3xl font-bold text-green-600">{byStatus['RISOLTA'] || 0}</p>
-							<p class="text-sm font-medium text-gray-600 mt-0.5">Risolte</p>
-							<p class="text-xs text-gray-400">Completate</p>
+							<p class="text-2xl sm:text-3xl font-bold text-green-600">{byStatus['RISOLTA'] || 0}</p>
+							<p class="text-xs sm:text-sm font-medium text-gray-600 mt-0.5">Risolte</p>
+							<p class="text-xs text-gray-400 hidden sm:block">Completate</p>
 						</div>
 					</div>
 
-					<div class="bg-white rounded-xl shadow-sm p-5 flex items-start gap-4">
-						<div class="p-2.5 bg-purple-100 rounded-lg flex-shrink-0">
-							<svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<div class="bg-white rounded-xl shadow-sm p-3 sm:p-5 flex items-start gap-3 sm:gap-4">
+						<div class="p-2 sm:p-2.5 bg-purple-100 rounded-lg flex-shrink-0">
+							<svg class="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
 							</svg>
 						</div>
 						<div>
-							<p class="text-3xl font-bold text-purple-600">{myIssues.length}</p>
-							<p class="text-sm font-medium text-gray-600 mt-0.5">Create da me</p>
-							<p class="text-xs text-gray-400">Le tue segnalazioni</p>
+							<p class="text-2xl sm:text-3xl font-bold text-purple-600">{myIssues.length}</p>
+							<p class="text-xs sm:text-sm font-medium text-gray-600 mt-0.5">Create da me</p>
+							<p class="text-xs text-gray-400 hidden sm:block">Le tue segnalazioni</p>
 						</div>
 					</div>
 				</div>
 
 				<!-- Breakdown panels -->
-				<div class="grid md:grid-cols-3 gap-6 mb-8">
+				<div class="grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
 					<div class="bg-white rounded-xl shadow-sm p-5">
 						<h2 class="text-lg font-semibold text-gray-900 mb-4">Per Stato</h2>
 						<div class="space-y-3">
@@ -251,7 +251,7 @@
 				</div>
 
 				<!-- Bottom section: Recent Issues + My Issues + Activity Timeline -->
-				<div class="grid md:grid-cols-3 gap-6">
+				<div class="grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
 					<div class="bg-white rounded-xl shadow-sm p-5">
 						<h2 class="text-lg font-semibold text-gray-900 mb-4">Issue Recenti</h2>
 						{#if recentIssues.length === 0}

@@ -46,11 +46,11 @@
 			onclick={(e) => e.stopPropagation()}
 			onkeydown={(e) => e.stopPropagation()}
 		>
-			<div class="p-6">
+			<div class="p-4 sm:p-6">
 				<h2 id="confirm-title" class="text-lg font-bold text-gray-900 mb-2">{title}</h2>
-				<p id="confirm-message" class="text-gray-600">{message}</p>
+				<p id="confirm-message" class="text-sm sm:text-base text-gray-600">{message}</p>
 			</div>
-			<div class="flex justify-end gap-3 px-6 pb-6">
+			<div class="flex justify-end gap-3 px-4 pb-4 sm:px-6 sm:pb-6">
 				<button
 					onclick={onCancel}
 					class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"

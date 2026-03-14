@@ -26,8 +26,8 @@
 			onclick={(e) => e.stopPropagation()}
 			onkeydown={(e) => e.stopPropagation()}
 		>
-			<div class="flex items-center justify-between p-6 border-b border-gray-200">
-				<h2 id="modal-title" class="text-2xl font-bold text-gray-900">{title}</h2>
+			<div class="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200">
+				<h2 id="modal-title" class="text-xl sm:text-2xl font-bold text-gray-900">{title}</h2>
 				<button
 					onclick={onClose}
 					class="text-gray-400 hover:text-gray-600 transition-colors"
@@ -38,7 +38,7 @@
 					</svg>
 				</button>
 			</div>
-			<div class="p-6">
+			<div class="p-4 sm:p-6">
 				{@render children?.()}
 			</div>
 		</div>

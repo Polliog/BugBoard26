@@ -48,48 +48,52 @@
 
 <div class="bg-white rounded-xl shadow-sm p-4 mb-6">
 	<div class="space-y-4">
-		<div class="flex flex-col md:flex-row gap-4">
-			<div class="flex-1">
-				<label for="filter-search" class="sr-only">Cerca issue</label>
-				<input
-					type="text"
-					id="filter-search"
-					bind:value={search}
-					oninput={onchange}
-					placeholder="Cerca issue..."
-					class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-				/>
+		<div class="flex flex-col gap-3">
+			<div class="flex flex-col sm:flex-row gap-3">
+				<div class="flex-1">
+					<label for="filter-search" class="sr-only">Cerca issue</label>
+					<input
+						type="text"
+						id="filter-search"
+						bind:value={search}
+						oninput={onchange}
+						placeholder="Cerca issue..."
+						class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+					/>
+				</div>
+				<div>
+					<label for="filter-sort" class="sr-only">Ordina per</label>
+					<select
+						id="filter-sort"
+						bind:value={sortBy}
+						onchange={onchange}
+						class="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent min-w-[160px]"
+					>
+						<option value="createdAt">Più recenti</option>
+						<option value="priority">Per priorità</option>
+						<option value="status">Per stato</option>
+					</select>
+				</div>
 			</div>
-			<div class="flex gap-2">
-				<label for="filter-sort" class="sr-only">Ordina per</label>
-				<select
-					id="filter-sort"
-					bind:value={sortBy}
-					onchange={onchange}
-					class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent min-w-[160px]"
-				>
-					<option value="createdAt">Più recenti</option>
-					<option value="priority">Per priorità</option>
-					<option value="status">Per stato</option>
-				</select>
-				<label class="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg">
+			<div class="flex flex-wrap gap-2">
+				<label class="flex items-center gap-2 px-3 py-1.5 border border-gray-300 rounded-lg text-sm">
 					<input
 						type="checkbox"
 						bind:checked={showArchived}
 						onchange={onchange}
 						class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
 					/>
-					<span class="text-sm text-gray-700">Archiviate</span>
+					<span class="text-gray-700">Archiviate</span>
 				</label>
 				{#if currentUser?.role === 'ADMIN'}
-					<label class="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg">
+					<label class="flex items-center gap-2 px-3 py-1.5 border border-gray-300 rounded-lg text-sm">
 						<input
 							type="checkbox"
 							bind:checked={showDeleted}
 							onchange={onchange}
 							class="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
 						/>
-						<span class="text-sm text-gray-700">Eliminate</span>
+						<span class="text-gray-700">Eliminate</span>
 					</label>
 				{/if}
 			</div>

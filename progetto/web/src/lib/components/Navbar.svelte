@@ -116,7 +116,7 @@
 					</button>
 
 					{#if showNotifications}
-						<div class="absolute right-0 mt-2 w-96 bg-white rounded-xl shadow-lg border border-gray-200 z-50 overflow-hidden">
+						<div class="fixed inset-x-4 top-16 sm:absolute sm:inset-x-auto sm:right-0 sm:top-auto mt-2 sm:w-96 bg-white rounded-xl shadow-lg border border-gray-200 z-50 overflow-hidden">
 							<div class="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
 								<h3 class="font-semibold text-gray-900">Notifiche</h3>
 								{#if notifications.length > 0}
@@ -187,11 +187,11 @@
 						aria-haspopup="true"
 						class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
 					>
-						<div class="text-right">
+						<div class="text-right hidden sm:block">
 							<p class="text-sm font-medium text-gray-900">{authStore.user?.name}</p>
 							<p class="text-xs text-gray-500">{roleLabels[authStore.user?.role ?? ''] ?? ''}</p>
 						</div>
-						<div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+						<div class="w-9 h-9 sm:w-10 sm:h-10 bg-blue-100 rounded-full flex items-center justify-center">
 							<span class="text-blue-700 font-semibold">
 								{authStore.user?.name?.charAt(0).toUpperCase()}
 							</span>
