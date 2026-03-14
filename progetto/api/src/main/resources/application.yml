@@ -5,7 +5,7 @@ spring:
     password: bugboard
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show-sql: false
 
 bugboard:
