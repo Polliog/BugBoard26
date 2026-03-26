@@ -44,7 +44,7 @@ jobs:
           exit 1
 
       - name: Bootstrap test data
-        run: ./scripts/bootstrap_bruno_ci.sh
+        run: chmod +x scripts/bootstrap_bruno_ci.sh && ./scripts/bootstrap_bruno_ci.sh
 
       - name: Build Bruno test container
         run: docker compose -f docker-compose.yml -f docker-compose.ci.yml build bruno
