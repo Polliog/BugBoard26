@@ -2,6 +2,7 @@ package it.unina.bugboard26.controller;
 
 import it.unina.bugboard26.dto.request.CreateUserRequest;
 import it.unina.bugboard26.dto.request.UpdateUserRequest;
+import it.unina.bugboard26.dto.response.ResetPasswordResponse;
 import it.unina.bugboard26.dto.response.UserResponse;
 
 import it.unina.bugboard26.service.UserService;
@@ -47,5 +48,11 @@ public class UserController {
     public ResponseEntity<Void> delete(@PathVariable String id) {
         userService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/reset-password")
+    public ResponseEntity<ResetPasswordResponse> resetPassword(@PathVariable String id) {
+        ResetPasswordResponse response = userService.resetPassword(id);
+        return ResponseEntity.ok(response);
     }
 }

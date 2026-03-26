@@ -2,6 +2,7 @@ package it.unina.bugboard26.service;
 
 import it.unina.bugboard26.dto.request.CreateUserRequest;
 import it.unina.bugboard26.dto.request.UpdateUserRequest;
+import it.unina.bugboard26.dto.response.ResetPasswordResponse;
 import it.unina.bugboard26.dto.response.UserResponse;
 import it.unina.bugboard26.enums.GlobalRole;
 import it.unina.bugboard26.model.User;
@@ -182,6 +183,29 @@ class UserServiceTest {
         assertEquals(GlobalRole.ADMIN, result.get(0).role());
         assertEquals(GlobalRole.USER, result.get(1).role());
         assertEquals(GlobalRole.EXTERNAL, result.get(2).role());
+    }
+
+    @Test
+    @DisplayName("Reset password genera una password temporanea di 8 caratteri")
+    void whenResetPassword_thenTemporaryPasswordGenerated() {
+        User user = new User();
+        user.setId("user-1");
+        user.setEmail("user@test.com");
+        user.setPasswordHash("old-hash");
+        user.setName("User");
+        user.setRole(GlobalRole.USER);
+        user.setCreatedAt(Instant.now());
+
+        when(userRepository.findById("user-1")).thenReturn(Optional.of(user));
+        when(passwordEncoder.encode(anyString())).thenReturn("new-encoded-hash");
+        when(userRepository.save(any(User.class))).thenReturn(user);
+
+        ResetPasswordResponse response = userService.resetPassword("user-1");
+
+        assertNotNull(response.temporaryPassword());
+        assertEquals(8, response.temporaryPassword().length());
+        verify(passwordEncoder).encode(response.temporaryPassword());
+        verify(userRepository).save(user);
     }
 
     // --- Helpers ---

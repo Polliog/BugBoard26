@@ -2,6 +2,7 @@ package it.unina.bugboard26.service;
 
 import it.unina.bugboard26.dto.request.CreateUserRequest;
 import it.unina.bugboard26.dto.request.UpdateUserRequest;
+import it.unina.bugboard26.dto.response.ResetPasswordResponse;
 import it.unina.bugboard26.dto.response.UserResponse;
 
 import it.unina.bugboard26.model.User;
@@ -85,5 +86,27 @@ public class UserService {
             throw new ResponseStatusException(NOT_FOUND, "Utente non trovato");
         }
         userRepository.deleteById(id);
+    }
+
+    @Transactional
+    public ResetPasswordResponse resetPassword(String id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Utente non trovato"));
+
+        String temporaryPassword = generateRandomPassword(8);
+        user.setPasswordHash(passwordEncoder.encode(temporaryPassword));
+        userRepository.save(user);
+
+        return new ResetPasswordResponse(temporaryPassword);
+    }
+
+    private String generateRandomPassword(int length) {
+        String chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
+        StringBuilder sb = new StringBuilder(length);
+        java.security.SecureRandom random = new java.security.SecureRandom();
+        for (int i = 0; i < length; i++) {
+            sb.append(chars.charAt(random.nextInt(chars.length())));
+        }
+        return sb.toString();
     }
 }
