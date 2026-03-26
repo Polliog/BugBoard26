@@ -28,6 +28,8 @@ services:
     security_opt:
       - no-new-privileges:true
     env_file: .env
+    volumes:
+      - uploads:/app/uploads
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
@@ -35,6 +37,7 @@ services:
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       JWT_SECRET: ${JWT_SECRET}
       BUGBOARD_CORS_ALLOWED_ORIGINS: https://${SERVER_NAME:-localhost}
+      BUGBOARD_ATTACHMENTS_DIR: /app/uploads
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8080/api/auth/health || exit 1"]
       interval: 10s
@@ -85,6 +88,7 @@ services:
 
 volumes:
   pgdata:
+  uploads:
 
 networks:
   bugboard_net:

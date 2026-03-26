@@ -128,6 +128,29 @@
 		}
 	}
 
+	let resetDialog = $state<{ open: boolean; password: string }>({ open: false, password: '' });
+
+	async function handleResetPassword(user: User) {
+		confirmDialog = {
+			open: true,
+			title: 'Reset Password',
+			message: `Sei sicuro di voler resettare la password di ${user.name}?`,
+			action: async () => {
+				try {
+					const res = await usersApi.resetPassword(user.id);
+					resetDialog = { open: true, password: res.temporaryPassword };
+				} catch (err) {
+					toast.error(err instanceof Error ? err.message : 'Errore reset password');
+				}
+			}
+		};
+	}
+
+	function copyPassword() {
+		navigator.clipboard.writeText(resetDialog.password);
+		toast.success('Password copiata');
+	}
+
 	function confirmDelete(user: User) {
 		confirmDialog = {
 			open: true,
@@ -187,6 +210,7 @@
 				<div class="flex justify-end gap-3 pt-2 border-t border-gray-100 dark:border-gray-800 transition-colors">
 					<button onclick={() => startEdit(user)} class="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-sm transition-colors">Modifica</button>
 					{#if user.id !== authStore.user?.id}
+						<button onclick={() => handleResetPassword(user)} class="text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 text-sm transition-colors">Reset Password</button>
 						<button onclick={() => confirmDelete(user)} class="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 text-sm transition-colors">Elimina</button>
 					{/if}
 				</div>
@@ -228,6 +252,9 @@
 									Modifica
 								</button>
 								{#if user.id !== authStore.user?.id}
+									<button onclick={() => handleResetPassword(user)} class="text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 text-sm transition-colors">
+										Reset PW
+									</button>
 									<button onclick={() => confirmDelete(user)} class="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 text-sm transition-colors">
 										Elimina
 									</button>
@@ -331,7 +358,32 @@
 	title={confirmDialog.title}
 	message={confirmDialog.message}
 	variant="danger"
-	confirmLabel="Elimina"
+	confirmLabel="Conferma"
 	onConfirm={() => { confirmDialog.open = false; confirmDialog.action(); }}
 	onCancel={() => { confirmDialog.open = false; }}
 />
+
+<Modal isOpen={resetDialog.open} title="Password Temporanea" onClose={() => { resetDialog = { open: false, password: '' }; }}>
+	<div class="space-y-4">
+		<p class="text-sm text-gray-600 dark:text-gray-400 transition-colors">La password e' stata resettata. Comunica la nuova password temporanea all'utente:</p>
+		<div class="flex items-center gap-2">
+			<code class="flex-1 px-4 py-3 bg-gray-100 dark:bg-gray-800 rounded-lg text-lg font-mono font-bold text-gray-900 dark:text-gray-100 text-center tracking-widest transition-colors">
+				{resetDialog.password}
+			</code>
+			<button onclick={copyPassword}
+				class="px-3 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm"
+				aria-label="Copia password">
+				<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+				</svg>
+			</button>
+		</div>
+		<p class="text-xs text-orange-600 dark:text-orange-400 transition-colors">Questa password non sara' piu' visibile dopo la chiusura di questo dialog.</p>
+		<div class="flex justify-end pt-2 border-t border-gray-200 dark:border-gray-800 transition-colors">
+			<button onclick={() => { resetDialog = { open: false, password: '' }; }}
+				class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors shadow-sm">
+				Chiudi
+			</button>
+		</div>
+	</div>
+</Modal>

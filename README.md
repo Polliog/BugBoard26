@@ -326,6 +326,8 @@ Base URL: `http://localhost:8080`
 |---|---|---|
 | GET | `/api/users` | Lista utenti |
 | POST | `/api/users` | Crea utente |
+| PATCH | `/api/users/{id}` | Modifica utente |
+| PATCH | `/api/users/{id}/reset-password` | Reset password (genera password temporanea) |
 | DELETE | `/api/users/{id}` | Elimina utente |
 
 ### Issue
@@ -351,6 +353,16 @@ Base URL: `http://localhost:8080`
 | `pageSize` | int | `20` |
 | `sortBy` | string | `createdAt` |
 | `order` | string | `desc` |
+
+### Allegati
+
+| Metodo | Endpoint | Descrizione |
+|---|---|---|
+| POST | `/api/issues/{issueId}/attachments` | Upload file (multipart, max 5MB) |
+| GET | `/api/issues/{issueId}/attachments/{filename}` | Download file |
+| DELETE | `/api/issues/{issueId}/attachments/{filename}` | Elimina allegato |
+
+Tipi ammessi: JPEG, PNG, GIF, WebP, PDF. Massimo 10 allegati per issue.
 
 ### Commenti
 
@@ -410,6 +422,9 @@ cp env/dev.example .env
 | `SPRING_JPA_HIBERNATE_DDL_AUTO` | Strategia DDL | `update` |
 | `BUGBOARD_CORS_ALLOWED_ORIGINS` | Origini CORS (comma-separated) | `http://localhost:5173` |
 | `VITE_API_URL` | URL backend per il frontend | `http://localhost:8080` |
+| `BUGBOARD_ATTACHMENTS_DIR` | Directory per allegati uploadati | `uploads` |
+| `BUGBOARD_AUTO_ARCHIVE_ENABLED` | Abilita auto-archiviazione issue risolte | `true` |
+| `BUGBOARD_AUTO_ARCHIVE_DAYS` | Giorni dopo cui archiviare issue risolte | `30` |
 
 ### Produzione
 
