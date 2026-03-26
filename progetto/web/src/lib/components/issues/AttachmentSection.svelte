@@ -32,6 +32,20 @@
 		return 'FILE';
 	}
 
+	async function handleDownload(storedFilename: string, originalFilename: string) {
+		try {
+			const blob = await attachmentsApi.download(issueId, storedFilename);
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = originalFilename;
+			a.click();
+			URL.revokeObjectURL(url);
+		} catch {
+			toast.error('Errore download allegato');
+		}
+	}
+
 	async function handleFileSelect(event: Event) {
 		const input = event.target as HTMLInputElement;
 		const file = input.files?.[0];
@@ -106,14 +120,12 @@
 							{getFileIcon(att.contentType)}
 						</span>
 						<div class="min-w-0">
-							<a
-								href={attachmentsApi.getDownloadUrl(issueId, att.storedFilename)}
-								target="_blank"
-								rel="noopener noreferrer"
-								class="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline truncate block"
+							<button
+								onclick={() => handleDownload(att.storedFilename, att.originalFilename)}
+								class="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline truncate block text-left"
 							>
 								{att.originalFilename}
-							</a>
+							</button>
 							<p class="text-xs text-gray-500 dark:text-gray-400">{formatSize(att.fileSize)}</p>
 						</div>
 					</div>

@@ -60,9 +60,20 @@
 		loadIssues();
 	}
 
-	async function handleCreateIssue(data: Parameters<typeof issuesApi.create>[0]) {
+	import { attachmentsApi } from '$lib/api/attachments.api';
+
+	async function handleCreateIssue(data: Parameters<typeof issuesApi.create>[0], files?: File[]) {
 		try {
-			await issuesApi.create(data);
+			const created = await issuesApi.create(data);
+			if (files && files.length > 0) {
+				for (const file of files) {
+					try {
+						await attachmentsApi.upload(created.id, file);
+					} catch {
+						toast.error(`Errore upload "${file.name}"`);
+					}
+				}
+			}
 			toast.success('Issue creata!');
 			loadIssues();
 		} catch (err) {

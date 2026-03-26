@@ -10,8 +10,11 @@ export const attachmentsApi = {
 		return api.postForm<Attachment>(`/api/issues/${issueId}/attachments`, formData);
 	},
 
-	getDownloadUrl: (issueId: string, storedFilename: string) =>
-		`${BASE_URL}/api/issues/${issueId}/attachments/${storedFilename}`,
+	download: async (issueId: string, storedFilename: string): Promise<Blob> => {
+		const res = await api.getRaw(`/api/issues/${issueId}/attachments/${storedFilename}`);
+		if (!res.ok) throw new Error(`HTTP ${res.status}`);
+		return res.blob();
+	},
 
 	delete: (issueId: string, storedFilename: string) =>
 		api.delete<void>(`/api/issues/${issueId}/attachments/${storedFilename}`)
