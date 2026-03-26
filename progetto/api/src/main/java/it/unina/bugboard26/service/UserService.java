@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.security.SecureRandom;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.CONFLICT;
@@ -22,6 +23,9 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 @Service
 @Transactional(readOnly = true)
 public class UserService {
+
+    private static final SecureRandom RANDOM = new SecureRandom();
+    private static final String PASSWORD_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -101,11 +105,9 @@ public class UserService {
     }
 
     private String generateRandomPassword(int length) {
-        String chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
         StringBuilder sb = new StringBuilder(length);
-        java.security.SecureRandom random = new java.security.SecureRandom();
         for (int i = 0; i < length; i++) {
-            sb.append(chars.charAt(random.nextInt(chars.length())));
+            sb.append(PASSWORD_CHARS.charAt(RANDOM.nextInt(PASSWORD_CHARS.length())));
         }
         return sb.toString();
     }

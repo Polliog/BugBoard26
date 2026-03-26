@@ -124,6 +124,145 @@ class AttachmentServiceTest {
         verify(issueRepository).save(issue);
     }
 
+    @Test
+    @DisplayName("Upload di file troppo grande lancia errore 400")
+    void whenFileTooLarge_thenBadRequest() {
+        User admin = buildUser("admin", GlobalRole.ADMIN);
+        Issue issue = buildIssue("issue-1", admin);
+
+        when(userRepository.findByEmail(admin.getEmail())).thenReturn(Optional.of(admin));
+        when(issueRepository.findById("issue-1")).thenReturn(Optional.of(issue));
+        when(permissionService.canModifyIssue(admin, issue)).thenReturn(true);
+
+        byte[] largeContent = new byte[6 * 1024 * 1024];
+        MockMultipartFile file = new MockMultipartFile("file", "big.png", "image/png", largeContent);
+
+        AttachmentService service = createService();
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> service.upload("issue-1", file, admin.getEmail()));
+        assertEquals(400, ex.getStatusCode().value());
+        verify(issueRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Upload oltre il limite di 10 allegati lancia errore 400")
+    void whenMaxAttachmentsReached_thenBadRequest() {
+        User admin = buildUser("admin", GlobalRole.ADMIN);
+        Issue issue = buildIssue("issue-1", admin);
+        for (int i = 0; i < 10; i++) {
+            issue.getAttachments().add(new Attachment("file-" + i + ".png", "file.png", "image/png", 100));
+        }
+
+        when(userRepository.findByEmail(admin.getEmail())).thenReturn(Optional.of(admin));
+        when(issueRepository.findById("issue-1")).thenReturn(Optional.of(issue));
+        when(permissionService.canModifyIssue(admin, issue)).thenReturn(true);
+
+        MockMultipartFile file = new MockMultipartFile("file", "extra.png", "image/png", "img".getBytes());
+
+        AttachmentService service = createService();
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> service.upload("issue-1", file, admin.getEmail()));
+        assertEquals(400, ex.getStatusCode().value());
+    }
+
+    @Test
+    @DisplayName("Upload su issue inesistente lancia 404")
+    void whenUploadToNonExistentIssue_thenNotFound() {
+        User admin = buildUser("admin", GlobalRole.ADMIN);
+        when(userRepository.findByEmail(admin.getEmail())).thenReturn(Optional.of(admin));
+        when(issueRepository.findById("ghost")).thenReturn(Optional.empty());
+
+        MockMultipartFile file = new MockMultipartFile("file", "test.png", "image/png", "img".getBytes());
+
+        AttachmentService service = createService();
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> service.upload("ghost", file, admin.getEmail()));
+        assertEquals(404, ex.getStatusCode().value());
+    }
+
+    @Test
+    @DisplayName("Upload su issue eliminata lancia 404")
+    void whenUploadToDeletedIssue_thenNotFound() {
+        User admin = buildUser("admin", GlobalRole.ADMIN);
+        Issue issue = buildIssue("issue-1", admin);
+        issue.setDeletedAt(Instant.now());
+
+        when(userRepository.findByEmail(admin.getEmail())).thenReturn(Optional.of(admin));
+        when(issueRepository.findById("issue-1")).thenReturn(Optional.of(issue));
+
+        MockMultipartFile file = new MockMultipartFile("file", "test.png", "image/png", "img".getBytes());
+
+        AttachmentService service = createService();
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> service.upload("issue-1", file, admin.getEmail()));
+        assertEquals(404, ex.getStatusCode().value());
+    }
+
+    @Test
+    @DisplayName("Download di allegato esistente restituisce la risorsa")
+    void whenDownloadExistingAttachment_thenReturnsResource() throws Exception {
+        User admin = buildUser("admin", GlobalRole.ADMIN);
+        Issue issue = buildIssue("issue-1", admin);
+        Attachment att = new Attachment("uuid-file.pdf", "report.pdf", "application/pdf", 1024);
+        issue.getAttachments().add(att);
+
+        java.nio.file.Files.createFile(tempDir.resolve("uuid-file.pdf"));
+
+        when(issueRepository.findById("issue-1")).thenReturn(Optional.of(issue));
+
+        AttachmentService service = createService();
+        org.springframework.core.io.Resource resource = service.download("issue-1", "uuid-file.pdf");
+
+        assertTrue(resource.exists());
+    }
+
+    @Test
+    @DisplayName("Download di allegato inesistente lancia 404")
+    void whenDownloadNonExistentAttachment_thenNotFound() {
+        User admin = buildUser("admin", GlobalRole.ADMIN);
+        Issue issue = buildIssue("issue-1", admin);
+
+        when(issueRepository.findById("issue-1")).thenReturn(Optional.of(issue));
+
+        AttachmentService service = createService();
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> service.download("issue-1", "nonexistent.pdf"));
+        assertEquals(404, ex.getStatusCode().value());
+    }
+
+    @Test
+    @DisplayName("Delete di allegato senza permesso lancia AccessDeniedException")
+    void whenDeleteWithoutPermission_thenAccessDenied() {
+        User ext = buildUser("external", GlobalRole.EXTERNAL);
+        Issue issue = buildIssue("issue-1", buildUser("owner", GlobalRole.USER));
+        issue.getAttachments().add(new Attachment("file.pdf", "report.pdf", "application/pdf", 1024));
+
+        when(userRepository.findByEmail(ext.getEmail())).thenReturn(Optional.of(ext));
+        when(issueRepository.findById("issue-1")).thenReturn(Optional.of(issue));
+        when(permissionService.canModifyIssue(ext, issue)).thenReturn(false);
+
+        AttachmentService service = createService();
+        assertThrows(AccessDeniedException.class,
+                () -> service.delete("issue-1", "file.pdf", ext.getEmail()));
+        verify(issueRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Delete di allegato inesistente lancia 404")
+    void whenDeleteNonExistentAttachment_thenNotFound() {
+        User admin = buildUser("admin", GlobalRole.ADMIN);
+        Issue issue = buildIssue("issue-1", admin);
+
+        when(userRepository.findByEmail(admin.getEmail())).thenReturn(Optional.of(admin));
+        when(issueRepository.findById("issue-1")).thenReturn(Optional.of(issue));
+        when(permissionService.canModifyIssue(admin, issue)).thenReturn(true);
+
+        AttachmentService service = createService();
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> service.delete("issue-1", "ghost.pdf", admin.getEmail()));
+        assertEquals(404, ex.getStatusCode().value());
+    }
+
     private User buildUser(String name, GlobalRole role) {
         User user = new User();
         user.setId(name + "-id");
