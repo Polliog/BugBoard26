@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * RF06, RF13, RF15 — Test per PermissionService.canModifyIssue(User user, Issue issue).
+ * Test per tutti i metodi di PermissionService.
  * Logica di accesso basata su ruolo e ownership (createdBy).
  */
 class PermissionServiceTest {
@@ -66,6 +66,146 @@ class PermissionServiceTest {
         Issue issue = buildIssue(other, IssueStatus.TODO);
 
         assertFalse(permissionService.canModifyIssue(user, issue));
+    }
+
+    // --- canCreateIssue ---
+
+    /** RF02 — ADMIN può creare issue */
+    @Test
+    @DisplayName("ADMIN può creare issue")
+    void adminCanCreateIssue() {
+        User admin = buildUser("admin", GlobalRole.ADMIN);
+        assertTrue(permissionService.canCreateIssue(admin));
+    }
+
+    /** RF02 — USER può creare issue */
+    @Test
+    @DisplayName("USER può creare issue")
+    void userCanCreateIssue() {
+        User user = buildUser("user", GlobalRole.USER);
+        assertTrue(permissionService.canCreateIssue(user));
+    }
+
+    /** RF15 — EXTERNAL non può creare issue */
+    @Test
+    @DisplayName("EXTERNAL non può creare issue")
+    void externalCannotCreateIssue() {
+        User ext = buildUser("external", GlobalRole.EXTERNAL);
+        assertFalse(permissionService.canCreateIssue(ext));
+    }
+
+    // --- canChangeStatus ---
+
+    /** RF06 — canChangeStatus delega a canModifyIssue: ADMIN può sempre cambiare stato */
+    @Test
+    @DisplayName("ADMIN può cambiare stato di qualsiasi issue (canChangeStatus)")
+    void adminCanChangeStatus() {
+        User admin = buildUser("admin", GlobalRole.ADMIN);
+        User other = buildUser("other", GlobalRole.USER);
+        Issue issue = buildIssue(other, IssueStatus.IN_PROGRESS);
+
+        assertTrue(permissionService.canChangeStatus(admin, issue));
+    }
+
+    // --- canArchive ---
+
+    /** RF13 — ADMIN può archiviare */
+    @Test
+    @DisplayName("ADMIN può archiviare issue")
+    void adminCanArchive() {
+        User admin = buildUser("admin", GlobalRole.ADMIN);
+        assertTrue(permissionService.canArchive(admin));
+    }
+
+    /** RF13 — USER non può archiviare */
+    @Test
+    @DisplayName("USER non può archiviare issue")
+    void userCannotArchive() {
+        User user = buildUser("user", GlobalRole.USER);
+        assertFalse(permissionService.canArchive(user));
+    }
+
+    /** RF13 — EXTERNAL non può archiviare */
+    @Test
+    @DisplayName("EXTERNAL non può archiviare issue")
+    void externalCannotArchive() {
+        User ext = buildUser("external", GlobalRole.EXTERNAL);
+        assertFalse(permissionService.canArchive(ext));
+    }
+
+    // --- canComment ---
+
+    /** RF15 — ADMIN può commentare */
+    @Test
+    @DisplayName("ADMIN può commentare")
+    void adminCanComment() {
+        User admin = buildUser("admin", GlobalRole.ADMIN);
+        assertTrue(permissionService.canComment(admin));
+    }
+
+    /** RF15 — USER può commentare */
+    @Test
+    @DisplayName("USER può commentare")
+    void userCanComment() {
+        User user = buildUser("user", GlobalRole.USER);
+        assertTrue(permissionService.canComment(user));
+    }
+
+    /** RF15 — EXTERNAL non può commentare */
+    @Test
+    @DisplayName("EXTERNAL non può commentare")
+    void externalCannotComment() {
+        User ext = buildUser("external", GlobalRole.EXTERNAL);
+        assertFalse(permissionService.canComment(ext));
+    }
+
+    // --- canManageUsers ---
+
+    /** RF01 — ADMIN può gestire utenti */
+    @Test
+    @DisplayName("ADMIN può gestire utenti")
+    void adminCanManageUsers() {
+        User admin = buildUser("admin", GlobalRole.ADMIN);
+        assertTrue(permissionService.canManageUsers(admin));
+    }
+
+    /** RF01 — USER non può gestire utenti */
+    @Test
+    @DisplayName("USER non può gestire utenti")
+    void userCannotManageUsers() {
+        User user = buildUser("user", GlobalRole.USER);
+        assertFalse(permissionService.canManageUsers(user));
+    }
+
+    // --- canDeleteIssue ---
+
+    /** ADMIN può eliminare issue */
+    @Test
+    @DisplayName("ADMIN può eliminare issue")
+    void adminCanDeleteIssue() {
+        User admin = buildUser("admin", GlobalRole.ADMIN);
+        assertTrue(permissionService.canDeleteIssue(admin));
+    }
+
+    /** USER non può eliminare issue */
+    @Test
+    @DisplayName("USER non può eliminare issue")
+    void userCannotDeleteIssue() {
+        User user = buildUser("user", GlobalRole.USER);
+        assertFalse(permissionService.canDeleteIssue(user));
+    }
+
+    // --- canModifyIssue (EXTERNAL) ---
+
+    /** RF15 — EXTERNAL non può modificare issue */
+    @Test
+    @DisplayName("EXTERNAL non può modificare nessuna issue")
+    void externalCannotModifyIssue() {
+        User ext = buildUser("external", GlobalRole.EXTERNAL);
+        User creator = buildUser("creator", GlobalRole.USER);
+        Issue issue = buildIssue(creator, IssueStatus.TODO);
+
+        assertFalse(permissionService.canModifyIssue(ext, issue));
     }
 
     // --- Helpers ---
