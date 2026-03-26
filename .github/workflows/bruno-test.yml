@@ -50,7 +50,7 @@ jobs:
         run: docker compose -f docker-compose.yml -f docker-compose.ci.yml build bruno
 
       - name: Create Bruno reports directory
-        run: mkdir -p BrunoTesting/.tmp/reports
+        run: mkdir -p BrunoTesting/.tmp
 
       - name: Run Bruno API tests
         run: |
@@ -61,14 +61,14 @@ jobs:
             API/Issues/ListIssues.bru \
             API/Users/ListUsers.bru \
             --env ci \
-            --output /workspace/BrunoTesting/.tmp/reports
+            --output /workspace/BrunoTesting/.tmp/results.json
 
       - name: Upload Bruno reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: bruno-reports
-          path: progetto/BrunoTesting/.tmp/reports
+          path: progetto/BrunoTesting/.tmp/results.json
 
       - name: Dump logs on failure
         if: failure()
