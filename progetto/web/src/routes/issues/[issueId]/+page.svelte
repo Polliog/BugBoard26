@@ -262,7 +262,7 @@
 
 				<div class="mb-6">
 					<div class="flex items-center gap-3 mb-3">
-						<h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 transition-colors">Allegato</h2>
+						<h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 transition-colors">Immagine</h2>
 						{#if !issue.deletedAt && can(authStore.user, 'change:status', issue)}
 							{#if issue.image}
 								<button onclick={removeIssueImage} class="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 text-sm transition-colors">Rimuovi</button>
@@ -274,9 +274,9 @@
 						{/if}
 					</div>
 					{#if issue.image}
-						<img src={issue.image} alt="Allegato issue: {issue.title}" class="max-w-full rounded-lg border border-gray-200 dark:border-gray-800 transition-colors" />
+						<img src={issue.image} alt="Immagine issue: {issue.title}" class="max-w-full rounded-lg border border-gray-200 dark:border-gray-800 transition-colors" />
 					{:else}
-						<p class="text-gray-400 dark:text-gray-600 text-sm transition-colors">Nessun allegato</p>
+						<p class="text-gray-400 dark:text-gray-600 text-sm transition-colors">Nessuna Immagine</p>
 					{/if}
 				</div>
 
