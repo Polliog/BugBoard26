@@ -21,3 +21,12 @@
 .DS_Store
 Thumbs.db
 /progetto/CLAUDE.md
+
+# Nginx certificates
+/progetto/nginx/certs/
+
+# Bruno
+/progetto/BrunoTesting/.tmp/
+
+# Docker
+*.log

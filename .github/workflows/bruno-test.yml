@@ -3,11 +3,11 @@ name: Bruno API Tests
 on:
   push:
     paths:
-      - "api/**"
-      - "BrunoTesting/**"
-      - "docker-compose.yml"
-      - "docker-compose.ci.yml"
-      - "scripts/bootstrap_bruno_ci.sh"
+      - "progetto/api/**"
+      - "progetto/BrunoTesting/**"
+      - "progetto/docker-compose.yml"
+      - "progetto/docker-compose.ci.yml"
+      - "progetto/scripts/bootstrap_bruno_ci.sh"
       - ".github/workflows/bruno-test.yml"
   workflow_dispatch:
   workflow_call:
@@ -16,6 +16,9 @@ jobs:
   bruno-test:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: progetto
 
     steps:
       - name: Checkout repository
@@ -65,7 +68,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: bruno-reports
-          path: BrunoTesting/.tmp/reports
+          path: progetto/BrunoTesting/.tmp/reports
 
       - name: Dump logs on failure
         if: failure()

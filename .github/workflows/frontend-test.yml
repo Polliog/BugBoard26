@@ -3,7 +3,7 @@ name: Frontend Checks
 on:
   push:
     paths:
-      - "web/**"
+      - "progetto/web/**"
       - ".github/workflows/frontend-test.yml"
   workflow_dispatch:
   workflow_call:
@@ -28,13 +28,13 @@ jobs:
           version: latest
 
       - name: Install dependencies
-        working-directory: web
+        working-directory: progetto/web
         run: pnpm install --frozen-lockfile
 
       - name: Type check
-        working-directory: web
+        working-directory: progetto/web
         run: pnpm check
 
       - name: Build
-        working-directory: web
+        working-directory: progetto/web
         run: pnpm build

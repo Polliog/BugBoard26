@@ -3,8 +3,8 @@ name: Backend Tests
 on:
   push:
     paths:
-      - "api/**"
-      - "docker-compose.yml"
+      - "progetto/api/**"
+      - "progetto/docker-compose.yml"
       - ".github/workflows/backend-test.yml"
   workflow_dispatch:
   workflow_call:
@@ -26,7 +26,7 @@ jobs:
           cache: maven
 
       - name: Run tests with coverage
-        working-directory: api
+        working-directory: progetto/api
         run: ./mvnw verify -B
 
       - name: Upload coverage report
@@ -34,4 +34,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: backend-coverage
-          path: api/target/site/jacoco/
+          path: progetto/api/target/site/jacoco/

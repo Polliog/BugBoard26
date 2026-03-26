@@ -26,7 +26,7 @@ jobs:
           cache: maven
 
       - name: Build and test with coverage
-        working-directory: api
+        working-directory: progetto/api
         run: ./mvnw verify -B
 
       - name: SonarQube Scan
