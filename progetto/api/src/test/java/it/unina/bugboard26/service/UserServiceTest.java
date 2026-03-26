@@ -208,6 +208,54 @@ class UserServiceTest {
         verify(userRepository).save(user);
     }
 
+    @Test
+    @DisplayName("Reset password per utente inesistente lancia NOT_FOUND")
+    void whenResetPasswordNonExistentUser_thenThrowsNotFound() {
+        when(userRepository.findById("ghost-id")).thenReturn(Optional.empty());
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> userService.resetPassword("ghost-id"));
+        assertEquals(404, ex.getStatusCode().value());
+        verify(userRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Cancellazione utente esistente lo elimina dal repository")
+    void whenDeleteExistingUser_thenDeleted() {
+        when(userRepository.existsById("mario-id")).thenReturn(true);
+
+        userService.delete("mario-id");
+
+        verify(userRepository).deleteById("mario-id");
+    }
+
+    @Test
+    @DisplayName("Update utente inesistente lancia NOT_FOUND")
+    void whenUpdateNonExistentUser_thenThrowsNotFound() {
+        when(userRepository.findById("ghost-id")).thenReturn(Optional.empty());
+
+        UpdateUserRequest request = new UpdateUserRequest(null, "New Name", null, null);
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> userService.update("ghost-id", request));
+        assertEquals(404, ex.getStatusCode().value());
+    }
+
+    @Test
+    @DisplayName("Update con nuova password la codifica correttamente")
+    void whenUpdateWithPassword_thenPasswordIsEncoded() {
+        User existing = buildUser("mario", GlobalRole.USER);
+        UpdateUserRequest request = new UpdateUserRequest(null, null, null, "newpassword123");
+
+        when(userRepository.findById("mario-id")).thenReturn(Optional.of(existing));
+        when(passwordEncoder.encode("newpassword123")).thenReturn("new-encoded");
+        when(userRepository.save(any(User.class))).thenReturn(existing);
+
+        userService.update("mario-id", request);
+
+        verify(passwordEncoder).encode("newpassword123");
+        assertEquals("new-encoded", existing.getPasswordHash());
+    }
+
     // --- Helpers ---
 
     private User buildUser(String name, GlobalRole role) {
