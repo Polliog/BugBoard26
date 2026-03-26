@@ -30,6 +30,7 @@ export interface Issue {
 	deletedBy: User | null;
 	labels: string[];
 	history: HistoryEntry[];
+	attachments: Attachment[];
 }
 
 export interface Comment {
@@ -47,6 +48,14 @@ export interface HistoryEntry {
 	performedBy: User;
 	action: string;
 	timestamp: string;
+}
+
+export interface Attachment {
+	storedFilename: string;
+	originalFilename: string;
+	contentType: string;
+	fileSize: number;
+	uploadedAt: string;
 }
 
 export interface Notification {

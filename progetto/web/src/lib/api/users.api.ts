@@ -10,5 +10,8 @@ export const usersApi = {
 	update: (id: string, data: { email?: string; name?: string; role?: string; password?: string }) =>
 		api.patch<User>(`/api/users/${id}`, data),
 
-	delete: (id: string) => api.delete<void>(`/api/users/${id}`)
+	delete: (id: string) => api.delete<void>(`/api/users/${id}`),
+
+	resetPassword: (id: string) =>
+		api.patch<{ temporaryPassword: string }>(`/api/users/${id}/reset-password`, {})
 };

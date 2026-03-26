@@ -37,5 +37,26 @@ export const api = {
 				...(token ? { Authorization: `Bearer ${token}` } : {})
 			}
 		});
+	},
+	postForm: <T>(path: string, formData: FormData) => {
+		const token = localStorage.getItem('bugboard_token');
+		return fetch(`${BASE_URL}${path}`, {
+			method: 'POST',
+			headers: {
+				...(token ? { Authorization: `Bearer ${token}` } : {})
+			},
+			body: formData
+		}).then(async (res) => {
+			if (!res.ok) {
+				const err = await res.json().catch(() => ({}));
+				const message =
+					err.message ??
+					err.error ??
+					(Array.isArray(err.errors) ? err.errors.map((e: { defaultMessage?: string }) => e.defaultMessage).join(', ') : null) ??
+					`HTTP ${res.status}`;
+				throw new Error(message);
+			}
+			return res.json() as T;
+		});
 	}
 };
