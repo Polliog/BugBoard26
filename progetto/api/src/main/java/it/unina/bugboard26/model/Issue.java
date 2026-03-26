@@ -83,6 +83,10 @@ public class Issue {
     @OrderBy("timestamp ASC")
     private List<HistoryEntry> history = new ArrayList<>();
 
+    @ElementCollection
+    @CollectionTable(name = "issue_attachments", joinColumns = @JoinColumn(name = "issue_id"))
+    private List<Attachment> attachments = new ArrayList<>();
+
     public Issue() {
     }
 
@@ -242,5 +246,13 @@ public class Issue {
 
     public void setDeletedBy(User deletedBy) {
         this.deletedBy = deletedBy;
+    }
+
+    public List<Attachment> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(List<Attachment> attachments) {
+        this.attachments = attachments;
     }
 }

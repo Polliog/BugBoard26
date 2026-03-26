@@ -26,7 +26,8 @@ public record IssueResponse(
         Instant deletedAt,
         UserResponse deletedBy,
         List<String> labels,
-        List<HistoryEntryResponse> history
+        List<HistoryEntryResponse> history,
+        List<AttachmentResponse> attachments
 ) {
     public static IssueResponse from(Issue issue) {
         return new IssueResponse(
@@ -47,7 +48,8 @@ public record IssueResponse(
                 issue.getDeletedAt(),
                 issue.getDeletedBy() != null ? UserResponse.from(issue.getDeletedBy()) : null,
                 issue.getLabels().stream().map(l -> l.getName()).toList(),
-                issue.getHistory().stream().map(HistoryEntryResponse::from).toList()
+                issue.getHistory().stream().map(HistoryEntryResponse::from).toList(),
+                issue.getAttachments().stream().map(AttachmentResponse::from).toList()
         );
     }
 }
