@@ -7,11 +7,22 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: false
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
 
 bugboard:
   jwt:
     secret: ${JWT_SECRET:dev-secret-256-bit-change-in-production-at-least-32-chars-long}
     expiration: 86400000
+  attachments:
+    dir: ${BUGBOARD_ATTACHMENTS_DIR:uploads}
+    max-size: 5242880
+    allowed-types: image/jpeg,image/png,image/gif,image/webp,application/pdf
+  auto-archive:
+    enabled: ${BUGBOARD_AUTO_ARCHIVE_ENABLED:true}
+    days: ${BUGBOARD_AUTO_ARCHIVE_DAYS:30}
 
 server:
   port: 8080
