@@ -10,6 +10,7 @@
 	import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte';
 	import Markdown from '$lib/components/ui/Markdown.svelte';
 	import CommentSection from '$lib/components/issues/CommentSection.svelte';
+	import AttachmentSection from '$lib/components/issues/AttachmentSection.svelte';
 	import { issuesApi } from '$lib/api/issues.api';
 	import { commentsApi } from '$lib/api/comments.api';
 	import { can } from '$lib/utils/permissions';
@@ -278,6 +279,15 @@
 						<p class="text-gray-400 dark:text-gray-600 text-sm transition-colors">Nessun allegato</p>
 					{/if}
 				</div>
+
+				{#if issue.attachments}
+					<AttachmentSection
+						{issueId}
+						attachments={issue.attachments}
+						canModify={!issue.deletedAt && can(authStore.user, 'change:status', issue)}
+						onUpdate={loadData}
+					/>
+				{/if}
 
 				<div class="pt-6 border-t border-gray-200 dark:border-gray-800 transition-colors">
 					<div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
