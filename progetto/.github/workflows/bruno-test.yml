@@ -1,0 +1,76 @@
+name: Bruno API Tests
+
+on:
+  push:
+    paths:
+      - "api/**"
+      - "BrunoTesting/**"
+      - "docker-compose.yml"
+      - "docker-compose.ci.yml"
+      - "scripts/bootstrap_bruno_ci.sh"
+      - ".github/workflows/bruno-test.yml"
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  bruno-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create CI env file
+        run: cp env/dev.example .env
+
+      - name: Start database and backend
+        run: docker compose up -d --build db api
+
+      - name: Wait for backend health
+        run: |
+          for i in $(seq 1 60); do
+            if curl -fsS http://localhost:8080/api/auth/health > /dev/null 2>&1; then
+              echo "Backend is healthy"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Backend failed to start"
+          docker compose logs api
+          exit 1
+
+      - name: Bootstrap test data
+        run: ./scripts/bootstrap_bruno_ci.sh
+
+      - name: Build Bruno test container
+        run: docker compose -f docker-compose.yml -f docker-compose.ci.yml build bruno
+
+      - name: Create Bruno reports directory
+        run: mkdir -p BrunoTesting/.tmp/reports
+
+      - name: Run Bruno API tests
+        run: |
+          docker compose -f docker-compose.yml -f docker-compose.ci.yml run --rm bruno run \
+            00_Setup/Login.bru \
+            API/Auth/Me.bru \
+            API/Issues/CreateIssue.bru \
+            API/Issues/ListIssues.bru \
+            API/Users/ListUsers.bru \
+            --env ci \
+            --output /workspace/BrunoTesting/.tmp/reports
+
+      - name: Upload Bruno reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bruno-reports
+          path: BrunoTesting/.tmp/reports
+
+      - name: Dump logs on failure
+        if: failure()
+        run: docker compose logs --no-color db api
+
+      - name: Stop stack
+        if: always()
+        run: docker compose -f docker-compose.yml -f docker-compose.ci.yml down -v

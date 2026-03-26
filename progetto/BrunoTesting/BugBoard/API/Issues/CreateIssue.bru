@@ -1,0 +1,48 @@
+meta {
+  name: Create Issue
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseURL}}/api/issues
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "title": "Bruno E2E Test Issue",
+    "type": "BUG",
+    "description": "Issue creata automaticamente dal test suite Bruno per verificare il funzionamento dell'endpoint.",
+    "priority": "MEDIA"
+  }
+}
+
+script:post-response {
+  if (res.status === 200 || res.status === 201) {
+    bru.setEnvVar("issueId", res.body.id);
+  }
+}
+
+tests {
+  test("should create issue successfully", function() {
+    expect(res.status).to.be.oneOf([200, 201]);
+  });
+
+  test("should return issue with correct title", function() {
+    expect(res.body.title).to.equal("Bruno E2E Test Issue");
+  });
+
+  test("should return issue with correct type", function() {
+    expect(res.body.type).to.equal("BUG");
+  });
+
+  test("should have an id", function() {
+    expect(res.body.id).to.be.a("string");
+  });
+}

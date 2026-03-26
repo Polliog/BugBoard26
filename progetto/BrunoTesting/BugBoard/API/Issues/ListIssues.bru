@@ -1,0 +1,27 @@
+meta {
+  name: List Issues
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseURL}}/api/issues
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+tests {
+  test("should return 200", function() {
+    expect(res.status).to.equal(200);
+  });
+
+  test("should return paged response", function() {
+    expect(res.body.data).to.be.an("array");
+    expect(res.body.total).to.be.a("number");
+    expect(res.body.total).to.be.greaterThan(0);
+  });
+}

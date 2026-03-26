@@ -1,0 +1,32 @@
+meta {
+  name: List Users
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseURL}}/api/users
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+tests {
+  test("should return 200", function() {
+    expect(res.status).to.equal(200);
+  });
+
+  test("should return list of users", function() {
+    expect(res.body).to.be.an("array");
+    expect(res.body.length).to.be.greaterThan(0);
+  });
+
+  test("should contain admin user", function() {
+    const admin = res.body.find(u => u.email === "admin@bugboard.com");
+    expect(admin).to.not.be.undefined;
+    expect(admin.role).to.equal("ADMIN");
+  });
+}

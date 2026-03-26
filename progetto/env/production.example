@@ -1,0 +1,20 @@
+# PostgreSQL
+POSTGRES_DB=bugboard
+POSTGRES_USER=bugboard
+POSTGRES_PASSWORD=CHANGE_ME_strong_password_here
+
+# Spring Boot
+SPRING_JPA_HIBERNATE_DDL_AUTO=update
+JWT_SECRET=CHANGE_ME_production_secret_at_least_32_chars
+
+# Server
+SERVER_NAME=your-domain.com
+
+# Docker images (required for docker-compose.prod.yml)
+API_IMAGE=bugboard26/api:latest
+WEB_IMAGE=bugboard26/web:latest
+
+# SSL
+SSL_CERTS_HOST_PATH=/etc/letsencrypt
+NGINX_SSL_CERT_PATH=/etc/nginx/certs/live/your-domain.com/fullchain.pem
+NGINX_SSL_KEY_PATH=/etc/nginx/certs/live/your-domain.com/privkey.pem

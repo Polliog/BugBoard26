@@ -1,0 +1,33 @@
+# Environment
+.env
+!env/*.example
+
+# Nginx certificates
+nginx/certs/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Java
+api/target/
+
+# Node
+web/node_modules/
+web/build/
+web/.svelte-kit/
+
+# Bruno
+BrunoTesting/.tmp/
+
+# Coverage
+api/target/site/jacoco/
+coverage/
+
+# Docker
+*.log

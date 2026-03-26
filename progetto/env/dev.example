@@ -1,0 +1,14 @@
+# PostgreSQL
+POSTGRES_DB=bugboard
+POSTGRES_USER=bugboard
+POSTGRES_PASSWORD=bugboard
+
+# Spring Boot
+SPRING_JPA_HIBERNATE_DDL_AUTO=update
+JWT_SECRET=dev-secret-256-bit-change-in-production-at-least-32-chars-long
+
+# CORS (comma-separated origins)
+BUGBOARD_CORS_ALLOWED_ORIGINS=http://localhost:5173,https://localhost
+
+# Frontend
+VITE_API_URL=http://localhost:8080

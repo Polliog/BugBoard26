@@ -1,0 +1,15 @@
+services:
+  bruno:
+    build:
+      context: .
+      dockerfile: BrunoTesting/Dockerfile
+    init: true
+    working_dir: /workspace/BrunoTesting/BugBoard
+    volumes:
+      - ./:/workspace:ro
+      - ./BrunoTesting/.tmp:/workspace/BrunoTesting/.tmp
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - bugboard_net

@@ -1,0 +1,36 @@
+meta {
+  name: Create Comment
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseURL}}/api/issues/{{issueId}}/comments
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "content": "Commento di test creato da Bruno E2E suite."
+  }
+}
+
+tests {
+  test("should create comment successfully", function() {
+    expect(res.status).to.be.oneOf([200, 201]);
+  });
+
+  test("should return comment with correct content", function() {
+    expect(res.body.content).to.equal("Commento di test creato da Bruno E2E suite.");
+  });
+
+  test("should have author info", function() {
+    expect(res.body.author).to.be.an("object");
+    expect(res.body.author.email).to.equal("admin@bugboard.com");
+  });
+}

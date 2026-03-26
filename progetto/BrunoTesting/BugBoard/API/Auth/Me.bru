@@ -1,0 +1,26 @@
+meta {
+  name: Me
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseURL}}/api/auth/me
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+tests {
+  test("should return 200", function() {
+    expect(res.status).to.equal(200);
+  });
+
+  test("should return current user", function() {
+    expect(res.body.email).to.equal("admin@bugboard.com");
+    expect(res.body.role).to.equal("ADMIN");
+  });
+}

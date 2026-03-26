@@ -1,0 +1,25 @@
+meta {
+  name: Get Issue
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseURL}}/api/issues/{{issueId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+tests {
+  test("should return 200", function() {
+    expect(res.status).to.equal(200);
+  });
+
+  test("should return the correct issue", function() {
+    expect(res.body.id).to.equal(bru.getEnvVar("issueId"));
+  });
+}

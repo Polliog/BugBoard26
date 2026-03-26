@@ -1,0 +1,40 @@
+meta {
+  name: Login
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseURL}}/api/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "{{email}}",
+    "password": "{{password}}"
+  }
+}
+
+script:post-response {
+  if (res.status === 200) {
+    bru.setEnvVar("token", res.body.token);
+  }
+}
+
+tests {
+  test("should return 200", function() {
+    expect(res.status).to.equal(200);
+  });
+
+  test("should return token", function() {
+    expect(res.body.token).to.be.a("string");
+    expect(res.body.token.length).to.be.greaterThan(0);
+  });
+
+  test("should return user", function() {
+    expect(res.body.user).to.be.an("object");
+    expect(res.body.user.email).to.equal("admin@bugboard.com");
+  });
+}
