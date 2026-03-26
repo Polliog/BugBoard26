@@ -12,7 +12,7 @@ public record HistoryEntryResponse(
     public static HistoryEntryResponse from(HistoryEntry e) {
         return new HistoryEntryResponse(
                 e.getId(),
-                UserResponse.from(e.getUser()),
+                e.getUser() != null ? UserResponse.from(e.getUser()) : null,
                 e.getAction(),
                 e.getTimestamp()
         );
