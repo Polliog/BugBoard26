@@ -1,0 +1,24 @@
+\newpage
+\chapter{Infrastruttura, DevOps e Continuous Integration}
+
+\section{Contrainerizzazione tramite Docker}
+L'intero ecosistema BugBoard26 è containerizzato tramite \textbf{Docker} allo scopo di garantire la riproducibilità degli ambienti e risolvere il problema delle dipendenze locali \\
+All'interno dei singoli applicativi troviamo file descrittori specifici:
+\begin{itemize}
+    \item \textbf{Backend(API):} Qui un \texttt{Dockerfile} dedicato preleva il codice sorgente Java, esegure la build tramite Maven e espone il file eseguibile \textit{.jar} su porta 8080 dentro un'immagine basata su Java 23
+    \item \textbf{Frontend(Web):} Anche qui un \texttt{Dockerfile} gestisce le dipendenze Node.js definite in \\ \texttt{package.json}, esegue la build del progetto SvelteKit usando \textit{Vite} e avviia il web server su porta 5173
+\end{itemize}
+La gestione multi-container, necessara alla comunicazione interna, è garantita da \textbf{Docker Compose}. Il file \texttt{docker-compose.dev.yml} definisce una rete virtuale isolata e inizializza tre servizi: il database \texttt{postgres} (associato a un volute persistente per salvaguardare i dati), il server \texttt{api} e il client \texttt{web}
+
+\section{Automazione del Ciclo di Vita e Makefile}
+Per standardizzare l'esecuzione dei comandi di build, test e edeplyment il progetto comprende tutte le istruzioni operative all'interno di un \texttt{Makefile}. Ciò garantisce ai membri del progetto un'interfaccia a riga di comando semplificata per l'avvio dell'architettura locale
+
+\section{Pipeline di Continuous Integration (CI)}
+Il repository adotta pratiche di Continuous Integration per favorire lo sviluppo operatvo. Ogni volta che una commit viene spinta sul repository o viene aperta una pull request, una pipeline automatizzata valida l'integrità della codebase. I passag\textbf{}gli della CI includono:
+
+\begin{enumerate}
+    \item \textbf{Check del codice} e inzializzazione degli ambienti di esecuzione come Java e Node
+    \item \textbf{Build Backend:} Compilazione del codice Spring Boot e risolzuone delle dependencies Maven
+    \item \textbf{Build Frontend:} Controllo dei TypeScript \texttt{svelte-check} e transpiling degli asset SvelteKit
+    \item \textbf{Quality Gate:} Interruzione della pipeline se la compilazione fallisce o una percentuale di test non viene superata
+\end{enumerate}

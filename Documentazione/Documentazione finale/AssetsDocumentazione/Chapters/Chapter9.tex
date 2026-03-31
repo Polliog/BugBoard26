@@ -1,0 +1,87 @@
+\newpage
+\chapter{Piano di collaudo}
+\section{Metodologia e Perimetro di Collaudo}
+La stategia di Quality Assurance si concentra esclusivamente su Backend (server. L'aprroccio è quello dell'\textbf{Unit Testing} tradizionale, supportato ulteriormente dal framework \textbf{JUnit 5}, con l'obiettivo di validare i componenti centrali dell'applicazione simulando l'interazione fra moduli e isolando le dipendenze esterne tramite l'utilizzo di Mock.
+\\
+Per garentire una copertura qualitativa, i testi sono incentrati su metodi ad \textbf{alta complessità logica},  non banali, scartando getter, setter e metodi delegati.
+Sono stati individuati 3 metodi essenziali, caratterizzati da regole di dominio rigorose e \textbf{firme con 2 o più parametri} in ingresso
+
+\section{Strategie di Isolamento e Classi di Equivalenza (Black Box)}
+Per metodi compessi che posseggono effetti collaterali o che non ritornano un valore esplicito, si è fatto uso della libreria \textbf{Mockito} per assicurare rapidità nell'escuzione e assenza di side-effect. \\
+Tutti gli oggetti di tipo \texttt{Repository} responsabili dell' accesso dati fisici sono stati rimpiazzati con sosia Mock simulati tramite annotazioni \texttt{@Mock} e \texttt{@InjectMocks}, per fare in modo di concentrare la valutazione esclusivamente sull'algoritmo Java.
+\begin{itemize}
+    \item \textbf{Esempio applicato(\texttt{IssueService.update})}: L'aggiornamento di un ticket aziona funzionalità di notifiche asincrone. La pianificazione ha dunque previsto test case specifici per verificare la cardinalità delle chiamate esterne, usando l'asserzione \texttt{verify()} di Mockito per garantire che il \texttt{NotificationService} venga invocato una sola volta in caso di aggiornamento da parte di terzi, e \texttt{verify(...,never())} per verificare l'assenza di chiamate qualora l'aggiornamento venga effettuato dall'autore stesso della segnalazione, prevenendo spam
+\end{itemize}
+
+Per ottimizzare la copertura evitando ridondanze durante l'esecuzione, si sono selezionati gli input basandosi sulla tecnica delle \textbf{Classi di Equivalenza}. Per ogni metodo sono stati dunque testati i percorsi ideali (Happy Path), percorsi di fallimento a causa di assenza di permessi (Error Path) e la gestione dei casi limite (Boundary Conditions), assumendo che il sistema si comporti in modo analogo per tutti i valori appartenenti allo stesso raggruppamento
+
+\section{Metodi Sottoposti a Test e Casi Pianificati}
+L'attività di collaudo ha verificato il comportamento di 3 parti cruciali del sistema:
+
+\subsection{Servizio di Gestione Segnalazioni (\texttt{IssueService.update()})}
+\begin{itemize}
+    \item \textbf{Metodo testato:}\\ \texttt{update(String id, UpdateIssueRequest req, User currentUser)}
+    \item \textbf{Logica di Collaudo:} Verifica la composizione complessa tra i componenti. Il metodo deve prima accertarsi dei permessi dell'utente, poi applicare i cambiamenti di stato, e infine, tramite il modulo \texttt{NotificationService}, iniziare le comunicazioni asincrone
+    \item \textbf{Partizione degli Input:} Le richieste valide \texttt{UpdateIssueRequest} sono divise in due classi di equivalenza: cambiamenti effettuati da terzi (che necessitano una notifica) e cambiamenti effettuati dall'autore (che la sopprimono)
+\end{itemize}
+
+%-----------------------------------------------------------------------------
+\begin{table}[h]
+\begin{tabular}{|c|l|l|}
+\hline
+\cellcolor[HTML]{FFFFFF}\textbf{ID Caso}                     & \multicolumn{1}{c|}{\cellcolor[HTML]{FFFFFF}\textbf{Descrizione dello Scenario}}                                                                                                    & \multicolumn{1}{c|}{\textbf{Risultato Atteso}}                                                                                                                                \\ \hline
+\rowcolor[HTML]{C4C4C4} 
+{\color[HTML]{000000} TC-ISS-UPD-01}                         & {\color[HTML]{000000} \begin{tabular}[c]{@{}l@{}}Happy Path (Terzi): \\ Utente assegnatario invia un DTO \\ valido per cambiare lo stato in RISOLTA.\end{tabular}}                  & \begin{tabular}[c]{@{}l@{}}Il repository salva l'entità.\\ Tramite verify(mock, times(1))si fa \\ in modo che NofiticationService\\ venga inviato una sola volta\end{tabular} \\ \hline
+\cellcolor[HTML]{FFFFFF}{\color[HTML]{000000} TC-ISS-UPD-02} & \cellcolor[HTML]{FFFFFF}{\color[HTML]{000000} \begin{tabular}[c]{@{}l@{}}Happy Path (Autore):\\ L'autore originale della Issue modifica \\ la descrizione o lo stato.\end{tabular}} & \begin{tabular}[c]{@{}l@{}}Il repository salva l'entità.\\ verify(mock, nevere()) garantisce \\ che nessuna notifica venga generata,\\ evitando spam\end{tabular}             \\ \hline
+\rowcolor[HTML]{C4C4C4} 
+\cellcolor[HTML]{C4C4C4}TC-ISS-UPD-03                        & \begin{tabular}[c]{@{}l@{}}Error Path (Privilegi):\\ Utente base tenta di archiviare la \\ segnalazione impostando il flag \\ archived=true.\end{tabular}                           & \begin{tabular}[c]{@{}l@{}}Si interrompe l'esecuzione, viene \\ sollevato AccessDeniedException\\ e non vengono effettuate chiamate\\ di salvataggio verso il DB\end{tabular} \\ \hline
+\cellcolor[HTML]{FFFFFF}TC-ISS-UPD-04                        & \begin{tabular}[c]{@{}l@{}}Boundary Condition:\\ L'ID fornito non corrisponde a \\ nessuna Issue esistente nel database.\end{tabular}                                               & \begin{tabular}[c]{@{}l@{}}Il repository simulato restituisce\\ "vuoto", con il sollevamento\\ controllato di \\ EntityNotFoundException\end{tabular}                         \\ \hline
+\end{tabular}
+\end{table}
+
+\newpage
+
+
+\subsection{Servizio di Autorizzazione: PermissionService.canModifyIssue()}
+\begin{itemize}
+    \item \textbf{Firma del metodo:} \texttt{canModifyIssue(User user, Issue issue)}
+    \item \textbf{Logica di collaudo:} Validazione della matrice dei privilegi \textit{RBAC} (Role Based Access Control). il metodo deve prevenire la \textit{Privilege Escalation} calcolando i diritti d'accesso basati su \texttt{GlobalRole} o sull'assegnazione specifica
+    \item \textbf{Partizione degli Input:} il parametro \texttt{USER} è stato suddiviso in diverse classi di equivalenza: \texttt{Admin}(Ruolo assoluto), \texttt{USER} assegnato alla issue (Ruolo Relativo), \texttt{USER} non assegnato (Ruolo Ristretto) e \texttt{EXTERNAL} (Ruolo Esterno)
+\end{itemize}
+
+% -------------------------------------------------------------------------
+\begin{table}[h]
+\begin{tabular}{|c|l|l|}
+\hline
+\cellcolor[HTML]{FFFFFF}\textbf{ID Caso}                      & \multicolumn{1}{c|}{\cellcolor[HTML]{FFFFFF}\textbf{Descrizione dello Scenario}}                                                                                                                                 & \multicolumn{1}{c|}{\textbf{Risultato Atteso}}                                                                                                                      \\ \hline
+\rowcolor[HTML]{C4C4C4} 
+{\color[HTML]{000000} TC-PERM-MOD-01}                         & {\color[HTML]{000000} \begin{tabular}[c]{@{}l@{}}Authorized (Ruolo Assoluto):\\ Valutazione di un operatore dotato di\\ GlobalRole.ADMIN\end{tabular}}                                                           & \begin{tabular}[c]{@{}l@{}}L'asserzione assertTrue conferma che il\\ metodo garantisce l'accesso ignorando\\ l'assegnazione della Issue\end{tabular}                \\ \hline
+\cellcolor[HTML]{FFFFFF}{\color[HTML]{000000} TC-PERM-MOD-02} & \cellcolor[HTML]{FFFFFF}{\color[HTML]{000000} \begin{tabular}[c]{@{}l@{}}Authorized (Ruolo Relativo):\\ Valutazione di un operatore USER il quale\\ ID coincide con l'assigned\_to\_id della Issue\end{tabular}} & \begin{tabular}[c]{@{}l@{}}L'asserzione assertTrue conferma \\ l'autorizzazione basata sulla paternità/\\ assegnazione del task\end{tabular}                        \\ \hline
+\rowcolor[HTML]{C4C4C4} 
+\cellcolor[HTML]{C4C4C4}TC-PERM-MOD-03                        & \begin{tabular}[c]{@{}l@{}}Unauthorized (Nessuna Relazione):\\ Valutazione di un operatore USER estraneo\\ alla Issue in esame\end{tabular}                                                                      & \begin{tabular}[c]{@{}l@{}}L'asserzione assertFalse conferma il \\ blocco della modifica, garantendo\\l'isolamento dei task tra team\end{tabular}                 \\ \hline
+\cellcolor[HTML]{FFFFFF}TC-PERM-MOD-04                        & \begin{tabular}[c]{@{}l@{}}Unauthorized (Ruolo Esterno):\\ Valutazione di un operatore con ruolo \\ EXTERNAL (es. cliente in sola lettura)\end{tabular}                                                          & \begin{tabular}[c]{@{}l@{}}L'asserzione assertFalse conferma la nega-\\zione assoluta dei privilegi di scrittura,\\ indipedentemente dall'Issue passata\end{tabular} \\ \hline
+\end{tabular}
+\end{table}
+
+\newpage
+
+\subsection{Servizio di Esportazione: ExportService.exportCsv()}
+\begin{itemize}
+    \item \textbf{Firma del metodo:} \texttt{exportCsv(List<Issue> issues, ExportRequest filters)}
+    \item \textbf{Logica di Collaudo:} Elaborazione sicura di una collezione di oggetti in un array di Byte (flusso) conforme allo standard CSV, applicando eventuali filtri di raffinamento
+    \item \textbf{Partizione degli Input:} La lista di entità di ingresso \texttt{List<Issue>} è stata testata sia con valori validi e popolati, sia con casi limite come lista vuota o entità contenenti null, per prevenire crash a runtime e valutare la stabiltà dell'algoritmo di parsing
+\end{itemize}
+
+% -----------------------------------------------------------------------------
+\begin{table}[h]
+\begin{tabular}{|c|l|l|}
+\hline
+\cellcolor[HTML]{FFFFFF}\textbf{ID Caso}                     & \multicolumn{1}{c|}{\cellcolor[HTML]{FFFFFF}\textbf{Descrizione dello Scenario}}                                                                                                    & \multicolumn{1}{c|}{\textbf{Risultato Atteso}}                                                                                                                                                         \\ \hline
+\rowcolor[HTML]{C4C4C4} 
+{\color[HTML]{000000} TC-EXP-CSV-01}                         & {\color[HTML]{000000} \begin{tabular}[c]{@{}l@{}}Happy Path: \\ Iniezione di una lista popolata\\ con diverse Issue con tutti i metadati\end{tabular}}                              & \begin{tabular}[c]{@{}l@{}}Il metodo restituisce un Array di Byte non nullo. \\ L'asserzione verifica che la stringa modificata\\ contenga il numero di righe atteso, incluso di\\ Header\end{tabular} \\ \hline
+\cellcolor[HTML]{FFFFFF}{\color[HTML]{000000} TC-EXP-CSV-02} & \cellcolor[HTML]{FFFFFF}{\color[HTML]{000000} \begin{tabular}[c]{@{}l@{}}Boundary Condition (Lista Vuota):\\  Iniezione di una \\ Collections.emptyList()\end{tabular}}             & \begin{tabular}[c]{@{}l@{}}Non vengono sollevate eccezioni. Il metodo\\ elabora il caso limite restituendo un CSV valido\\ contenente solo l'Header\end{tabular}                                       \\ \hline
+\rowcolor[HTML]{C4C4C4} 
+\cellcolor[HTML]{C4C4C4}TC-EXP-CSV-03                        & \begin{tabular}[c]{@{}l@{}}Boundary Condition (Null Safety):\\ Iniezione di Issue contenenti campi \\ testuali opzionali non valorizzati\end{tabular}                               & \begin{tabular}[c]{@{}l@{}}L'algoritmo non incorre in NullPointerException.\\ I campi vuoti vengono formattato nel CSV come\\ stringhe vuote " "\end{tabular}                                           \\ \hline
+\cellcolor[HTML]{FFFFFF}TC-EXP-CSV-04                        & \begin{tabular}[c]{@{}l@{}}Filter Path: \\ Applicazione di un ExportRequest \\ per parametri di delimitazione personalizzati \\ (es. il separatore ; al posto della ,)\end{tabular} & \begin{tabular}[c]{@{}l@{}}L'asserzione verifica che la sintassi del documento \\ rispetti le direttive del DTO di configurazione \\ passato in input\end{tabular}                                       \\ \hline
+\end{tabular}
+\end{table}

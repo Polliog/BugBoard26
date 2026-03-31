@@ -1,0 +1,32 @@
+% glossary.sty
+% Pacchetto per creare un glossario personalizzato
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{glossary}[2025/10/18 Custom glossary package]
+
+\RequirePackage{xcolor}
+
+% Lista interna per memorizzare le voci del glossario
+\newcommand{\@glossarylist}{}
+
+% Comando per aggiungere una voce al glossario
+% Uso: \glossaryentry{Termine}{Definizione}
+\newcommand{\glossaryentry}[2]{%
+	\g@addto@macro\@glossarylist{%
+		\noindent%
+		{\color{red!30!black}\bfseries #1}\hfill\par%
+		\vspace{0.2em}%
+		\hangindent=1.5em\hangafter=1%
+		#2\par%
+		\vspace{0.8em}%
+	}%
+}
+
+% Comando per stampare il glossario
+\newcommand{\printglossary}{%
+	\chapter*{\hfill\normalfont\fontsize{28}{34}\selectfont Glossario}%
+	\vspace{-1em}%
+	\@glossarylist%
+}
+
+\endinput

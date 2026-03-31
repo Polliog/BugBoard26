@@ -1,5 +1,4 @@
-La consegna finale include tutta la documentazione prodotta nelle prime fasi (eventualmente aggiornata e rivista) nonchè tutti i documenti sulla progettazione e implementazione non ancora realizzata nelle fasi precedenti.
-
-Eventuali materiali necessari alla presentazione e discussione del progetto possono essere anch'essi caricati in questa cartella.
-
-Le informazioni riguardanti l'installazione e utilizzo del progetto vanno invece scritte nel readme della cartella principale, coerentemente con la modalità di fruizione dei normali progetti open source.
+In questo folder devono essere aggiunti, almeno :
+- documento riportante la specifica dei requisiti, lo use case diagram e la descrizione del/dei casi d'uso richiesti
+- nella cartella mock-up immagini corrispondenti ai mock-up utilizzati nella descrizione del/dei casi d'uso richiesti
+- nella cartella UCD file sorgente (possibilmente in formato visual paradigm vpp) e/o immagine del diagramma dei casi d'uso

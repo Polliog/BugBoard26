@@ -1,0 +1,46 @@
+\chapter{Descrizione Requisiti}
+I requisiti del sistema definiscono ciò che l’applicazione deve fare e come deve operare.\\
+I \textbf{Requisiti Di Sistema} descrivono le funzionalità principali e le caratteristiche tecniche necessarie al corretto funzionamento del software, quali autenticazione e gestione dei progetti/issues.\newline
+I \textbf{Requisiti Non-Funzionali} specificano le qualità del sistema, concentrandosi su come deve operare. Include aspetti come sicurezza, usabilità e performance, garantendone efficienza, stabilità e affidabilità.
+\section{Requisiti di sistema}
+\begin{itemize} %----LISTA REQUISITI-----%
+	
+	\item \textbf{Gestione Autenticazione:} Il sistema deve consentire il login a utenti tramite email e password, distinguendoli tra utenti \textit{Normali} e \textit{Admin}.
+	
+	\item \textbf{Gestione Progetti:} Schermata iniziale dov'è possibile visualizzare e cercare tutti i progetti a cui l'utente lavora, con informazioni annesse come il numero di \textit{issues} aperte per progetto e il numero di membri che ci partecipano.\\
+	Nel caso dell'\textit{admin}, dev'essere possibile anche gestire progetti già esistenti o crearne di nuovi.
+	
+	
+	\item \textbf{Creazione Issues:} Gli \textit{admin} devono poter creare nuove \textit{issues}, specificando tipo, priorità e una breve descrizione, mentre gli utenti normali possono segnalare nuove \textit{issues} agli admin; opzionalmente si possono anche inserire un'immagine e uno stato.
+	
+	\item \textbf{Assegnazione Issues:} Gli \textit{admin} devono poter assegnare \textit{issues} a membri del progetto, notificando gli utenti interessati.
+	
+	\item \textbf{Gestione stati:} Il sistema deve consentire il cambiamento degli stati delle issueus, sia dagli \textit{Admin} sia dagli utenti a cui è stata assegnata un issue.
+	
+	\item \textbf{Filtraggio Issues:} L’utente deve poter filtrare le issue per nome, tipo (Bug, Feature, Question, Documentation), stato (Aperta, In Progress, Risolta, Chiusa), priorità (Bassa, Media, Alta, Critica) o in base al tempo di creazione.
+	
+	\item \textbf{Archiviazione Issues:} L'\textit{admin} dev'essere in grado di archiviare \textit{issues} risolte, in modo tale che non siano più visibili nella lista principale ma rimangano consultabili.
+	
+	\item \textbf{Commenti e aggiornamenti:} Ogni Issue deve poter includere una sezione commenti/aggiornamenti, visibile a tutti i membri del progetto .
+	
+	\item \textbf{Esportazione dati:} Il sistema dev'essere in grado di consentire l'esportazione dati in vari formati, quali CVS, PDF o Excel.
+	
+	\item \textbf{Modalità Read-Only:} Il sistema deve permettere la creazione di utenti in sola lettura per esterni al team di sviluppo, che consente di visualizzare \textit{issues}, progetti e commenti senza però permetterne la modifica; La creazione e gestione di questi account è a carico solo degli \textit{Admin} del sistema 
+	
+\end{itemize}
+
+\section{Requisiti Non-Funzionali}
+\begin{itemize}
+	\item \textbf{Sicurezza:} Tutti i dati di utenti (progetti, issues) sono accessibili solo 
+	previa autenticazione, utilizzando email e password memorizzate in forma cifrata.
+	
+	\item \textbf{Affidabilità:} Il sistema deve garantire registrazione e conservazione di tutte le modifiche apportate alle \textit{issues} senza perdere informazioni
+	
+	\item \textbf{Performance:} Il caricamento dei progetti o delle \textit{issues} non deve richiedere tempo eccessivo, con database di dimensioni standard
+	
+	\item \textbf{Manutenibilità:} Il sistema dev'essere sviluppata in modo modulare per semplificare eventuali manutenzioni e aggiornamenti futuri
+	
+	\item \textbf{Portabilità:} Dev'essere garantita l'esecuzione del sistema su qualsiasi browser moderno
+	
+	\item \textbf{Backup e recupero dati:} Devono essere garantiti meccanismi di backup automatico e di esportazione manuale dei dati in vari formati per prevenire perdite accidentali
+\end{itemize}

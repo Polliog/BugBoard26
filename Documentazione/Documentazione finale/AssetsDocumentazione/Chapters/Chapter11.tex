@@ -1,0 +1,19 @@
+\newpage
+\chapter{Gestione della Configurazione e Versioning}
+La gestione del codice sorgente, l'architettura e la collaborazione tra membri è stato coordinato tramite il sistema di versioning control \textbf{Git}. \\
+L'hosting del repository è stato invece affidato alla piattaforma \textbf{GitHub}, che possiede l'intera codebase, includendo layer applicativi (API e Web), script di automazione \textit{Makefile} e i \textit{Docker Compose} descrittori dell'infrastruttura.
+
+\subsection{Repository Ufficiale}
+L'intero codice sorgente del progetto BugBoard26, compresa la cronologia delle modifiche e configuration files è visualizzabile al seguente indirizzo:
+\begin{itemize}
+    \item \textbf{GitHub Repository:} \url{https://github.com/polliog/bugboard26}
+\end{itemize}
+
+\subsection{Metriche, Statistiche, Workflow}
+GitHub traccia analiticamente l'andamento dei lavori analzziando i vari contributi dei membri. Le seguenti statistiche, estratte dalla dashboard \textit{Insights} della repository, evidenziano la continuità dell'attività di implementazione:
+\begin{itemize}
+    \item \textbf{Contributors:} Il progetto è stato sviluppato da 3 contributori, che hanno operato in parallelo su componenti diverse dell'architettura, garntendo una separazione tra task di Backend e Frontend
+    \item \textbf{Volume dei Commit:} Dall'inizializzaione del progetto fino alla sua fine, sono state registrate 62 commits totali. Questo volume rispecchia uno sviluppo di tipo incrementale, con salvataggi atomici, coesi e facilmente tracciabili in caso di anomali
+    \item \textbf{Gestione tramite Pull Request:} Per garantire la stabilità dell'applicativo, il codice all'interno del branch main è stato mediato attraverso l'uso di Pull Request. In questo modo è stato possibile effettuare ogni merge in seguito all'esito positivo della pipeline di Continuous Integration e al superamento del Quality Gate imposto da SonarQube
+    \item \textbf{Strategia di Branching:} Il ciclo di vita del codice ha seguito un modello derivato dal \textit{GitHub Flow}, dove ogni funzionalità nuova di risoluzione bug è stata sviluppata all'interno di \textit{feature branch} isolati, per proteggere il branch \texttt{main}. Nella fase finale del progetto, questi branch sono stati sistematicamente integrati all'interno del main e successivamente rimossi.
+\end{itemize}

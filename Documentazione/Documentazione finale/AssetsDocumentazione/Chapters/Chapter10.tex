@@ -1,0 +1,21 @@
+\newpage
+\chapter{Analisi statistica e Qualità del Codice (SonarQube)}
+Per affiancare il testing dinamico descritto nel capitolo precedente e garantire manutenibilità a lungo termine dell'architettura Backend, il codice sorgente viene sottoposto a ispezione statica tramite \textbf{SonarQube}. \\
+Questo strumento è integrato nella pipeline di CI e valuta la codebase rispetto a un \textit{Quality Gate}, fornendo delle metriche precise sul \textit{Technical Debt} e validando le aree di logica complessa sottoposte già a Unit Testing\\
+L'analisi produce un report qualitativo incentrato su diversi assi metrici, con attenzione a servizi essenziali dell'applicazione:
+
+\subsection{Security and Vulnaribilities (Sicurezza)}
+Al fine di garantire che non siano presenti vulnerabilità note o cattive pratiche architetturali, il codice viene scansionato. In riferimento al \texttt{PermissionService}, valutato secondo il metodo \texttt{canModifyIssue}, SonarQube verifica l'assenza di \textit{Security Hotspost}.\\
+Garantisce che non ci siano bypass logici o credenziali hardcoded dentro la matrice di visualizzazone dei privilegi RBAC e che l'implementazione di controlli autorizzativi non venga bypassatada tentativi di Privilege Escalation
+
+\subsection{Reliability and Bugs (Affidabilità)}
+Quest'ispezione rileva potenziali errori logici aruntime che potrebbero sfuggire anche ad alcuni test.\\
+Un'enfatizzazione particolare è rivolta all'\texttt{ExportService} e al metodo \texttt{exportCsv}. SonarQube esamina il codice per evitare la deferenzazione di null pointer, assicurandosi che non ci siano \textit{Resource Leaks}
+
+\subsection{Manintainability and Code Smells (Manutenibilità e Complessità)}
+L'analisi identifica porzioni di codice funzionanti ma strutturalmente carenti.\\
+Il metodo \texttt{IssueService.update} poichè gestisce permessi, DB, variazioni di stato, notifiche potrebbe accumulare un'elevata complessità ciclomatica (troppi if/else annidati). SonarQube per monitorare quest'indicatore possiede una soglia di guardia che blocca le pull request che superano una certa complessità promuovendo il refactoring. Inoltre verifica che i DTO non presentino parametri non utilizzati
+
+\subsection{Test Coverage (Copertura del Codice)}
+Si può quantificare visivamente la percentuale esatta di linee di codice e rami condizionali effettivamente attraversati durante il testing (\textbf{Branch Coverage}) utilizzando l'integrazione tra i report generati da JaCoCo e SonarQube.\\
+Grazie all'applicazione delle \textit{Classi di Equivalenza} e della \textit{Behavior Verification} sui metodi \texttt{update}, \texttt{canModifyIssue} e \texttt{exportCsv} SonarQube si assicura che gli Happy Path, gli Error Path e Boundary Conditions del layer \texttt{Service} raggiungano una più ampia copertura, in linea con gli standard qualitativi del progetto. 
